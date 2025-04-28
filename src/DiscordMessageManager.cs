@@ -70,7 +70,7 @@ namespace VRCXDiscordTracker
             if (string.IsNullOrEmpty(url)) return false;
 
             // 最後に投稿した内容と同じであれば何もしない
-            if (lastMessageContent.ContainsKey(messageId) && equalEmbedWithoutTimestamp(lastMessageContent[messageId], embed))
+            if (lastMessageContent.ContainsKey(messageId) && EqualEmbedWithoutTimestamp(lastMessageContent[messageId], embed))
             {
                 return true;
             }
@@ -138,7 +138,7 @@ namespace VRCXDiscordTracker
                 Url = $"https://vrchat.com/home/launch?worldId={myLocation.WorldId}&instanceId={instanceId}",
                 Author = new EmbedAuthorBuilder
                 {
-                    Name = myLocation.DisplayName,
+                    Name = EscapeMarkdownCharacters(myLocation.DisplayName),
                 },
                 Timestamp = DateTime.UtcNow,
                 Footer = new EmbedFooterBuilder
@@ -183,7 +183,7 @@ namespace VRCXDiscordTracker
             return myLocation.JoinId.ToString();
         }
 
-        private bool equalEmbedWithoutTimestamp(Embed left, Embed right)
+        private bool EqualEmbedWithoutTimestamp(Embed left, Embed right)
         {
             if (left == null && right == null) return true;
             if (left == null || right == null) return false;
@@ -193,6 +193,18 @@ namespace VRCXDiscordTracker
             rightWithoutTimestamp.Timestamp = null;
 
             return leftWithoutTimestamp.Equals(rightWithoutTimestamp);
+        }
+
+
+        private string EscapeMarkdownCharacters(string text)
+        {
+            // Markdownでエスケープする必要がある文字をエスケープする
+            return text.Replace("\\", "\\\\")
+                       .Replace("*", "\\*")
+                       .Replace("_", "\\_")
+                       .Replace("~", "\\~")
+                       .Replace("#", "\\#");
+
         }
 
         private string FormatDateTime(DateTime? dateTime)
@@ -233,15 +245,16 @@ namespace VRCXDiscordTracker
             var result = string.Join("\n", members.ConvertAll(member =>
             {
                 var baseText = $"{GetMemberEmoji(member)} ";
+                var escapedName = EscapeMarkdownCharacters(member.DisplayName);
 
                 // includeUserPageLink が true の場合は、ユーザーページのリンクを追加する
                 if (includeUserPageLink)
                 {
-                    baseText += $"[{member.DisplayName}](https://vrchat.com/home/user/{member.UserId})";
+                    baseText += $"[{escapedName}](https://vrchat.com/home/user/{member.UserId})";
                 }
                 else
                 {
-                    baseText += $"{member.DisplayName}";
+                    baseText += $"{escapedName}";
                 }
 
                 // includeJoinLeaveAt が true の場合は、JoinAt と LeaveAt を追加する
