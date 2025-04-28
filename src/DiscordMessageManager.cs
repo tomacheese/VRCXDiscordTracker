@@ -254,7 +254,7 @@ namespace VRCXDiscordTracker
                 }
                 else
                 {
-                    baseText += $"{escapedName}";
+                    baseText += escapedName;
                 }
 
                 // includeJoinLeaveAt が true の場合は、JoinAt と LeaveAt を追加する
