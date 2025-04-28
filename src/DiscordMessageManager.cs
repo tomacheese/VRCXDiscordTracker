@@ -217,9 +217,25 @@ namespace VRCXDiscordTracker
             return "⬜️";
         }
 
-        private string GetMembersString(List<InstanceMember> members)
+        private string GetMembersString(List<InstanceMember> members, bool includeJoinLeaveAt = true)
         {
-            return string.Join("\n", members.ConvertAll(member => $"{GetMemberEmoji(member)} [{member.DisplayName}](https://vrchat.com/home/user/{member.UserId}): {FormatDateTime(member.LastJoinAt)} - {FormatDateTime(member.LastLeaveAt)}"));
+            var result = string.Join("\n", members.ConvertAll(member =>
+            {
+                var baseText = $"{GetMemberEmoji(member)} [{member.DisplayName}](https://vrchat.com/home/user/{member.UserId})";
+                if (includeJoinLeaveAt)
+                {
+                    baseText += $": {FormatDateTime(member.LastJoinAt)} - {FormatDateTime(member.LastLeaveAt)}";
+                }
+
+                return baseText;
+            }));
+
+            if (result.Length >= 1000 && includeJoinLeaveAt)
+            {
+                result = GetMembersString(members, false);
+            }
+
+            return result.Length > 1000 ? result.Substring(0, 1000) + "..." : result;
         }
     }
 }
