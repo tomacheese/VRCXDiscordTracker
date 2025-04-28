@@ -24,7 +24,7 @@ namespace VRCXDiscordTracker
         private class ConfigData
         {
             /// <summary>
-            /// VRCXのデータベースファイルのハス
+            /// VRCXのデータベースファイルのパス
             /// </summary>
             [JsonPropertyName("databasePath")]
             public string DatabasePath { get; set; }

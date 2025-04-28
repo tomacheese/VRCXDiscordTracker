@@ -127,7 +127,15 @@ namespace VRCXDiscordTracker
             var version = Assembly.GetExecutingAssembly().GetName().Version;
 
             // インスタンスIDは、Locationの:よりあと
-            var instanceId = myLocation.Location.Split(':')[1];
+            var locationParts = myLocation.Location.Split(':');
+            if (locationParts.Length > 1)
+            {
+                var instanceId = locationParts[1];
+            }
+            else
+            {
+                throw new FormatException("Location string is not in the expected format with a colon.");
+            }
             var embed = new EmbedBuilder
             {
                 Title = myLocation.WorldName,

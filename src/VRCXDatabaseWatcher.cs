@@ -17,7 +17,7 @@ namespace VRCXDiscordTracker
 
         public VRCXDatabaseWatcher(string databasePath)
         {
-            // データベースパス指定されていない場合は、デフォルトのVRCXデータベースハム巣を使用する
+            // データベースパスが指定されていない場合は、デフォルトのVRCXデータベースパスを使用する
             string defaultLogPath = Path.GetFullPath(Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "VRCX",
