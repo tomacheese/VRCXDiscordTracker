@@ -66,7 +66,7 @@ namespace VRCXDiscordTracker
                 Console.WriteLine($"GetMyLocations: {myLocations.Count}");
                 foreach (var myLocation in myLocations)
                 {
-                    var instanceMembers = GetInstanceMembers(conn, userId, myLocation.JoinCreatedAt, myLocation.EstimatedLeaveCreatedAt);
+                    var instanceMembers = GetInstanceMembers(conn, userId, myLocation.Location, myLocation.JoinCreatedAt, myLocation.EstimatedLeaveCreatedAt);
                     Console.WriteLine($"GetInstanceMembers: {instanceMembers.Count}");
 
                     await new DiscordMessageManager(myLocation, instanceMembers).SendUpdateMessageAsync();
@@ -229,9 +229,9 @@ namespace VRCXDiscordTracker
             return myLocations;
         }
 
-        private List<InstanceMember> GetInstanceMembers(SQLiteConnection conn, string vrchatUserId, DateTime joinCreatedAt, DateTime? estimatedLeaveAt)
+        private List<InstanceMember> GetInstanceMembers(SQLiteConnection conn, string vrchatUserId, string location, DateTime joinCreatedAt, DateTime? estimatedLeaveAt)
         {
-            Console.WriteLine($"GetInstanceMembers: {vrchatUserId}, {joinCreatedAt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ")}, {estimatedLeaveAt?.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ")}");
+            Console.WriteLine($"GetInstanceMembers: {vrchatUserId}, {joinCreatedAt.ToUniversalTime():yyyy-MM-ddTHH:mm:ss.fffffffZ}, {estimatedLeaveAt?.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ")}");
             var sanitizedUserId = vrchatUserId.Replace("_", "").Replace("-", "");
             var friendTableName = sanitizedUserId + "_friend_log_current";
             var sql = @"
@@ -239,7 +239,7 @@ namespace VRCXDiscordTracker
                 SELECT
                     user_id,
                     display_name,
-                    location,  -- 追加：location 列を取得
+                    location,
                     MAX(CASE WHEN type = 'OnPlayerJoined' THEN created_at END) AS last_join_at,
                     MAX(CASE WHEN type = 'OnPlayerLeft'   THEN created_at END) AS last_leave_at
                 FROM
@@ -247,10 +247,11 @@ namespace VRCXDiscordTracker
                 WHERE
                     created_at BETWEEN :join_created_at
                         AND COALESCE(:estimated_leave_created_at, strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+                        AND location = :location
                 GROUP BY
                     user_id,
                     display_name,
-                    location   -- location を GROUP BY に追加
+                    location
             )
             SELECT
                 ue.user_id,
@@ -288,6 +289,7 @@ namespace VRCXDiscordTracker
                 cmd.CommandText = sql;
                 cmd.Parameters.AddWithValue(":join_created_at", joinCreatedAt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"));
                 cmd.Parameters.AddWithValue(":estimated_leave_created_at", estimatedLeaveAt?.AddMilliseconds(1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"));
+                cmd.Parameters.AddWithValue(":location", location);
 
                 using (var reader = cmd.ExecuteReader())
                 {
