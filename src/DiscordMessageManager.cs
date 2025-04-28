@@ -70,7 +70,7 @@ namespace VRCXDiscordTracker
             if (string.IsNullOrEmpty(url)) return false;
 
             // 最後に投稿した内容と同じであれば何もしない
-            if (lastMessageContent.ContainsKey(messageId) && lastMessageContent[messageId] == embed)
+            if (lastMessageContent.ContainsKey(messageId) && equalEmbedWithoutTimestamp(lastMessageContent[messageId], embed))
             {
                 return true;
             }
@@ -181,6 +181,18 @@ namespace VRCXDiscordTracker
         private string GetJoinId()
         {
             return myLocation.JoinId.ToString();
+        }
+
+        private bool equalEmbedWithoutTimestamp(Embed left, Embed right)
+        {
+            if (left == null && right == null) return true;
+            if (left == null || right == null) return false;
+            var leftWithoutTimestamp = left.ToEmbedBuilder();
+            leftWithoutTimestamp.Timestamp = null;
+            var rightWithoutTimestamp = right.ToEmbedBuilder();
+            rightWithoutTimestamp.Timestamp = null;
+
+            return leftWithoutTimestamp.Equals(rightWithoutTimestamp);
         }
 
         private string FormatDateTime(DateTime? dateTime)
