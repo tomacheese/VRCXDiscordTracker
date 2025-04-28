@@ -1,5 +1,4 @@
 ﻿using Discord;
-using Discord.Rest;
 using Discord.Webhook;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace VRCXDiscordTracker
     {
         private static readonly string SaveFilePath = "discord-messages.json";
         private static readonly Dictionary<string, ulong> joinIdMessageIdPairs = LoadJoinIdMessageIdPairs();
-        private static readonly Dictionary<ulong, string> lastMessageContent = new Dictionary<ulong, string>();
+        private static readonly Dictionary<ulong, Embed> lastMessageContent = new Dictionary<ulong, Embed>();
 
         private readonly MyLocation myLocation;
         private readonly List<InstanceMember> instanceMembers;
@@ -71,7 +70,7 @@ namespace VRCXDiscordTracker
             if (string.IsNullOrEmpty(url)) return false;
 
             // 最後に投稿した内容と同じであれば何もしない
-            if (lastMessageContent.ContainsKey(messageId) && lastMessageContent[messageId] == embed.ToJsonString())
+            if (lastMessageContent.ContainsKey(messageId) && lastMessageContent[messageId] == embed)
             {
                 return true;
             }
@@ -81,7 +80,7 @@ namespace VRCXDiscordTracker
                 try
                 {
                     await client.ModifyMessageAsync(messageId, m => m.Embeds = new[] { embed });
-                    lastMessageContent[messageId] = embed.ToJsonString();
+                    lastMessageContent[messageId] = embed;
                     return true;
                 }
                 catch (Exception ex)
