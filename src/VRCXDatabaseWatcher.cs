@@ -226,7 +226,10 @@ namespace VRCXDiscordTracker
                 }
             }
 
-            return myLocations;
+            // Location が local: で始まる場合は、ローカルインスタンスなので除外
+            return myLocations.FindAll(
+                myLocation => !myLocation.Location.StartsWith("local:")
+            );
         }
 
         private List<InstanceMember> GetInstanceMembers(SQLiteConnection conn, string vrchatUserId, string location, DateTime joinCreatedAt, DateTime? estimatedLeaveAt)
