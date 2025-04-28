@@ -71,7 +71,7 @@ namespace VRCXDiscordTracker
             if (string.IsNullOrEmpty(url)) return false;
 
             // 最後に投稿した内容と同じであれば何もしない
-            if (lastMessageContent.ContainsKey(messageId) && lastMessageContent[messageId] == embed.ToString())
+            if (lastMessageContent.ContainsKey(messageId) && lastMessageContent[messageId] == embed.ToJsonString())
             {
                 return true;
             }
