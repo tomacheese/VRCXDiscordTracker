@@ -128,14 +128,11 @@ namespace VRCXDiscordTracker
 
             // インスタンスIDは、Locationの:よりあと
             var locationParts = myLocation.Location.Split(':');
-            if (locationParts.Length > 1)
-            {
-                var instanceId = locationParts[1];
-            }
-            else
+            if (locationParts.Length != 2)
             {
                 throw new FormatException("Location string is not in the expected format with a colon.");
             }
+            var instanceId = locationParts[1];
             var embed = new EmbedBuilder
             {
                 Title = myLocation.WorldName,
