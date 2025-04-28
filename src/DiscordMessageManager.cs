@@ -217,11 +217,23 @@ namespace VRCXDiscordTracker
             return "⬜️";
         }
 
-        private string GetMembersString(List<InstanceMember> members, bool includeJoinLeaveAt = true)
+        private string GetMembersString(List<InstanceMember> members, bool includeJoinLeaveAt = true, bool includeUserPageLink = true)
         {
             var result = string.Join("\n", members.ConvertAll(member =>
             {
-                var baseText = $"{GetMemberEmoji(member)} [{member.DisplayName}](https://vrchat.com/home/user/{member.UserId})";
+                var baseText = $"{GetMemberEmoji(member)} ";
+
+                // includeUserPageLink が true の場合は、ユーザーページのリンクを追加する
+                if (includeUserPageLink)
+                {
+                    baseText += $"[{member.DisplayName}](https://vrchat.com/home/user/{member.UserId})";
+                }
+                else
+                {
+                    baseText += $"{member.DisplayName}";
+                }
+
+                // includeJoinLeaveAt が true の場合は、JoinAt と LeaveAt を追加する
                 if (includeJoinLeaveAt)
                 {
                     baseText += $": {FormatDateTime(member.LastJoinAt)} - {FormatDateTime(member.LastLeaveAt)}";
@@ -230,11 +242,18 @@ namespace VRCXDiscordTracker
                 return baseText;
             }));
 
-            if (result.Length >= 1000 && includeJoinLeaveAt)
+            if (result.Length >= 1000 && includeJoinLeaveAt && includeUserPageLink)
             {
-                result = GetMembersString(members, false);
+                // 1000文字を超える場合は、JoinLeaveAtを省略する
+                result = GetMembersString(members, false, true);
+            }
+            if (result.Length >= 1000)
+            {
+                // 1000文字を超える場合は、ユーザーページのリンクを省略する
+                result = GetMembersString(members, includeJoinLeaveAt, false);
             }
 
+            // それでも1000文字を超える場合は、メッセージを切り落とす
             return result.Length > 1000 ? result.Substring(0, 1000) + "..." : result;
         }
     }
