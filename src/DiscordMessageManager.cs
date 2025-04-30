@@ -207,7 +207,7 @@ namespace VRCXDiscordTracker
 
         private string FormatDateTime(DateTime? dateTime)
         {
-            return dateTime?.ToString("f", CultureInfo.CurrentCulture) ?? string.Empty;
+            return dateTime?.ToString("G", CultureInfo.CurrentCulture) ?? string.Empty;
         }
 
         private string GetMemberEmoji(InstanceMember member)
