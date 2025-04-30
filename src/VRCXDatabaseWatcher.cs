@@ -290,8 +290,8 @@ namespace VRCXDiscordTracker
             using (var cmd = new SQLiteCommand(conn))
             {
                 cmd.CommandText = sql;
-                cmd.Parameters.AddWithValue(":join_created_at", joinCreatedAt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"));
-                cmd.Parameters.AddWithValue(":estimated_leave_created_at", estimatedLeaveAt?.AddMilliseconds(1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"));
+                cmd.Parameters.AddWithValue(":join_created_at", joinCreatedAt.AddSeconds(-1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"));
+                cmd.Parameters.AddWithValue(":estimated_leave_created_at", estimatedLeaveAt?.AddSeconds(1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"));
                 cmd.Parameters.AddWithValue(":location", location);
 
                 using (var reader = cmd.ExecuteReader())
