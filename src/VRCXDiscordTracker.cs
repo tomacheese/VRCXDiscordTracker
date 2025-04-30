@@ -16,8 +16,8 @@ namespace VRCXDiscordTracker
                 Icon = Properties.Resources.AppIcon,
                 ContextMenu = new ContextMenu(new MenuItem[]
                 {
-                    new MenuItem("設定", ShowSettings),
-                    new MenuItem("終了", Exit)
+                    new MenuItem("Settings", ShowSettings),
+                    new MenuItem("Exit", Exit)
                 }),
                 Visible = true,
                 Text = "VRCXDiscordTracker"
