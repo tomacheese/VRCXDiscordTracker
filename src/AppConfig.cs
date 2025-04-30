@@ -83,12 +83,11 @@ namespace VRCXDiscordTracker
             set
             {
                 // required exists path
-                var trimmedValue = value?.Trim();
-                if (trimmedValue != null && !File.Exists(trimmedValue))
+                if (!File.Exists(value))
                 {
-                    throw new DirectoryNotFoundException($"The specified file does not exist: {trimmedValue}");
+                    throw new FileNotFoundException($"The specified file does not exist: {value}");
                 }
-                _config.DatabasePath = trimmedValue;
+                _config.DatabasePath = value?.Trim();
                 Save();
             }
         }

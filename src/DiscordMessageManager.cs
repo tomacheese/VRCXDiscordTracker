@@ -56,11 +56,9 @@ namespace VRCXDiscordTracker
             var url = AppConfig.DiscordWebhookUrl;
             if (string.IsNullOrEmpty(url)) return null;
 
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-
             using (var client = new DiscordWebhookClient(url))
             {
-                return await client.SendMessageAsync(text: "", embeds: new[] { embed });
+                return await client.SendMessageAsync(text: string.Empty, embeds: new[] { embed });
             }
         }
 
@@ -209,11 +207,7 @@ namespace VRCXDiscordTracker
 
         private string FormatDateTime(DateTime? dateTime)
         {
-            if (dateTime == null)
-            {
-                return "";
-            }
-            return ((DateTime)dateTime).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.CreateSpecificCulture("ja-JP"));
+            return dateTime?.ToString("f", CultureInfo.CurrentCulture) ?? string.Empty;
         }
 
         private string GetMemberEmoji(InstanceMember member)
