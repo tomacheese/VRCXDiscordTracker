@@ -136,7 +136,7 @@ namespace VRCXDiscordTracker
                 Url = $"https://vrchat.com/home/launch?worldId={myLocation.WorldId}&instanceId={instanceId}",
                 Author = new EmbedAuthorBuilder
                 {
-                    Name = EscapeMarkdownCharacters(myLocation.DisplayName),
+                    Name = Format.Sanitize(myLocation.DisplayName),
                 },
                 Timestamp = DateTime.UtcNow,
                 Footer = new EmbedFooterBuilder
@@ -192,19 +192,6 @@ namespace VRCXDiscordTracker
 
             return leftWithoutTimestamp.Equals(rightWithoutTimestamp);
         }
-
-
-        private string EscapeMarkdownCharacters(string text)
-        {
-            // Markdownでエスケープする必要がある文字をエスケープする
-            return text.Replace("\\", "\\\\")
-                       .Replace("*", "\\*")
-                       .Replace("_", "\\_")
-                       .Replace("~", "\\~")
-                       .Replace("#", "\\#");
-
-        }
-
         private string FormatDateTime(DateTime? dateTime)
         {
             return dateTime?.ToString("G", CultureInfo.CurrentCulture) ?? string.Empty;
@@ -239,7 +226,7 @@ namespace VRCXDiscordTracker
             var result = string.Join("\n", members.ConvertAll(member =>
             {
                 var baseText = $"{GetMemberEmoji(member)} ";
-                var escapedName = EscapeMarkdownCharacters(member.DisplayName);
+                var escapedName = Format.Sanitize(member.DisplayName);
 
                 // includeUserPageLink が true の場合は、ユーザーページのリンクを追加する
                 if (includeUserPageLink)
