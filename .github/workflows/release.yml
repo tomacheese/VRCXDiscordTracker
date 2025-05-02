@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  release:
+    if: startsWith(github.event.release.tag_name, 'v')
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Set version from tag
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $version = $tag -replace '^v', ''
+          $versionWithRevision = ($version.Split('.') + '0')[0..3] -join '.'
+          (Get-Content .\Properties\AssemblyInfo.cs) -replace '(\[assembly: AssemblyVersion\(")[^"]*("\)\])', "[assembly: AssemblyVersion(`"$versionWithRevision`")]" | Set-Content .\Properties\AssemblyInfo.cs
+          (Get-Content .\Properties\AssemblyInfo.cs) -replace '(\[assembly: AssemblyFileVersion\(")[^"]*("\)\])', "[assembly: AssemblyFileVersion(`"$versionWithRevision`")]" | Set-Content .\Properties\AssemblyInfo.cs
+        shell: pwsh
+
+      - name: Restore NuGet packages
+        run: nuget restore VRCXDiscordTracker.sln
+
+      - name: Build solution
+        run: msbuild VRCXDiscordTracker.sln /p:Configuration=Release
+
+      - name: Upload exe to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: bin/Release/VRCXDiscordTracker.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

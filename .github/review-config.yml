@@ -1,0 +1,5 @@
+addReviewers: true
+addAssignees: false
+reviewers:
+  - LunaRabbit66
+  - book000
