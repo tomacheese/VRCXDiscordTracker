@@ -1,0 +1,103 @@
+using VRCXDiscordTracker.Core.Config;
+using VRCXDiscordTracker.Core.Notification;
+
+namespace VRCXDiscordTracker.Core;
+public partial class SettingsForm : Form
+{
+    private string _lastSavedDatabasePath = string.Empty;
+    private string _lastSavedDiscordWebhookUrl = string.Empty;
+
+    public SettingsForm()
+    {
+        InitializeComponent();
+    }
+
+    /// <summary>
+    /// 設定画面がロードされたときの処理
+    /// </summary>
+    private void OnLoad(object sender, EventArgs e)
+    {
+        // 設定ファイルから値を読み込む
+        textBoxDatabasePath.Text = AppConfig.DatabasePath;
+        // 設定ファイルで規定していない場合は実際の監視対象を取得
+        if (string.IsNullOrWhiteSpace(textBoxDatabasePath.Text))
+        {
+            textBoxDatabasePath.Text = Program.Controller?.GetDatabasePath() ?? string.Empty;
+        }
+        textBoxDiscordWebhookUrl.Text = AppConfig.DiscordWebhookUrl;
+
+        _lastSavedDatabasePath = textBoxDatabasePath.Text;
+        _lastSavedDiscordWebhookUrl = textBoxDiscordWebhookUrl.Text;
+    }
+
+    private bool Save()
+    {
+        try
+        {
+            AppConfig.DatabasePath = textBoxDatabasePath.Text;
+            AppConfig.DiscordWebhookUrl = textBoxDiscordWebhookUrl.Text;
+
+            Program.Controller?.Dispose();
+            Program.Controller = new VRCXDiscordTrackerController(textBoxDatabasePath.Text);
+            Program.Controller.Start();
+
+            _lastSavedDatabasePath = textBoxDatabasePath.Text;
+            _lastSavedDiscordWebhookUrl = textBoxDiscordWebhookUrl.Text;
+
+            UwpNotificationService.Notify("Settings Saved", "Settings have been saved successfully.");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error saving settings: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 保存ボタンがクリックされたときの処理
+    /// </summary>
+    /// <remarks>設定ファイルに値を保存し、VRChatのログ監視を再起動する</remarks>
+    private void OnSaveButtonClicked(object sender, EventArgs e)
+    {
+        var textBoxDiscordWebhookUrlText = textBoxDiscordWebhookUrl.Text.Trim();
+        if (string.IsNullOrEmpty(textBoxDiscordWebhookUrlText))
+        {
+            MessageBox.Show("Discord Webhook URL is required.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        Save();
+    }
+
+    private void OnFormClosing(object sender, FormClosingEventArgs e)
+    {
+        var textBoxDiscordWebhookUrlText = textBoxDiscordWebhookUrl.Text.Trim();
+        if (string.IsNullOrEmpty(textBoxDiscordWebhookUrlText))
+        {
+            Application.Exit(); // メッセージ表示後にExitを呼び出すと2回メッセージが表示されてしまうので先に呼び出す
+            MessageBox.Show("Discord Webhook URL is required. Application will be closed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        var changed = _lastSavedDatabasePath != textBoxDatabasePath.Text.Trim() || _lastSavedDiscordWebhookUrl != textBoxDiscordWebhookUrlText;
+        if (!changed)
+        {
+            return;
+        }
+
+        var result = MessageBox.Show("Some settings are not saved. Do you want to save them?", "Confirm", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+        if (result == DialogResult.Yes)
+        {
+            var saved = Save();
+            if (!saved)
+            {
+                e.Cancel = true; // 保存に失敗した場合は閉じない
+            }
+        }
+        else if (result == DialogResult.Cancel)
+        {
+            e.Cancel = true;
+        }
+    }
+}

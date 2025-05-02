@@ -21,14 +21,14 @@ jobs:
         run: nuget restore VRCXDiscordTracker.sln
 
       - name: Build solution
-        run: msbuild VRCXDiscordTracker.sln /p:Configuration=Release
+        run: dotnet build VRCXDiscordTracker.sln /p:Configuration=Release
 
-      - name: Run tests
-        run: dotnet test VRCXDiscordTracker.sln --configuration Release
+      - name: Publish solution
+        run: dotnet publish VRCXDiscordTracker.sln -p:PublishProfile=Publish
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: VRCXDiscordTracker
           path: |
-            bin/Release/
+            **/bin/

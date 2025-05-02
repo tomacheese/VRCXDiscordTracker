@@ -1,0 +1,95 @@
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using VRCXDiscordTracker.Core;
+using VRCXDiscordTracker.Core.Config;
+using VRCXDiscordTracker.Core.UI.TrayIcon;
+
+namespace VRCXDiscordTracker;
+internal static partial class Program
+{
+    public static VRCXDiscordTrackerController? Controller;
+
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool AllocConsole();
+
+    [STAThread]
+    static void Main()
+    {
+        Application.ThreadException += (s, e) => OnException(e.Exception, "ThreadException");
+        Thread.GetDomain().UnhandledException += (s, e) => OnException((Exception)e.ExceptionObject, "UnhandledException");
+        TaskScheduler.UnobservedTaskException += (s, e) => OnException(e.Exception, "UnobservedTaskException");
+
+        string[] cmds = Environment.GetCommandLineArgs();
+        bool isDebugMode = false;
+        foreach (string cmd in cmds)
+        {
+            if (cmd.Equals("--debug"))
+            {
+                isDebugMode = true;
+            }
+        }
+        if (isDebugMode)
+        {
+            AllocConsole();
+            Console.SetOut(new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true });
+        }
+
+        Console.WriteLine("Program.Main");
+        ApplicationConfiguration.Initialize();
+
+        var trayIcon = new TrayIcon();
+
+        Controller = new VRCXDiscordTrackerController(AppConfig.DatabasePath);
+
+        // DiscordWebhookUrlが空の場合は、設定画面を表示する
+        if (string.IsNullOrEmpty(AppConfig.DiscordWebhookUrl))
+        {
+            trayIcon.OpenSettingsWindow();
+        }
+        else
+        {
+            Controller.Start();
+        }
+
+        Application.Run(trayIcon);
+    }
+
+    public static void OnException(Exception e, string exceptionType)
+    {
+        Console.WriteLine($"Exception: {exceptionType}");
+        Console.WriteLine($"Message: {e.Message}");
+        Console.WriteLine($"InnerException: {e.InnerException?.Message}");
+        Console.WriteLine($"StackTrace: {e.StackTrace}");
+
+        string errorDetailAndStacktrace = "----- Error Details -----\n" +
+            e.Message + "\n" +
+            e.InnerException?.Message + "\n" +
+            "\n" +
+            "----- StackTrace -----\n" +
+            e.StackTrace + "\n";
+
+        DialogResult result = MessageBox.Show(
+            "An error has occurred and the operation has stopped.\n" +
+            "It would be helpful if you could report this bug using GitHub issues!\n" +
+            "https://github.com/tomacheese/VRCXDiscordTracker/issues\n" +
+            "\n" +
+            errorDetailAndStacktrace +
+            "\n" +
+            "Click OK to open the Create GitHub issue page.\n" +
+            "Click Cancel to close this application.",
+            $"Error ({exceptionType})",
+            MessageBoxButtons.OKCancel,
+            MessageBoxIcon.Error);
+
+        if (result == DialogResult.OK)
+        {
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = "https://github.com/tomacheese/VRCXDiscordTracker/issues/new?body=" + Uri.EscapeDataString(errorDetailAndStacktrace),
+                UseShellExecute = true,
+            });
+        }
+        Application.Exit();
+    }
+}
