@@ -36,7 +36,7 @@ internal class VRCXDiscordTrackerController
     public VRCXDiscordTrackerController(string databasePath)
     {
         // データベースパスが指定されていない場合は、デフォルトのVRCXデータベースパスを使用する
-        string defaultLogPath = Path.GetFullPath(Path.Combine(
+        var defaultLogPath = Path.GetFullPath(Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "VRCX",
             "VRCX.sqlite3"
@@ -88,29 +88,20 @@ internal class VRCXDiscordTrackerController
     /// VRCXのSQLiteデータベースのパスを取得する
     /// </summary>
     /// <returns></returns>
-    public string GetDatabasePath()
-    {
-        return _databasePath;
-    }
+    public string GetDatabasePath() => _databasePath;
 
     /// <summary>
     /// VRChatのユーザーIDを取得する
     /// </summary>
     /// <returns></returns>
-    public string GetVRChatUserId()
-    {
-        return _vrcxDatabase.GetVRChatUserId();
-    }
+    public string GetVRChatUserId() => _vrcxDatabase.GetVRChatUserId();
 
     /// <summary>
     /// 監視処理を実行する
     /// </summary>
     /// <param name="sender">Sender</param>
     /// <param name="e">EventArgs</param>
-    private void OnTimerTick(object? sender, EventArgs e)
-    {
-        Task.Run(Run).Wait();
-    }
+    private void OnTimerTick(object? sender, EventArgs e) => Task.Run(Run).Wait();
 
     /// <summary>
     /// 監視処理
@@ -122,12 +113,12 @@ internal class VRCXDiscordTrackerController
         var userId = _vrcxDatabase.GetVRChatUserId();
         Debug.WriteLine($"GetVRChatUserId: {userId}");
 
-        var myLocations = _vrcxDatabase.GetMyLocations(userId);
+        List<MyLocation> myLocations = _vrcxDatabase.GetMyLocations(userId);
         Debug.WriteLine($"GetMyLocations: {myLocations.Count}");
 
-        foreach (var myLocation in myLocations)
+        foreach (MyLocation myLocation in myLocations)
         {
-            var instanceMembers = _vrcxDatabase.GetInstanceMembers(userId, myLocation.Location, myLocation.JoinCreatedAt, myLocation.EstimatedLeaveCreatedAt);
+            List<InstanceMember> instanceMembers = _vrcxDatabase.GetInstanceMembers(userId, myLocation.Location, myLocation.JoinCreatedAt, myLocation.EstimatedLeaveCreatedAt);
             Console.WriteLine($"GetInstanceMembers: {instanceMembers.Count}");
 
             await new DiscordNotificationService(myLocation, instanceMembers).SendUpdateMessageAsync();

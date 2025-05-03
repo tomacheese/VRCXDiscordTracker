@@ -1,8 +1,8 @@
-using Discord;
-using Discord.Webhook;
 using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
+using Discord;
+using Discord.Webhook;
 using VRCXDiscordTracker.Core.Config;
 using VRCXDiscordTracker.Core.VRCX;
 using Color = Discord.Color;
@@ -48,10 +48,10 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     public async Task SendUpdateMessageAsync()
     {
         Console.WriteLine("DiscordNotificationService.SendUpdateMessageAsync()");
-        string joinId = GetJoinId();
-        ulong? messageId = _joinIdMessageIdPairs.TryGetValue(joinId, out ulong value) ? (ulong?)value : null;
+        var joinId = GetJoinId();
+        var messageId = _joinIdMessageIdPairs.TryGetValue(joinId, out var value) ? (ulong?)value : null;
 
-        var embed = GetEmbed();
+        Embed embed = GetEmbed();
 
         if (messageId != null)
         {
@@ -157,7 +157,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     /// <exception cref="FormatException">Location文字列がコロンで区切られていない場合</exception>
     private Embed GetEmbed()
     {
-        var version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0);
+        Version version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0);
 
         // インスタンスIDは、Locationの:よりあと
         var locationParts = myLocation.Location.Split(':');
@@ -187,7 +187,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
 
         // isCurrently=true のメンバーは、CurrentMembers として表示する
         // フォーマットは "{emoji} [{member.DisplayName}](https://vrchat.com/home/user/{member.UserId})]: {member.LastJoinAt} - {member.LastLeaveAt}"
-        var currentMembers = instanceMembers.FindAll(member => member.IsCurrently);
+        List<InstanceMember> currentMembers = instanceMembers.FindAll(member => member.IsCurrently);
         if (currentMembers.Count > 0)
         {
             embed.AddField(new EmbedFieldBuilder
@@ -198,7 +198,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             });
         }
 
-        var pastMembers = instanceMembers.FindAll(member => !member.IsCurrently);
+        List<InstanceMember> pastMembers = instanceMembers.FindAll(member => !member.IsCurrently);
         if (pastMembers.Count > 0)
         {
             embed.AddField(new EmbedFieldBuilder
@@ -216,10 +216,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     /// JoinIdを取得する
     /// </summary>
     /// <returns></returns>
-    private string GetJoinId()
-    {
-        return myLocation.JoinId.ToString();
-    }
+    private string GetJoinId() => myLocation.JoinId.ToString(CultureInfo.InvariantCulture);
 
     /// <summary>
     /// タイムスタンプを除いたEmbedの等価性を比較する

@@ -29,10 +29,7 @@ internal class AppConfig
     /// <summary>
     /// 静的コンストラクタ。設定ファイルを読み込む
     /// </summary>
-    static AppConfig()
-    {
-        Load();
-    }
+    static AppConfig() => Load();
 
     /// <summary>
     /// 設定ファイルを読み込む
@@ -45,7 +42,7 @@ internal class AppConfig
         }
 
         var json = File.ReadAllText(_configFilePath);
-        var config = JsonSerializer.Deserialize<ConfigData>(json) ?? throw new InvalidOperationException("Failed to deserialize config file.");
+        ConfigData config = JsonSerializer.Deserialize<ConfigData>(json) ?? throw new InvalidOperationException("Failed to deserialize config file.");
         _config = config;
     }
 
@@ -72,7 +69,7 @@ internal class AppConfig
         set
         {
             var trimmedValue = value.Trim();
-            if (trimmedValue == string.Empty)
+            if (string.IsNullOrEmpty(trimmedValue))
             {
                 // 空白の場合はデフォルトのパスを使用
                 _config.DatabasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX", "VRCX.sqlite3");
@@ -101,7 +98,7 @@ internal class AppConfig
         set
         {
             var trimmedValue = value.Trim();
-            if (trimmedValue != string.Empty && !trimmedValue.StartsWith("http://") && !trimmedValue.StartsWith("https://"))
+            if (!string.IsNullOrEmpty(trimmedValue) && !trimmedValue.StartsWith("http://") && !trimmedValue.StartsWith("https://"))
             {
                 throw new ArgumentException("DiscordWebhookUrl must start with http or https.");
             }

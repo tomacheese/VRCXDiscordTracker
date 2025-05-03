@@ -20,9 +20,9 @@ internal static partial class Program
         Thread.GetDomain().UnhandledException += (s, e) => OnException((Exception)e.ExceptionObject, "UnhandledException");
         TaskScheduler.UnobservedTaskException += (s, e) => OnException(e.Exception, "UnobservedTaskException");
 
-        string[] cmds = Environment.GetCommandLineArgs();
-        bool isDebugMode = false;
-        foreach (string cmd in cmds)
+        var cmds = Environment.GetCommandLineArgs();
+        var isDebugMode = false;
+        foreach (var cmd in cmds)
         {
             if (cmd.Equals("--debug"))
             {
@@ -62,7 +62,7 @@ internal static partial class Program
         Console.WriteLine($"InnerException: {e.InnerException?.Message}");
         Console.WriteLine($"StackTrace: {e.StackTrace}");
 
-        string errorDetailAndStacktrace = "----- Error Details -----\n" +
+        var errorDetailAndStacktrace = "----- Error Details -----\n" +
             e.Message + "\n" +
             e.InnerException?.Message + "\n" +
             "\n" +

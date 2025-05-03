@@ -14,10 +14,7 @@ public partial class SettingsForm : Form
     /// </summary>
     private string _lastSavedDiscordWebhookUrl = string.Empty;
 
-    public SettingsForm()
-    {
-        InitializeComponent();
-    }
+    public SettingsForm() => InitializeComponent();
 
     /// <summary>
     /// 設定画面がロードされたときの処理
@@ -104,7 +101,7 @@ public partial class SettingsForm : Form
             return;
         }
 
-        var result = MessageBox.Show("Some settings are not saved. Do you want to save them?", "Confirm", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+        DialogResult result = MessageBox.Show("Some settings are not saved. Do you want to save them?", "Confirm", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
         if (result == DialogResult.Yes)
         {
             var saved = Save();

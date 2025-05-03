@@ -49,10 +49,7 @@ internal class TrayIcon : ApplicationContext
     /// <summary>
     /// Settingsボタンがクリックされたときの処理
     /// </summary>
-    private void ShowSettings(object? sender, EventArgs e)
-    {
-        OpenSettingsWindow();
-    }
+    private void ShowSettings(object? sender, EventArgs e) => OpenSettingsWindow();
 
     /// <summary>
     /// アプリケーションを終了する

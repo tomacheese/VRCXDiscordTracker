@@ -1,4 +1,5 @@
 using System.Data.SQLite;
+using System.Globalization;
 using System.Reflection;
 
 namespace VRCXDiscordTracker.Core.VRCX;
@@ -72,7 +73,7 @@ internal class VRCXDatabase
         using var cmd = new SQLiteCommand(_conn);
         // configs テーブルで、key = "config:lastuserloggedin" の value
         cmd.CommandText = "SELECT value FROM configs WHERE key = 'config:lastuserloggedin'";
-        using var reader = cmd.ExecuteReader();
+        using SQLiteDataReader reader = cmd.ExecuteReader();
         if (reader.Read())
         {
             return reader.GetString(0);
@@ -89,14 +90,14 @@ internal class VRCXDatabase
     public List<MyLocation> GetMyLocations(string vrchatUserId)
     {
         Console.WriteLine($"VRCXDatabase.GetMyLocations(): {vrchatUserId}");
-        string sql = GetEmbedFileContent("VRCXDiscordTracker.Core.VRCX.Queries.myLocations.sql");
+        var sql = GetEmbedFileContent("VRCXDiscordTracker.Core.VRCX.Queries.myLocations.sql");
 
         var myLocations = new List<MyLocation>();
         using (var cmd = new SQLiteCommand(_conn))
         {
             cmd.CommandText = sql;
             cmd.Parameters.AddWithValue(":target_user_id", vrchatUserId);
-            using var reader = cmd.ExecuteReader();
+            using SQLiteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 try
@@ -108,13 +109,13 @@ internal class VRCXDatabase
                         UserId = reader.GetString(1),
                         DisplayName = reader.GetString(2),
                         Location = reader.GetString(3),
-                        JoinCreatedAt = DateTime.Parse(reader.GetString(4)),
+                        JoinCreatedAt = DateTime.Parse(reader.GetString(4), CultureInfo.InvariantCulture),
                         JoinTime = reader.GetInt64(5),
                         LeaveId = reader.IsDBNull(6) ? null : reader.GetInt64(6),
-                        LeaveCreatedAt = reader.IsDBNull(7) ? null : DateTime.Parse(reader.GetString(7)),
+                        LeaveCreatedAt = reader.IsDBNull(7) ? null : DateTime.Parse(reader.GetString(7), CultureInfo.InvariantCulture),
                         LeaveTime = reader.IsDBNull(8) ? null : reader.GetInt64(8),
-                        NextJoinCreatedAt = reader.IsDBNull(9) ? null : DateTime.Parse(reader.GetString(9)),
-                        EstimatedLeaveCreatedAt = reader.IsDBNull(10) ? null : DateTime.Parse(reader.GetString(10)),
+                        NextJoinCreatedAt = reader.IsDBNull(9) ? null : DateTime.Parse(reader.GetString(9), CultureInfo.InvariantCulture),
+                        EstimatedLeaveCreatedAt = reader.IsDBNull(10) ? null : DateTime.Parse(reader.GetString(10), CultureInfo.InvariantCulture),
                         WorldName = reader.IsDBNull(11) ? null : reader.GetString(11),
                         WorldId = reader.IsDBNull(12) ? null : reader.GetString(12),
                     };
@@ -144,7 +145,7 @@ internal class VRCXDatabase
     /// <returns>インスタンスのメンバー情報</returns>
     public List<InstanceMember> GetInstanceMembers(string vrchatUserId, string location, DateTime joinCreatedAt, DateTime? estimatedLeaveAt)
     {
-        Console.WriteLine($"VRCXDatabase.GetInstanceMembers(): {vrchatUserId}, {joinCreatedAt.ToUniversalTime():yyyy-MM-ddTHH:mm:ss.fffffffZ}, {estimatedLeaveAt?.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ")}");
+        Console.WriteLine($"VRCXDatabase.GetInstanceMembers(): {vrchatUserId}, {joinCreatedAt.ToUniversalTime():yyyy-MM-ddTHH:mm:ss.fffffffZ}, {estimatedLeaveAt?.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", CultureInfo.InvariantCulture)}");
         var sanitizedUserId = vrchatUserId.Replace("_", "").Replace("-", "");
         var friendTableName = sanitizedUserId + "_friend_log_current";
         var sql = GetEmbedFileContent("VRCXDiscordTracker.Core.VRCX.Queries.instanceMembers.sql").Replace("@{friendTableName}", friendTableName);
@@ -153,11 +154,11 @@ internal class VRCXDatabase
         using (var cmd = new SQLiteCommand(_conn))
         {
             cmd.CommandText = sql;
-            cmd.Parameters.AddWithValue(":join_created_at", joinCreatedAt.AddSeconds(-1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"));
-            cmd.Parameters.AddWithValue(":estimated_leave_created_at", estimatedLeaveAt?.AddSeconds(1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"));
+            cmd.Parameters.AddWithValue(":join_created_at", joinCreatedAt.AddSeconds(-1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", CultureInfo.InvariantCulture));
+            cmd.Parameters.AddWithValue(":estimated_leave_created_at", estimatedLeaveAt?.AddSeconds(1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", CultureInfo.InvariantCulture));
             cmd.Parameters.AddWithValue(":location", location);
 
-            using var reader = cmd.ExecuteReader();
+            using SQLiteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 // 取得したデータを処理
@@ -165,8 +166,8 @@ internal class VRCXDatabase
                 {
                     UserId = reader.GetString(0),
                     DisplayName = reader.GetString(1),
-                    LastJoinAt = DateTime.Parse(reader.GetString(2)),
-                    LastLeaveAt = reader.IsDBNull(3) ? null : DateTime.Parse(reader.GetString(3)),
+                    LastJoinAt = DateTime.Parse(reader.GetString(2), CultureInfo.InvariantCulture),
+                    LastLeaveAt = reader.IsDBNull(3) ? null : DateTime.Parse(reader.GetString(3), CultureInfo.InvariantCulture),
                     IsCurrently = reader.GetBoolean(4),
                     IsInstanceOwner = reader.GetBoolean(5),
                     IsFriend = reader.GetBoolean(6),
