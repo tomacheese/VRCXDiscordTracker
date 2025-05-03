@@ -1,72 +1,72 @@
 namespace VRCXDiscordTracker.Core.VRCX;
 
 /// <summary>
-/// ©•ª‚ª‹‚½/‹‚éƒCƒ“ƒXƒ^ƒ“ƒX‚Ìî•ñ‚ğŠi”[‚·‚éƒNƒ‰ƒX
+/// è‡ªåˆ†ãŒå±…ãŸ/å±…ã‚‹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®æƒ…å ±ã‚’æ ¼ç´ã™ã‚‹ã‚¯ãƒ©ã‚¹
 /// </summary>
 internal class MyLocation
 {
     /// <summary>
-    /// Q‰ÁID
+    /// å‚åŠ ID
     /// </summary>
     public required long JoinId { get; set; }
 
     /// <summary>
-    /// ƒ†[ƒU[ID
+    /// ãƒ¦ãƒ¼ã‚¶ãƒ¼ID
     /// </summary>
     public required string UserId { get; set; }
 
     /// <summary>
-    /// ƒ†[ƒU[–¼
+    /// ãƒ¦ãƒ¼ã‚¶ãƒ¼å
     /// </summary>
     public required string DisplayName { get; set; }
 
     /// <summary>
-    /// ƒƒP[ƒVƒ‡ƒ“ID
+    /// ãƒ­ã‚±ãƒ¼ã‚·ãƒ§ãƒ³ID
     /// </summary>
     public required string Location { get; set; }
 
     /// <summary>
-    /// ƒCƒ“ƒXƒ^ƒ“ƒX‚ÉQ‰Á‚µ‚½“ú
+    /// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã«å‚åŠ ã—ãŸæ—¥æ™‚
     /// </summary>
     public required DateTime JoinCreatedAt { get; set; }
 
     /// <summary>
-    /// JoinƒCƒxƒ“ƒg‚ÌTime’lBŠî–{“I‚É0‚É‚È‚éB
+    /// Joinã‚¤ãƒ™ãƒ³ãƒˆã®Timeå€¤ã€‚åŸºæœ¬çš„ã«0ã«ãªã‚‹ã€‚
     /// </summary>
     public required long JoinTime { get; set; }
 
     /// <summary>
-    /// ‘ŞoID
+    /// é€€å‡ºID
     /// </summary>
     public required long? LeaveId { get; set; }
 
     /// <summary>
-    /// ‘Şo“ú
+    /// é€€å‡ºæ—¥æ™‚
     /// </summary>
     public required DateTime? LeaveCreatedAt { get; set; }
 
     /// <summary>
-    /// ‘ŞoƒCƒxƒ“ƒg‚ÌTime’lBƒCƒ“ƒXƒ^ƒ“ƒX‚É‹‚½ŠÔ (ƒ~ƒŠ•b)
+    /// é€€å‡ºã‚¤ãƒ™ãƒ³ãƒˆã®Timeå€¤ã€‚ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã«å±…ãŸæ™‚é–“ (ãƒŸãƒªç§’)
     /// </summary>
     public required long? LeaveTime { get; set; }
 
     /// <summary>
-    /// Ÿ‚ÉˆÙ‚È‚éƒCƒ“ƒXƒ^ƒ“ƒX‚ÉQ‰Á‚µ‚½“ú
+    /// æ¬¡ã«ç•°ãªã‚‹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã«å‚åŠ ã—ãŸæ—¥æ™‚
     /// </summary>
     public required DateTime? NextJoinCreatedAt { get; set; }
 
     /// <summary>
-    /// ‚¨‚»‚ç‚­‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ‘Şo‚µ‚½“ú
+    /// ãŠãã‚‰ãã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’é€€å‡ºã—ãŸæ—¥æ™‚
     /// </summary>
     public required DateTime? EstimatedLeaveCreatedAt { get; set; }
 
     /// <summary>
-    /// ƒ[ƒ‹ƒh‚Ì–¼‘O
+    /// ãƒ¯ãƒ¼ãƒ«ãƒ‰ã®åå‰
     /// </summary>
     public required string? WorldName { get; set; }
 
     /// <summary>
-    /// ƒ[ƒ‹ƒh‚ÌID
+    /// ãƒ¯ãƒ¼ãƒ«ãƒ‰ã®ID
     /// </summary>
     public required string? WorldId { get; set; }
 }

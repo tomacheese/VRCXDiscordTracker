@@ -1,42 +1,42 @@
 namespace VRCXDiscordTracker.Core.VRCX;
 
 /// <summary>
-/// VRCX‚ÌƒCƒ“ƒXƒ^ƒ“ƒXƒƒ“ƒo[‚ğ•\‚·ƒNƒ‰ƒX
+/// VRCXã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒ¡ãƒ³ãƒãƒ¼ã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹
 /// </summary>
 internal class InstanceMember
 {
     /// <summary>
-    /// ƒCƒ“ƒXƒ^ƒ“ƒXƒƒ“ƒo[‚ÌID
+    /// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒ¡ãƒ³ãƒãƒ¼ã®ID
     /// </summary>
     public required string UserId { get; set; }
 
     /// <summary>
-    /// ƒCƒ“ƒXƒ^ƒ“ƒXƒƒ“ƒo[‚Ì–¼‘O
+    /// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒ¡ãƒ³ãƒãƒ¼ã®åå‰
     /// </summary>
     public required string DisplayName { get; set; }
 
     /// <summary>
-    /// ÅIQ‰Á“ú
+    /// æœ€çµ‚å‚åŠ æ—¥æ™‚
     /// </summary>
     public required DateTime LastJoinAt { get; set; }
 
     /// <summary>
-    /// ÅI‘Şo“ú
+    /// æœ€çµ‚é€€å‡ºæ—¥æ™‚
     /// </summary>
     public required DateTime? LastLeaveAt { get; set; }
 
     /// <summary>
-    /// Œ»İ‚àƒCƒ“ƒXƒ^ƒ“ƒX‚ÉQ‰Á‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
+    /// ç¾åœ¨ã‚‚ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã«å‚åŠ ã—ã¦ã„ã‚‹ã‹ã©ã†ã‹
     /// </summary>
     public required bool IsCurrently { get; set; }
 
     /// <summary>
-    /// ƒCƒ“ƒXƒ^ƒ“ƒX‚ÌƒI[ƒi[‚©‚Ç‚¤‚©
+    /// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ã‚ªãƒ¼ãƒŠãƒ¼ã‹ã©ã†ã‹
     /// </summary>
     public required bool IsInstanceOwner { get; set; }
 
     /// <summary>
-    /// ƒtƒŒƒ“ƒh‚©‚Ç‚¤‚©
+    /// ãƒ•ãƒ¬ãƒ³ãƒ‰ã‹ã©ã†ã‹
     /// </summary>
     public required bool IsFriend { get; set; }
 }
