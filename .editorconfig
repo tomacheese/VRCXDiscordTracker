@@ -10,7 +10,7 @@ root = true
 # =========================
 # インデントにスペースのみを使用する強制
 indent_style = space
-# インデント幅を4スペースに固定する強制
+# インデント幅（1レベルあたりのスペース数）を4スペースに固定する強制
 indent_size = 4
 # タブ幅を4スペースとして扱う強制
 tab_width = 4
@@ -20,7 +20,7 @@ end_of_line = crlf
 insert_final_newline = false
 # 行末の空白自動削除の強制
 trim_trailing_whitespace = true
-# ファイルの文字コードをUTF-8のみに限定する強制
+# ファイルの文字エンコーディングをUTF-8のみに限定する強制
 charset = utf-8
 
 # =========================
@@ -94,120 +94,139 @@ dotnet_style_qualification_for_property = false
 # =========================
 # C# コードスタイル: 名前空間
 # =========================
+# 名前空間のスコープはファイル単位とする
 csharp_style_namespace_declarations = file_scoped:warning
 
 # =========================
 # C# コードスタイル: 不要な括弧の扱い
 # =========================
+# 算術演算子の優先順位を明確にするためにかっこを優先する
 dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity
+# かっこを使用して他の二項演算子の優先順位を明確にする
 dotnet_style_parentheses_in_other_binary_operators = always_for_clarity
+# 関係演算子の優先順位を明確にするためにかっこを優先する
 dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity
+# 他の演算子の優先順位を明確にするためにかっこを優先する
 dotnet_style_parentheses_in_other_operators = never_if_unnecessary
 
 # =========================
 # C# コードスタイル: アクセシビリティ修飾子の要求
 # =========================
+# パブリック インターフェイス メンバーを除き、アクセシビリティ修飾子を優先
 dotnet_style_require_accessibility_modifiers = for_non_interface_members
 
 # =========================
 # C# コードスタイル: フォーマットルール
 # =========================
+# 新しい行に catch ステートメントを配置
 csharp_new_line_before_catch = true
+# 新しい行に else ステートメントを配置
 csharp_new_line_before_else = true
+# 新しい行に finally ステートメントを配置
 csharp_new_line_before_finally = true
+# ブロックの内容をインデントする
 csharp_indent_block_contents = true
+# 中かっこをインデントしない
 csharp_indent_braces = false
+# switch ケース コンテンツにインデントを付ける
 csharp_indent_case_contents = true
+# ブロック付きの switch ケース コンテンツにインデントを付けない
+csharp_indent_case_contents_when_block = false
+# switch ケース ラベルをインデントする
 csharp_indent_switch_labels = true
+# for ループなど、制御フロー ステートメントのキーワードの後に空白文字を配置する
 csharp_space_after_keywords_in_control_flow_statements = true
+# バイナリ演算子の前後にスペースを挿入する
 csharp_space_around_binary_operators = before_and_after
+# コンマの後にスペースを挿入する
 csharp_space_after_comma = true
+# コンマの前にスペースを挿入しない
 csharp_space_before_comma = false
 
 # =========================
 # 診断・警告レベルの設定
 # =========================
-# CA1031: Exception catchの許可
+# CA1031: 一般的な Exception キャッチの抑制を無効化
 dotnet_diagnostic.CA1031.severity = none
-# CA1051: publicフィールド宣言の警告
+# CA1051: public フィールド宣言の回避
 dotnet_diagnostic.CA1051.severity = warning
-# CA1063: IDisposable実装時のDisposeパターン違反警告
+# CA1063: IDisposable 実装の正しい Dispose パターン
 dotnet_diagnostic.CA1063.severity = warning
-# CA1305: カルチャ指定なしメソッド呼び出しの警告
+# CA1305: IFormatProvider の明示指定
 dotnet_diagnostic.CA1305.severity = warning
-# CA1707: 識別子アンダースコア使用の警告
+# CA1707: 識別子のアンダースコア禁止
 dotnet_diagnostic.CA1707.severity = warning
-# CA1801: 未使用引数の警告
+# CA1801: 未使用引数の削除
 dotnet_diagnostic.CA1801.severity = warning
-# CA1820: 文字列の長さを使用して空の文字列をテストする警告
+# CA1820: 空文字列チェックに string.IsNullOrEmpty を使用
 dotnet_diagnostic.CA1820.severity = warning
-# CA1822: static化可能メンバーの警告
+# CA1822: static 化可能メンバーの警告
 dotnet_diagnostic.CA1822.severity = warning
-# CA9999: カスタムルール違反の警告
+# CA9999: カスタムコード分析ルール違反
 dotnet_diagnostic.CA9999.severity = warning
-# CS8602: ヌル参照可能性の警告
+# CS8602: ヌル参照可能性チェック
 dotnet_diagnostic.CS8602.severity = warning
-# CS8618: 非Nullプロパティ未初期化の警告
+# CS8618: 非 null プロパティの初期化漏れ
 dotnet_diagnostic.CS8618.severity = warning
-# IDE0003: 明示的型指定必要時の警告
+# IDE0003: 型を明示的に指定
 dotnet_diagnostic.IDE0003.severity = warning
-# IDE0004: 不要なキャストの警告
+# IDE0004: 不要なキャストの除去
 dotnet_diagnostic.IDE0004.severity = warning
-# IDE0005: 不要なusingディレクティブの警告
+# IDE0005: 未使用 using ディレクティブの除去
 dotnet_diagnostic.IDE0005.severity = warning
-# IDE0017: オブジェクト初期化子未使用の警告
+# IDE0017: オブジェクト初期化子の活用
 dotnet_diagnostic.IDE0017.severity = warning
-# IDE0018: 変数宣言スコープ過大の警告
+# IDE0018: 変数スコープの最小化
 dotnet_diagnostic.IDE0018.severity = warning
-# IDE0019: パターンマッチング未使用の警告
+# IDE0019: パターンマッチングの利用
 dotnet_diagnostic.IDE0019.severity = warning
-# IDE0020: 不要なnull合体演算子使用の警告
+# IDE0020: 不要な null 合体演算子の除去
 dotnet_diagnostic.IDE0020.severity = warning
-# IDE0021: 不要なnull条件演算子使用の警告
+# IDE0021: 不要な null 条件演算子の除去
 dotnet_diagnostic.IDE0021.severity = warning
-# IDE0022: 不要なnull許容型使用の警告
+# IDE0022: 不要な null 許容型の除去
 dotnet_diagnostic.IDE0022.severity = warning
-# IDE0028: 不要な条件演算子使用の警告
+# IDE0028: 不要な条件演算子の除去
 dotnet_diagnostic.IDE0028.severity = warning
-# IDE0030: 不要なthis修飾子使用の警告
+# IDE0030: 不要な this 修飾子の除去
 dotnet_diagnostic.IDE0030.severity = warning
-# IDE0031: 不要なbase修飾子使用の警告
+# IDE0031: 不要な base 修飾子の除去
 dotnet_diagnostic.IDE0031.severity = warning
-# IDE0039: 不要なreadonly修飾子使用の警告
+# IDE0039: 不要な readonly 修飾子の除去
 dotnet_diagnostic.IDE0039.severity = warning
-# IDE0044: フィールドreadonly指定漏れの警告
+# IDE0044: 変更不可フィールドに readonly を付与
 dotnet_diagnostic.IDE0044.severity = warning
-# IDE0050: 不要なprivate修飾子使用の警告
+# IDE0050: 不要な private 修飾子の除去
 dotnet_diagnostic.IDE0050.severity = warning
-# IDE0051: 未使用privateメンバーの警告
+# IDE0051: 未使用 private メンバーの削除
 dotnet_diagnostic.IDE0051.severity = warning
-# IDE0052: 書き込み専用フィールド未使用の警告
+# IDE0052: 書き込み専用未使用フィールドの警告
 dotnet_diagnostic.IDE0052.severity = warning
-# IDE0055: コードフォーマット違反の警告
+# IDE0055: コードフォーマットの自動適用
 dotnet_diagnostic.IDE0055.severity = warning
-# IDE0059: 未使用変数の警告
+# IDE0059: 未使用変数の削除
 dotnet_diagnostic.IDE0059.severity = warning
-# IDE0060: 未使用パラメータの警告
+# IDE0060: 未使用パラメータの削除
 dotnet_diagnostic.IDE0060.severity = warning
-# IDE0063: usingステートメントスコープ違反の警告
+# IDE0063: using ステートメントのスコープ確認
 dotnet_diagnostic.IDE0063.severity = warning
-# IDE0075: 不要な条件式使用の警告
+# IDE0075: 不要な条件式の除去
 dotnet_diagnostic.IDE0075.severity = warning
-# IDE0078: 不要なswitch式使用の警告
+# IDE0078: 不要な switch 式の除去
 dotnet_diagnostic.IDE0078.severity = warning
-# IDE0079: 不要な#pragma警告使用の警告
+# IDE0079: 不要な #pragma の除去
 dotnet_diagnostic.IDE0079.severity = warning
-# IDE0080: 不要なnull許容型使用の警告
+# IDE0080: 不要な null 許容型の除去
 dotnet_diagnostic.IDE0080.severity = warning
-# IDE0090: 不要な型推論使用の警告
+# IDE0090: 型推論の抑制
 dotnet_diagnostic.IDE0090.severity = warning
-# IDE0091: 不要な型明示使用の警告
+# IDE0091: 不要な型明示の削除
 dotnet_diagnostic.IDE0091.severity = warning
-# IDE0092: 不要な型変換使用の警告
+# IDE0092: 不要な型変換の削除
 dotnet_diagnostic.IDE0092.severity = warning
-# IDE0110: 不要なnull許容型使用の警告
+# IDE0110: 不要な null 許容型の除去
 dotnet_diagnostic.IDE0110.severity = warning
-# IDE0111: 不要なnull許容型使用の警告
+# IDE0111: 不要な null 許容型の除去
 dotnet_diagnostic.IDE0111.severity = warning
 # IDE1006: 命名規則違反の警告
 dotnet_diagnostic.IDE1006.severity = warning
