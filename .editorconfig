@@ -1,141 +1,356 @@
-# --- 基本設定 (Core EditorConfig Options)
-# このファイルをリポジトリのルートで最上位として扱う
+# =========================
+# 全般設定
+# =========================
+# このファイルをルートとして扱う
 root = true
 
-[*.cs]
-
-# インデントとタブ幅
+# =========================
+# インデント・改行・文字コード
+# =========================
+# インデントにスペースのみを使用する強制
 indent_style = space
+# インデント幅を4スペースに固定する強制
 indent_size = 4
+# タブ幅を4スペースとして扱う強制
 tab_width = 4
-
-# 改行コードと末尾改行
+# 改行コードをCRLF（\r\n）のみに限定する強制
 end_of_line = crlf
+# ファイル末尾の自動改行追加の禁止
 insert_final_newline = false
-
-# 行末の空白除去
+# 行末の空白自動削除の強制
 trim_trailing_whitespace = true
-
-# 文字コード
+# ファイルの文字コードをUTF-8のみに限定する強制
 charset = utf-8
 
-# --- .NET コーディング規約 (dotnet_*)
-# using ディレクティブのグループ化・ソート
+# =========================
+# C# コードスタイル: ブレース・式本体
+# =========================
+# すべてのブレース（{）の前の改行の強制
+csharp_new_line_before_open_brace = all:warning
+# 制御構文でのブレース省略の禁止
+csharp_prefer_braces = true:warning
+# アクセサの式本体（=>）実装の強制
+csharp_prefer_expression_bodied_accessors = true:warning
+# コンストラクタの式本体（=>）実装の強制
+csharp_prefer_expression_bodied_constructors = true:warning
+# インデクサの式本体（=>）実装の強制
+csharp_prefer_expression_bodied_indexers = true:warning
+# メソッドの式本体（=>）実装の強制
+csharp_prefer_expression_bodied_methods = true:warning
+# 演算子の式本体（=>）実装の強制
+csharp_prefer_expression_bodied_operators = true:warning
+# プロパティの式本体（=>）実装の強制
+csharp_prefer_expression_bodied_properties = true:warning
+
+# =========================
+# C# コードスタイル: パターン・var・using
+# =========================
+# パターンマッチング構文の使用強制
+csharp_prefer_pattern_matching = true:warning
+# default値の簡易記法（default）使用の強制
+dsharp_prefer_simple_default_expression = true:warning
+# switch式の使用強制
+csharp_prefer_switch_expression = true:warning
+# ローカル関数でのパターン優先の強制
+csharp_style_pattern_local_over_anonymous_function = true:warning
+# 匿名型メンバー名の型推論省略形使用の強制
+csharp_style_prefer_inferred_anonymous_type_member_names = true:warning
+# タプルメンバー名の型推論省略形使用の強制
+csharp_style_prefer_inferred_tuple_names = true:warning
+# using宣言形式（using var）記述の強制
+csharp_style_prefer_using_declaration = true:warning
+# varの型明確時のみ使用許可
+csharp_style_var_elsewhere = false:warning
+# 組み込み型でのvar使用の強制
+csharp_style_var_for_built_in_types = true:warning
+# 型明示時のvar使用の強制
+csharp_style_var_when_type_is_apparent = true:warning
+
+# =========================
+# C# コードスタイル: usingディレクティブ
+# =========================
+# usingディレクティブのグループ分け禁止
 dotnet_separate_import_directive_groups = false
-dotnet_sort_system_directives_first = false
+# System名前空間usingの先頭配置の強制
+dotnet_sort_system_directives_first = true:warning
 
-# this./Me. 修飾子の省略
-dotnet_style_qualification_for_field = false
-dotnet_style_qualification_for_property = false
-dotnet_style_qualification_for_method = false
-dotnet_style_qualification_for_event = false
-
-# プリミティブ型 vs BCL 型のキーワード
+# =========================
+# C# コードスタイル: 型名・メンバーアクセス
+# =========================
+# ローカル・パラメータ・メンバーでの組み込み型名使用の強制
 dotnet_style_predefined_type_for_locals_parameters_members = true
+# メンバーアクセス時の組み込み型名使用の強制
 dotnet_style_predefined_type_for_member_access = true
+# イベントアクセス時の修飾子付与禁止
+dotnet_style_qualification_for_event = false
+# フィールドアクセス時の修飾子付与禁止
+dotnet_style_qualification_for_field = false
+# メソッドアクセス時の修飾子付与禁止
+dotnet_style_qualification_for_method = false
+# プロパティアクセス時の修飾子付与禁止
+dotnet_style_qualification_for_property = false
 
-# 不要な括弧の扱い
-dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity
-dotnet_style_parentheses_in_other_binary_operators = always_for_clarity
-dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity
-dotnet_style_parentheses_in_other_operators = never_if_unnecessary
+# =========================
+# 診断・警告レベルの設定
+# =========================
+# CA1031: Exception catchの許可
+dotnet_diagnostic.CA1031.severity = none
+# CA1051: publicフィールド宣言の警告
+dotnet_diagnostic.CA1051.severity = warning
+# CA1063: IDisposable実装時のDisposeパターン違反警告
+dotnet_diagnostic.CA1063.severity = warning
+# CA1305: カルチャ指定なしメソッド呼び出しの警告
+dotnet_diagnostic.CA1305.severity = warning
+# CA1707: 識別子アンダースコア使用の警告
+dotnet_diagnostic.CA1707.severity = warning
+# CA1801: 未使用引数の警告
+dotnet_diagnostic.CA1801.severity = warning
+# CA1820: 文字列連結時のStringBuilder等未使用警告
+dotnet_diagnostic.CA1820.severity = warning
+# CA1822: static化可能メンバーの警告
+dotnet_diagnostic.CA1822.severity = warning
+# CA9999: カスタムルール違反の警告
+dotnet_diagnostic.CA9999.severity = warning
+# CS8602: ヌル参照可能性の警告
+dotnet_diagnostic.CS8602.severity = warning
+# CS8618: 非Nullプロパティ未初期化の警告
+dotnet_diagnostic.CS8618.severity = warning
+# IDE0003: 明示的型指定必要時の警告
+dotnet_diagnostic.IDE0003.severity = warning
+# IDE0004: 不要なキャストの警告
+dotnet_diagnostic.IDE0004.severity = warning
+# IDE0005: 不要なusingディレクティブの警告
+dotnet_diagnostic.IDE0005.severity = warning
+# IDE0017: オブジェクト初期化子未使用の警告
+dotnet_diagnostic.IDE0017.severity = warning
+# IDE0018: 変数宣言スコープ過大の警告
+dotnet_diagnostic.IDE0018.severity = warning
+# IDE0019: パターンマッチング未使用の警告
+dotnet_diagnostic.IDE0019.severity = warning
+# IDE0020: 不要なnull合体演算子使用の警告
+dotnet_diagnostic.IDE0020.severity = warning
+# IDE0021: 不要なnull条件演算子使用の警告
+dotnet_diagnostic.IDE0021.severity = warning
+# IDE0022: 不要なnull許容型使用の警告
+dotnet_diagnostic.IDE0022.severity = warning
+# IDE0028: 不要な条件演算子使用の警告
+dotnet_diagnostic.IDE0028.severity = warning
+# IDE0030: 不要なthis修飾子使用の警告
+dotnet_diagnostic.IDE0030.severity = warning
+# IDE0031: 不要なbase修飾子使用の警告
+dotnet_diagnostic.IDE0031.severity = warning
+# IDE0039: 不要なreadonly修飾子使用の警告
+dotnet_diagnostic.IDE0039.severity = warning
+# IDE0044: フィールドreadonly指定漏れの警告
+dotnet_diagnostic.IDE0044.severity = warning
+# IDE0050: 不要なprivate修飾子使用の警告
+dotnet_diagnostic.IDE0050.severity = warning
+# IDE0051: 未使用privateメンバーの警告
+dotnet_diagnostic.IDE0051.severity = warning
+# IDE0052: 書き込み専用フィールド未使用の警告
+dotnet_diagnostic.IDE0052.severity = warning
+# IDE0055: コードフォーマット違反の警告
+dotnet_diagnostic.IDE0055.severity = warning
+# IDE0059: 未使用変数の警告
+dotnet_diagnostic.IDE0059.severity = warning
+# IDE0060: 未使用パラメータの警告
+dotnet_diagnostic.IDE0060.severity = warning
+# IDE0063: usingステートメントスコープ違反の警告
+dotnet_diagnostic.IDE0063.severity = warning
+# IDE0075: 不要な条件式使用の警告
+dotnet_diagnostic.IDE0075.severity = warning
+# IDE0078: 不要なswitch式使用の警告
+dotnet_diagnostic.IDE0078.severity = warning
+# IDE0079: 不要な#pragma警告使用の警告
+dotnet_diagnostic.IDE0079.severity = warning
+# IDE0080: 不要なnull許容型使用の警告
+dotnet_diagnostic.IDE0080.severity = warning
+# IDE0090: 不要な型推論使用の警告
+dotnet_diagnostic.IDE0090.severity = warning
+# IDE0091: 不要な型明示使用の警告
+dotnet_diagnostic.IDE0091.severity = warning
+# IDE0092: 不要な型変換使用の警告
+dotnet_diagnostic.IDE0092.severity = warning
+# IDE0110: 不要なnull許容型使用の警告
+dotnet_diagnostic.IDE0110.severity = warning
+# IDE0111: 不要なnull許容型使用の警告
+dotnet_diagnostic.IDE0111.severity = warning
+# IDE1006: 命名規則違反の警告
+dotnet_diagnostic.IDE1006.severity = warning
 
-# アクセシビリティ修飾子の要求
-dotnet_style_require_accessibility_modifiers = for_non_interface_members
+# =========================
+# 命名規則 (.NET Naming Rules)
+# =========================
+# メソッド名をPascalCaseで強制
+[*.cs]
+dotnet_naming_rule.methods_should_be_pascal_case.severity = warning
+# メソッド名に対するルール適用対象指定
+dotnet_naming_rule.methods_should_be_pascal_case.symbols = methods
+# メソッド名のスタイル指定（PascalCase）
+dotnet_naming_rule.methods_should_be_pascal_case.style = pascal_case
 
-# null 合体演算子やオブジェクト初期化子など
-dotnet_style_coalesce_expression = true
-dotnet_style_object_initializer = true
-dotnet_style_collection_initializer = true
-dotnet_style_null_propagation = true
-dotnet_style_prefer_auto_properties = true
-
-# --- C# 固有コードスタイル (csharp_*)
-# var キーワードの使用可否
-csharp_style_var_for_built_in_types = false
-csharp_style_var_when_type_is_apparent = false
-csharp_style_var_elsewhere = false
-
-# 式本文メンバー
-csharp_style_expression_bodied_methods = false
-csharp_style_expression_bodied_properties = true
-csharp_style_expression_bodied_lambdas = true
-
-# パターンマッチング
-csharp_style_pattern_matching_over_is_with_cast_check = true
-csharp_style_pattern_matching_over_as_with_null_check = true
-csharp_style_prefer_switch_expression = true
-csharp_style_prefer_not_pattern = true
-
-# ファイルスコープ namespace (C# 10+)
-csharp_style_namespace_declarations = file_scoped:warning
-
-# メソッド呼び出しなどの簡潔化
-csharp_prefer_simple_default_expression = true
-csharp_style_deconstructed_variable_declaration = true
-csharp_style_throw_expression = true
-csharp_style_prefer_null_check_over_type_check = true
-
-# --- C# フォーマットルール (csharp_* formatting)
-# ブレースの改行位置
-csharp_new_line_before_open_brace = all
-
-# catch/else/finally の改行
-csharp_new_line_before_catch = true
-csharp_new_line_before_else = true
-csharp_new_line_before_finally = true
-
-# インデント設定
-csharp_indent_block_contents = true
-csharp_indent_braces = false
-csharp_indent_case_contents = true
-csharp_indent_switch_labels = true
-
-# 空白設定
-csharp_space_after_keywords_in_control_flow_statements = true
-csharp_space_around_binary_operators = before_and_after
-csharp_space_after_comma = true
-csharp_space_before_comma = false
-
-# --- 命名規則 (.NET Naming Rules)
-# ルールの有効化
+# インターフェース名をIで始めることを強制
+[*.cs]
 dotnet_naming_rule.interface_should_be_prefixed_with_i.severity = warning
+# インターフェース名に対するルール適用対象指定
 dotnet_naming_rule.interface_should_be_prefixed_with_i.symbols = interface
+# インターフェース名のスタイル指定（I+PascalCase）
 dotnet_naming_rule.interface_should_be_prefixed_with_i.style = begins_with_i
 
+# 型名をPascalCaseで強制
 dotnet_naming_rule.types_should_be_pascal_case.severity = warning
+# 型名に対するルール適用対象指定
 dotnet_naming_rule.types_should_be_pascal_case.symbols = types
+# 型名のスタイル指定（PascalCase）
 dotnet_naming_rule.types_should_be_pascal_case.style = pascal_case
 
+# privateフィールド名を_で始めるcamelCaseで強制
 dotnet_naming_rule.private_fields_should_be_camel_case_prefixed.severity = warning
+# privateフィールド名に対するルール適用対象指定
 dotnet_naming_rule.private_fields_should_be_camel_case_prefixed.symbols = private_fields
+# privateフィールド名のスタイル指定（_+camelCase）
 dotnet_naming_rule.private_fields_should_be_camel_case_prefixed.style = camel_case_with_underscore
 
+# publicフィールド名をPascalCaseで強制
 dotnet_naming_rule.public_fields_should_be_pascal_case.severity = warning
+# publicフィールド名に対するルール適用対象指定
 dotnet_naming_rule.public_fields_should_be_pascal_case.symbols = public_fields
+# publicフィールド名のスタイル指定（PascalCase）
 dotnet_naming_rule.public_fields_should_be_pascal_case.style = pascal_case
 
-# シンボル仕様
+# プロパティ名をPascalCaseで強制
+dotnet_naming_rule.properties_should_be_pascal_case.severity = warning
+# プロパティ名に対するルール適用対象指定
+dotnet_naming_rule.properties_should_be_pascal_case.symbols = properties
+# プロパティ名のスタイル指定（PascalCase）
+dotnet_naming_rule.properties_should_be_pascal_case.style = pascal_case
+
+# 定数名をPascalCaseで強制
+[*.cs]
+dotnet_naming_rule.constants_should_be_pascal_case.severity = warning
+# 定数名に対するルール適用対象指定
+dotnet_naming_rule.constants_should_be_pascal_case.symbols = constants
+# 定数名のスタイル指定（PascalCase）
+dotnet_naming_rule.constants_should_be_pascal_case.style = pascal_case
+
+# enumメンバー名をPascalCaseで強制
+[*.cs]
+dotnet_naming_rule.enum_members_should_be_pascal_case.severity = warning
+# enumメンバー名に対するルール適用対象指定
+dotnet_naming_rule.enum_members_should_be_pascal_case.symbols = enum_members
+# enumメンバー名のスタイル指定（PascalCase）
+dotnet_naming_rule.enum_members_should_be_pascal_case.style = pascal_case
+
+# イベント名をPascalCaseで強制
+[*.cs]
+dotnet_naming_rule.events_should_be_pascal_case.severity = warning
+# イベント名に対するルール適用対象指定
+dotnet_naming_rule.events_should_be_pascal_case.symbols = events
+# イベント名のスタイル指定（PascalCase）
+dotnet_naming_rule.events_should_be_pascal_case.style = pascal_case
+
+# パラメータ名をcamelCaseで強制
+[*.cs]
+dotnet_naming_rule.parameters_should_be_camel_case.severity = warning
+# パラメータ名に対するルール適用対象指定
+dotnet_naming_rule.parameters_should_be_camel_case.symbols = parameters
+# パラメータ名のスタイル指定（camelCase）
+dotnet_naming_rule.parameters_should_be_camel_case.style = camel_case
+
+# ローカル変数名をcamelCaseで強制
+[*.cs]
+dotnet_naming_rule.locals_should_be_camel_case.severity = warning
+# ローカル変数名に対するルール適用対象指定
+dotnet_naming_rule.locals_should_be_camel_case.symbols = locals
+# ローカル変数名のスタイル指定（camelCase）
+dotnet_naming_rule.locals_should_be_camel_case.style = camel_case
+
+# =========================
+# 命名規則: シンボル仕様
+# =========================
+# インターフェースに対する適用範囲指定
+[*.cs]
 dotnet_naming_symbols.interface.applicable_kinds = interface
+# インターフェースのアクセス修飾子指定なし
 dotnet_naming_symbols.interface.applicable_accessibilities = *
+# インターフェースの修飾子指定なし
 dotnet_naming_symbols.interface.required_modifiers =
-
+# 型全般に対する適用範囲指定
+[*.cs]
 dotnet_naming_symbols.types.applicable_kinds = class, struct, enum, interface
+# 型全般のアクセス修飾子指定なし
 dotnet_naming_symbols.types.applicable_accessibilities = *
+# 型全般の修飾子指定なし
 dotnet_naming_symbols.types.required_modifiers =
-
+# privateフィールドに対する適用範囲指定
+[*.cs]
 dotnet_naming_symbols.private_fields.applicable_kinds = field
+# privateフィールドのアクセス修飾子指定（private）
 dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+# privateフィールドの修飾子指定なし
 dotnet_naming_symbols.private_fields.required_modifiers =
-
+# publicフィールドに対する適用範囲指定
+[*.cs]
 dotnet_naming_symbols.public_fields.applicable_kinds = field
+# publicフィールドのアクセス修飾子指定（public）
 dotnet_naming_symbols.public_fields.applicable_accessibilities = public
+# 定数に対する適用範囲指定
+[*.cs]
+dotnet_naming_symbols.constants.applicable_kinds = field
+# 定数のアクセス修飾子指定なし
+dotnet_naming_symbols.constants.applicable_accessibilities = *
+# 定数の修飾子指定（const）
+dotnet_naming_symbols.constants.required_modifiers = const
+# enumメンバーに対する適用範囲指定
+[*.cs]
+dotnet_naming_symbols.enum_members.applicable_kinds = enum_member
+# enumメンバーのアクセス修飾子指定なし
+dotnet_naming_symbols.enum_members.applicable_accessibilities = *
+# enumメンバーの修飾子指定なし
+dotnet_naming_symbols.enum_members.required_modifiers =
+# メソッドに対する適用範囲指定
+[*.cs]
+dotnet_naming_symbols.methods.applicable_kinds = method
+# メソッドのアクセス修飾子指定なし
+dotnet_naming_symbols.methods.applicable_accessibilities = *
+# メソッドの修飾子指定なし
+dotnet_naming_symbols.methods.required_modifiers =
+# プロパティに対する適用範囲指定
+[*.cs]
+dotnet_naming_symbols.properties.applicable_kinds = property
+# プロパティのアクセス修飾子指定なし
+dotnet_naming_symbols.properties.applicable_accessibilities = *
+# プロパティの修飾子指定なし
+dotnet_naming_symbols.properties.required_modifiers =
+# イベントに対する適用範囲指定
+[*.cs]
+dotnet_naming_symbols.events.applicable_kinds = event
+# イベントのアクセス修飾子指定なし
+dotnet_naming_symbols.events.applicable_accessibilities = *
+# イベントの修飾子指定なし
+dotnet_naming_symbols.events.required_modifiers =
+# パラメータに対する適用範囲指定
+[*.cs]
+dotnet_naming_symbols.parameters.applicable_kinds = parameter
+# パラメータのアクセス修飾子指定なし
+dotnet_naming_symbols.parameters.applicable_accessibilities = *
+# パラメータの修飾子指定なし
+dotnet_naming_symbols.parameters.required_modifiers =
+# ローカル変数に対する適用範囲指定
+[*.cs]
+dotnet_naming_symbols.locals.applicable_kinds = local
 
-# スタイル仕様
+# =========================
+# 命名規則: スタイル仕様
+# =========================
+# インターフェース名の接頭辞指定（I）
+[*.cs]
 dotnet_naming_style.begins_with_i.required_prefix = I
+# インターフェース名の大文字小文字指定（PascalCase）
 dotnet_naming_style.begins_with_i.capitalization = pascal_case
-
+# PascalCaseスタイル指定
 dotnet_naming_style.pascal_case.capitalization = pascal_case
-
+# _+camelCaseスタイル指定
 dotnet_naming_style.camel_case_with_underscore.required_prefix = _
+# _+camelCaseの大文字小文字指定
 dotnet_naming_style.camel_case_with_underscore.capitalization = camel_case

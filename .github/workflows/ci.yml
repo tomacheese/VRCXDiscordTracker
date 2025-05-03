@@ -14,8 +14,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
 
       - name: Restore NuGet packages
         run: nuget restore VRCXDiscordTracker.sln
@@ -32,3 +34,6 @@ jobs:
           name: VRCXDiscordTracker
           path: |
             **/bin/
+
+      - name: Check code style
+        run: dotnet format VRCXDiscordTracker.sln --verify-no-changes --severity warn
