@@ -4,7 +4,14 @@ using VRCXDiscordTracker.Core.Notification;
 namespace VRCXDiscordTracker.Core;
 public partial class SettingsForm : Form
 {
+    /// <summary>
+    /// 最後に保存したデータベースのパス
+    /// </summary>
     private string _lastSavedDatabasePath = string.Empty;
+
+    /// <summary>
+    /// 最後に保存したDiscordのWebhook URL
+    /// </summary>
     private string _lastSavedDiscordWebhookUrl = string.Empty;
 
     public SettingsForm()
@@ -30,6 +37,10 @@ public partial class SettingsForm : Form
         _lastSavedDiscordWebhookUrl = textBoxDiscordWebhookUrl.Text;
     }
 
+    /// <summary>
+    /// 設定を保存するメソッド
+    /// </summary>
+    /// <returns>保存に成功した場合はtrue、失敗した場合はfalse</returns>
     private bool Save()
     {
         try
@@ -70,6 +81,13 @@ public partial class SettingsForm : Form
         Save();
     }
 
+    /// <summary>
+    /// フォームが閉じられるときの処理。
+    /// DiscordのWebhook URLが空の場合は、アプリケーションを終了する。
+    /// 未保存の設定がある場合は、保存するかどうかを確認する。
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="e">FormClosingEventArgs</param>
     private void OnFormClosing(object sender, FormClosingEventArgs e)
     {
         var textBoxDiscordWebhookUrlText = textBoxDiscordWebhookUrl.Text.Trim();

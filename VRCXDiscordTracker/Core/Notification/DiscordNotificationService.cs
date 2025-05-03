@@ -9,11 +9,27 @@ using Color = Discord.Color;
 using Format = Discord.Format;
 
 namespace VRCXDiscordTracker.Core.Notification;
+
+/// <summary>
+/// DiscordのWebhookを使用して、VRCXのインスタンス情報を通知するサービス
+/// </summary>
+/// <param name="myLocation">自分のロケーション情報</param>
+/// <param name="instanceMembers">インスタンスのメンバー情報</param>
 internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMember> instanceMembers)
 {
-
+    /// <summary>
+    /// 保存パス
+    /// </summary>
     private static readonly string _saveFilePath = "discord-messages.json";
+
+    /// <summary>
+    /// JoinIdとMessageIdのペアを保存する辞書
+    /// </summary>
     private static readonly Dictionary<string, ulong> _joinIdMessageIdPairs = LoadJoinIdMessageIdPairs();
+
+    /// <summary>
+    /// 最後に投稿したメッセージの内容を保存する辞書
+    /// </summary>
     private static readonly Dictionary<ulong, Embed> _lastMessageContent = [];
 
     /// <summary>
@@ -24,8 +40,14 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
         WriteIndented = true
     };
 
+    /// <summary>
+    /// DIscordにメッセージを送信、もしくは更新する
+    /// </summary>
+    /// <returns>タスク</returns>
+    /// <exception cref="Exception">Webhook URLが空の場合</exception>
     public async Task SendUpdateMessageAsync()
     {
+        Console.WriteLine("DiscordNotificationService.SendUpdateMessageAsync()");
         string joinId = GetJoinId();
         ulong? messageId = _joinIdMessageIdPairs.TryGetValue(joinId, out ulong value) ? (ulong?)value : null;
 
@@ -45,6 +67,11 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
         SaveJoinIdMessageIdPairs();
     }
 
+    /// <summary>
+    /// DiscordのWebhookを使用して新しいメッセージを送信する
+    /// </summary>
+    /// <param name="embed">メッセージのEmbed</param>
+    /// <returns>メッセージIDを含むTask</returns>
     private static async Task<ulong?> SendNewMessage(Embed embed)
     {
         var url = AppConfig.DiscordWebhookUrl;
@@ -54,6 +81,12 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
         return await client.SendMessageAsync(text: string.Empty, embeds: [embed]);
     }
 
+    /// <summary>
+    /// DiscordのWebhookを使用してメッセージを更新する
+    /// </summary>
+    /// <param name="messageId">メッセージID</param>
+    /// <param name="embed">メッセージのEmbed</param>
+    /// <returns>更新が成功した場合はtrue、失敗した場合はfalseを含むTask</returns>
     private static async Task<bool> UpdateMessage(ulong messageId, Embed embed)
     {
         var url = AppConfig.DiscordWebhookUrl;
@@ -79,6 +112,10 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
         }
     }
 
+    /// <summary>
+    /// JoinIdとMessageIdのペアを保存する辞書をロードする
+    /// </summary>
+    /// <returns>JoinIdとMessageIdのペアを保存する辞書</returns>
     private static Dictionary<string, ulong> LoadJoinIdMessageIdPairs()
     {
         if (!File.Exists(_saveFilePath))
@@ -97,6 +134,9 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
         }
     }
 
+    /// <summary>
+    /// JoinIdとMessageIdのペアを保存する辞書を保存する
+    /// </summary>
     private static void SaveJoinIdMessageIdPairs()
     {
         try
@@ -109,6 +149,12 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             Console.WriteLine($"Error saving joinIdMessageIdPairs: {ex.Message}");
         }
     }
+
+    /// <summary>
+    /// Embedを取得する
+    /// </summary>
+    /// <returns>Embed</returns>
+    /// <exception cref="FormatException">Location文字列がコロンで区切られていない場合</exception>
     private Embed GetEmbed()
     {
         var version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0);
@@ -166,11 +212,21 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
         return embed.Build();
     }
 
+    /// <summary>
+    /// JoinIdを取得する
+    /// </summary>
+    /// <returns></returns>
     private string GetJoinId()
     {
         return myLocation.JoinId.ToString();
     }
 
+    /// <summary>
+    /// タイムスタンプを除いたEmbedの等価性を比較する
+    /// </summary>
+    /// <param name="left">右側のEmbed</param>
+    /// <param name="right">左側のEmbed</param>
+    /// <returns>タイムスタンプを除いたEmbedが等しい場合はtrue、そうでない場合はfalse</returns>
     private static bool EqualEmbedWithoutTimestamp(Embed left, Embed right)
     {
         if (left == null && right == null) return true;
@@ -182,8 +238,19 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
 
         return leftWithoutTimestamp.Equals(rightWithoutTimestamp);
     }
+
+    /// <summary>
+    /// DateTimeをフォーマットする
+    /// </summary>
+    /// <param name="dateTime">フォーマットするDateTime</param>
+    /// <returns>フォーマットされたDateTime文字列</returns>
     private static string FormatDateTime(DateTime? dateTime) => dateTime?.ToString("G", CultureInfo.CurrentCulture) ?? string.Empty;
 
+    /// <summary>
+    /// メンバーの絵文字を取得する。インスタンスオーナー、自分自身、フレンド、それ以外で絵文字を設定する。
+    /// </summary>
+    /// <param name="member">対象のメンバー</param>
+    /// <returns>メンバーの絵文字</returns>
     private string GetMemberEmoji(InstanceMember member)
     {
         // インスタンスオーナーの場合は "👑"
@@ -208,6 +275,13 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
         return "⬜️";
     }
 
+    /// <summary>
+    /// メンバーの情報をリスト化された文字列として取得する
+    /// </summary>
+    /// <param name="members">メンバーのリスト</param>
+    /// <param name="includeJoinLeaveAt">参加・退出時間を含めるかどうか</param>
+    /// <param name="includeUserPageLink">ユーザーページのリンクを含めるかどうか</param>
+    /// <returns>リスト化されたメンバー情報</returns>
     private string GetMembersString(List<InstanceMember> members, bool includeJoinLeaveAt = true, bool includeUserPageLink = true)
     {
         var result = string.Join("\n", members.ConvertAll(member =>

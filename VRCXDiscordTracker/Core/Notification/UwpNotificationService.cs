@@ -10,6 +10,7 @@ internal class UwpNotificationService
     /// <param name="message">通知のメッセージ</param>
     public static void Notify(string title, string message)
     {
+        Console.WriteLine("UwpNotificationService.Notify()");
         new ToastContentBuilder()
             .AddText(title)
             .AddText(message)
