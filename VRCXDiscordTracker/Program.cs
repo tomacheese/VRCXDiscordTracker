@@ -64,11 +64,11 @@ internal static partial class Program
             }
         }
 
-        Application.ApplicationExit += (s, e) =>
+        Application.ApplicationExit += async (s, e) =>
         {
             if (AppConfig.NotifyOnExit)
             {
-                DiscordNotificationService.SendAppExitMessage().Wait();
+                await DiscordNotificationService.SendAppExitMessage();
             }
             Controller?.Dispose();
         };
