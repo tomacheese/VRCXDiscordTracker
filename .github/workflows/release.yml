@@ -12,27 +12,37 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
 
       - name: Set version from tag
         run: |
           $tag = "${{ github.ref_name }}"
           $version = $tag -replace '^v', ''
           $versionWithRevision = ($version.Split('.') + '0')[0..3] -join '.'
-          (Get-Content .\Properties\AssemblyInfo.cs) -replace '(\[assembly: AssemblyVersion\(")[^"]*("\)\])', "[assembly: AssemblyVersion(`"$versionWithRevision`")]" | Set-Content .\Properties\AssemblyInfo.cs
-          (Get-Content .\Properties\AssemblyInfo.cs) -replace '(\[assembly: AssemblyFileVersion\(")[^"]*("\)\])', "[assembly: AssemblyFileVersion(`"$versionWithRevision`")]" | Set-Content .\Properties\AssemblyInfo.cs
+          (Get-Content .\VRCXDiscordTracker\VRCXDiscordTracker.csproj) -replace '<Version>[^<]*(</Version>)', "<Version>$version</Version>" | Set-Content .\VRCXDiscordTracker\VRCXDiscordTracker.csproj
+          (Get-Content .\VRCXDiscordTracker\VRCXDiscordTracker.csproj) -replace '<AssemblyVersion>[^<]*</AssemblyVersion>', "<AssemblyVersion>$versionWithRevision</AssemblyVersion>" | Set-Content .\VRCXDiscordTracker\VRCXDiscordTracker.csproj
+          (Get-Content .\VRCXDiscordTracker\VRCXDiscordTracker.csproj) -replace '<FileVersion>[^<]*</FileVersion>', "<FileVersion>$versionWithRevision</FileVersion>" | Set-Content .\VRCXDiscordTracker\VRCXDiscordTracker.csproj
         shell: pwsh
 
       - name: Restore NuGet packages
         run: nuget restore VRCXDiscordTracker.sln
 
       - name: Build solution
-        run: msbuild VRCXDiscordTracker.sln /p:Configuration=Release
+        run: dotnet publish VRCXDiscordTracker.sln -p:PublishProfile=Publish
+
+      - name: Create zip
+        run: |
+          $zipFilePath = "VRCXDiscordTracker.zip"
+          $sourceDir = "VRCXDiscordTracker/bin/Publish/*"
+          Compress-Archive -Path $sourceDir -DestinationPath $zipFilePath -Force
+        shell: pwsh
 
       - name: Upload exe to release
         uses: softprops/action-gh-release@v2
         with:
-          files: bin/Release/VRCXDiscordTracker.exe
+          files: VRCXDiscordTracker.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
