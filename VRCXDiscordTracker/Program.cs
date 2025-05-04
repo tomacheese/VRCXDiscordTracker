@@ -76,8 +76,6 @@ internal static partial class Program
         Application.Run(trayIcon);
     }
 
-    private static void Application_ApplicationExit(object? sender, EventArgs e) => throw new NotImplementedException();
-
     public static void OnException(Exception e, string exceptionType)
     {
         Console.WriteLine($"Exception: {exceptionType}");
