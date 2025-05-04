@@ -13,7 +13,7 @@ namespace VRCXDiscordTracker.Core.Notification;
 /// <summary>
 /// DiscordのWebhookを使用して、VRCXのインスタンス情報を通知するサービス
 /// </summary>
-/// <param name="myLocation">自分のロケーション情報</param>
+/// <param name="myLocation">自分が居た/居るインスタンスの情報</param>
 /// <param name="instanceMembers">インスタンスのメンバー情報</param>
 internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMember> instanceMembers)
 {
@@ -160,7 +160,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
         Version version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0);
 
         // インスタンスIDは、Locationの:よりあと
-        var locationParts = myLocation.Location.Split(':');
+        var locationParts = myLocation.LocationId.Split(':');
         if (locationParts.Length != 2)
         {
             throw new FormatException("Location string is not in the expected format with a colon.");
@@ -168,7 +168,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
         var instanceId = locationParts[1];
         var embed = new EmbedBuilder
         {
-            Title = myLocation.WorldName,
+            Title = $"{myLocation.WorldName} ({myLocation.LocationInstance.Type})",
             Url = $"https://vrchat.com/home/launch?worldId={myLocation.WorldId}&instanceId={instanceId}",
             Author = new EmbedAuthorBuilder
             {

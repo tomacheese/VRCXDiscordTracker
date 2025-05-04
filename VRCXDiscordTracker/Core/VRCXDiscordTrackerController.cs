@@ -104,7 +104,7 @@ internal class VRCXDiscordTrackerController
 
         foreach (MyLocation myLocation in myLocations)
         {
-            List<InstanceMember> instanceMembers = _vrcxDatabase.GetInstanceMembers(userId, myLocation.Location, myLocation.JoinCreatedAt, myLocation.EstimatedLeaveCreatedAt);
+            List<InstanceMember> instanceMembers = _vrcxDatabase.GetInstanceMembers(userId, myLocation);
             Console.WriteLine($"GetInstanceMembers: {instanceMembers.Count}");
 
             await new DiscordNotificationService(myLocation, instanceMembers).SendUpdateMessageAsync();

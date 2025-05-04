@@ -1,6 +1,7 @@
 using System.Data.SQLite;
 using System.Globalization;
 using System.Reflection;
+using VRCXDiscordTracker.Core.VRChat;
 
 namespace VRCXDiscordTracker.Core.VRCX;
 
@@ -108,7 +109,8 @@ internal class VRCXDatabase
                         JoinId = reader.GetInt64(0),
                         UserId = reader.GetString(1),
                         DisplayName = reader.GetString(2),
-                        Location = reader.GetString(3),
+                        LocationId = reader.GetString(3),
+                        LocationInstance = LocationParser.Parse(reader.GetString(3)),
                         JoinCreatedAt = DateTime.Parse(reader.GetString(4), CultureInfo.InvariantCulture),
                         JoinTime = reader.GetInt64(5),
                         LeaveId = reader.IsDBNull(6) ? null : reader.GetInt64(6),
@@ -131,7 +133,7 @@ internal class VRCXDatabase
 
         // Location が local: で始まる場合は、ローカルインスタンスなので除外
         return myLocations.FindAll(
-            myLocation => !myLocation.Location.StartsWith("local:")
+            myLocation => !myLocation.LocationId.StartsWith("local:")
         );
     }
 
@@ -139,13 +141,11 @@ internal class VRCXDatabase
     /// 指定したインスタンスのメンバー情報を取得する。同一インスタンスに複数回参加した場合を考慮して、自分の参加/退出日時を指定する。
     /// </summary>
     /// <param name="vrchatUserId">自分のVRChatユーザーID</param>
-    /// <param name="location">ロケーションID</param>
-    /// <param name="joinCreatedAt">自分がインスタンスに参加した日時</param>
-    /// <param name="estimatedLeaveAt">自分がインスタンスを退出した日時</param>
+    /// <param name="myLocation">自分が居た/居るインスタンスの情報</param>
     /// <returns>インスタンスのメンバー情報</returns>
-    public List<InstanceMember> GetInstanceMembers(string vrchatUserId, string location, DateTime joinCreatedAt, DateTime? estimatedLeaveAt)
+    public List<InstanceMember> GetInstanceMembers(string vrchatUserId, MyLocation myLocation)
     {
-        Console.WriteLine($"VRCXDatabase.GetInstanceMembers(): {vrchatUserId}, {joinCreatedAt.ToUniversalTime():yyyy-MM-ddTHH:mm:ss.fffffffZ}, {estimatedLeaveAt?.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", CultureInfo.InvariantCulture)}");
+        Console.WriteLine($"VRCXDatabase.GetInstanceMembers(): {vrchatUserId}, {FormatDateTime(myLocation.JoinCreatedAt)}, {FormatDateTime(myLocation.EstimatedLeaveCreatedAt)}");
         var sanitizedUserId = vrchatUserId.Replace("_", "").Replace("-", "");
         var friendTableName = sanitizedUserId + "_friend_log_current";
         var sql = GetEmbedFileContent("VRCXDiscordTracker.Core.VRCX.Queries.instanceMembers.sql").Replace("@{friendTableName}", friendTableName);
@@ -154,9 +154,9 @@ internal class VRCXDatabase
         using (var cmd = new SQLiteCommand(_conn))
         {
             cmd.CommandText = sql;
-            cmd.Parameters.AddWithValue(":join_created_at", joinCreatedAt.AddSeconds(-1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", CultureInfo.InvariantCulture));
-            cmd.Parameters.AddWithValue(":estimated_leave_created_at", estimatedLeaveAt?.AddSeconds(1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", CultureInfo.InvariantCulture));
-            cmd.Parameters.AddWithValue(":location", location);
+            cmd.Parameters.AddWithValue(":join_created_at", FormatDateTime(myLocation.JoinCreatedAt.AddSeconds(-1)));
+            cmd.Parameters.AddWithValue(":estimated_leave_created_at", FormatDateTime(myLocation.EstimatedLeaveCreatedAt?.AddSeconds(1)));
+            cmd.Parameters.AddWithValue(":location", myLocation.LocationId);
 
             using SQLiteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -194,4 +194,6 @@ internal class VRCXDatabase
         using StreamReader reader = new(stream);
         return reader.ReadToEnd();
     }
+
+    private static string? FormatDateTime(DateTime? dateTime) => dateTime?.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", CultureInfo.InvariantCulture);
 }

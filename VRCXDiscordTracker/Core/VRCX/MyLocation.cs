@@ -1,3 +1,5 @@
+using VRCXDiscordTracker.Core.VRChat;
+
 namespace VRCXDiscordTracker.Core.VRCX;
 
 /// <summary>
@@ -23,7 +25,12 @@ internal class MyLocation
     /// <summary>
     /// ロケーションID
     /// </summary>
-    public required string Location { get; set; }
+    public required string LocationId { get; set; }
+
+    /// <summary>
+    /// VRChatインスタンス
+    /// </summary>
+    public required VRChatInstance LocationInstance { get; set; }
 
     /// <summary>
     /// インスタンスに参加した日時
