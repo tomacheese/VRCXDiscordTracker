@@ -19,4 +19,16 @@ internal class ConfigData
     /// </summary>
     [JsonPropertyName("discordWebhookUrl")]
     public string DiscordWebhookUrl { get; set; } = string.Empty;
+
+    /// <summary>
+    /// アプリケーション起動時に通知を送信するかどうか
+    /// </summary>
+    [JsonPropertyName("notifyOnStart")]
+    public bool NotifyOnStart { get; set; } = true;
+
+    /// <summary>
+    /// アプリケーション終了時に通知を送信するかどうか
+    /// </summary>
+    [JsonPropertyName("notifyOnExit")]
+    public bool NotifyOnExit { get; set; } = true;
 }

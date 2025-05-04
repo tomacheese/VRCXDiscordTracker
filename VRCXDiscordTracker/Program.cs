@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using VRCXDiscordTracker.Core;
 using VRCXDiscordTracker.Core.Config;
+using VRCXDiscordTracker.Core.Notification;
 using VRCXDiscordTracker.Core.UI.TrayIcon;
 
 namespace VRCXDiscordTracker;
@@ -50,10 +51,32 @@ internal static partial class Program
         else
         {
             Controller.Start();
+
+            if (AppConfig.NotifyOnStart)
+            {
+                DiscordNotificationService.SendAppStartMessage().ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        Console.WriteLine($"Error sending app start message: {t.Exception?.Message}");
+                    }
+                });
+            }
         }
+
+        Application.ApplicationExit += (s, e) =>
+        {
+            if (AppConfig.NotifyOnExit)
+            {
+                DiscordNotificationService.SendAppExitMessage().Wait();
+            }
+            Controller?.Dispose();
+        };
 
         Application.Run(trayIcon);
     }
+
+    private static void Application_ApplicationExit(object? sender, EventArgs e) => throw new NotImplementedException();
 
     public static void OnException(Exception e, string exceptionType)
     {
