@@ -5,7 +5,6 @@ using VRCXDiscordTracker.Core.Config;
 using VRCXDiscordTracker.Core.UI.TrayIcon;
 
 namespace VRCXDiscordTracker;
-// a
 internal static partial class Program
 {
     public static VRCXDiscordTrackerController? Controller;
