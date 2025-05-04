@@ -299,7 +299,9 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             // includeJoinLeaveAt が true の場合は、JoinAt と LeaveAt を追加する
             if (includeJoinLeaveAt)
             {
-                baseText += $": {FormatDateTime(member.LastJoinAt)} - {FormatDateTime(member.LastLeaveAt)}";
+                // LastLeaveAt が LastJoinAt より後の場合に値を代入し、それ以外は null
+                DateTime? lastLeaveAt = member.LastLeaveAt > member.LastJoinAt ? member.LastLeaveAt : null;
+                baseText += $": {FormatDateTime(member.LastJoinAt)} - {FormatDateTime(lastLeaveAt)}";
             }
 
             return baseText;
