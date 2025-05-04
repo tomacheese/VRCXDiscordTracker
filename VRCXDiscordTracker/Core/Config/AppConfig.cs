@@ -72,7 +72,7 @@ internal class AppConfig
             if (string.IsNullOrEmpty(trimmedValue))
             {
                 // 空白の場合はデフォルトのパスを使用
-                _config.DatabasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX", "VRCX.sqlite3");
+                _config.DatabasePath = AppConstants.VRCXDefaultDatabasePath;
             }
             if (!File.Exists(trimmedValue))
             {

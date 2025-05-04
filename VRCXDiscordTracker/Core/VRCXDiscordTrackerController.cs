@@ -36,11 +36,7 @@ internal class VRCXDiscordTrackerController
     public VRCXDiscordTrackerController(string databasePath)
     {
         // データベースパスが指定されていない場合は、デフォルトのVRCXデータベースパスを使用する
-        var defaultLogPath = Path.GetFullPath(Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "VRCX",
-            "VRCX.sqlite3"
-        ));
+        var defaultLogPath = AppConstants.VRCXDefaultDatabasePath;
         _databasePath = databasePath ?? defaultLogPath;
         if (string.IsNullOrEmpty(_databasePath))
         {
@@ -60,16 +56,6 @@ internal class VRCXDiscordTrackerController
         Console.WriteLine("VRCXDiscordTrackerController.Start()");
         _vrcxDatabase.Open();
         _timer.Start();
-    }
-
-    /// <summary>
-    /// 監視を停止する
-    /// </summary>
-    public void Stop()
-    {
-        Console.WriteLine("VRCXDiscordTrackerController.Stop()");
-        _timer.Stop();
-        _vrcxDatabase.Close();
     }
 
     /// <summary>
