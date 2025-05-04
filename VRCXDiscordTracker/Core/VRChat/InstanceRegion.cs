@@ -3,51 +3,32 @@ using System.Reflection;
 namespace VRCXDiscordTracker.Core.VRChat;
 
 /// <summary>
-/// VRChatのインスタンスの種類を表すクラス
+/// VRChatのインスタンスの地域を表すクラス
 /// </summary>
 /// <param name="id">管理用ID</param>
+/// <param name="token">トークン。例: "us"</param>
 /// <param name="name">表示名</param>
-internal class InstanceType(int id, string name) : IComparable<InstanceType>, IEquatable<InstanceType>, IFormattable
+internal class InstanceRegion(int id, string token, string name) : IComparable<InstanceRegion>, IEquatable<InstanceRegion>, IFormattable
 {
     /// <summary>
-    /// Public
+    /// US West
     /// </summary>
-    public static readonly InstanceType Public = new(0, "Public");
+    public static readonly InstanceRegion USWest = new(1, "us", "US West");
 
     /// <summary>
-    /// Friends+
+    /// US East
     /// </summary>
-    public static readonly InstanceType FriendsPlus = new(1, "Friends+");
+    public static readonly InstanceRegion USEast = new(2, "use", "US East");
 
     /// <summary>
-    /// Friends
+    /// Europe
     /// </summary>
-    public static readonly InstanceType Friends = new(2, "Friends");
+    public static readonly InstanceRegion Europe = new(3, "eu", "Europe");
 
     /// <summary>
-    /// Invite+
+    /// Japan
     /// </summary>
-    public static readonly InstanceType InvitePlus = new(3, "Invite+");
-
-    /// <summary>
-    /// Invite
-    /// </summary>
-    public static readonly InstanceType Invite = new(4, "Invite");
-
-    /// <summary>
-    /// Group Public
-    /// </summary>
-    public static readonly InstanceType GroupPublic = new(5, "Group Public");
-
-    /// <summary>
-    /// Group+
-    /// </summary>
-    public static readonly InstanceType GroupPlus = new(6, "Group+");
-
-    /// <summary>
-    /// Group
-    /// </summary>
-    public static readonly InstanceType Group = new(7, "Group");
+    public static readonly InstanceRegion Japan = new(4, "jp", "Japan");
 
     /// <summary>
     /// 管理用ID
@@ -55,9 +36,15 @@ internal class InstanceType(int id, string name) : IComparable<InstanceType>, IE
     public readonly int Id = id;
 
     /// <summary>
+    /// トークン
+    /// </summary>
+    /// <example>us</example>
+    public readonly string Token = token;
+
+    /// <summary>
     /// 表示名
     /// </summary>
-    /// <example>Public</example>
+    /// <example>US West</example>
     public readonly string Name = name;
 
     public static IEnumerable<T> GetAll<T>() where T : class
@@ -69,7 +56,10 @@ internal class InstanceType(int id, string name) : IComparable<InstanceType>, IE
             .Where(instance => instance != null)!;
     }
 
-    public int CompareTo(InstanceType? other)
+    public static InstanceRegion? GetByToken(string? token) =>
+        GetAll<InstanceRegion>().FirstOrDefault(region => region.Token.Equals(token, StringComparison.OrdinalIgnoreCase));
+
+    public int CompareTo(InstanceRegion? other)
     {
         if (other == null) return 1;
         if (Id == other.Id) return 0;
@@ -78,7 +68,7 @@ internal class InstanceType(int id, string name) : IComparable<InstanceType>, IE
 
     public override bool Equals(object? obj)
     {
-        if (obj is InstanceType other)
+        if (obj is InstanceRegion other)
             return Equals(other);
 
         return false;
@@ -87,9 +77,11 @@ internal class InstanceType(int id, string name) : IComparable<InstanceType>, IE
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
         if (string.IsNullOrEmpty(format))
-            return Name;
+            return $"{GetType().Name}({Token})";
         if (format.Equals("id", StringComparison.OrdinalIgnoreCase))
             return Id.ToString(formatProvider);
+        if (format.Equals("token", StringComparison.OrdinalIgnoreCase))
+            return Token;
         if (format.Equals("name", StringComparison.OrdinalIgnoreCase))
             return Name;
 
@@ -98,7 +90,7 @@ internal class InstanceType(int id, string name) : IComparable<InstanceType>, IE
 
     public override int GetHashCode() => Id.GetHashCode();
 
-    public bool Equals(InstanceType? other)
+    public bool Equals(InstanceRegion? other)
     {
         if (other == null) return false;
         if (Id == other.Id) return true;
