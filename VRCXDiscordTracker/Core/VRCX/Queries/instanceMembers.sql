@@ -43,4 +43,4 @@ FROM
     LEFT JOIN @{friendTableName} f
     ON ue.user_id = f.user_id
 ORDER BY
-    ue.user_id;
+    last_join_at;
