@@ -215,7 +215,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"VRCXDiscordTracker {version.Major}.{version.Minor}.{version.Build}",
+                Text = $"{AppConstants.AppName} {version.Major}.{version.Minor}.{version.Build}",
             }
         };
 

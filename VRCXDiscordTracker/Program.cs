@@ -93,7 +93,7 @@ internal static partial class Program
         DialogResult result = MessageBox.Show(
             "An error has occurred and the operation has stopped.\n" +
             "It would be helpful if you could report this bug using GitHub issues!\n" +
-            "https://github.com/tomacheese/VRCXDiscordTracker/issues\n" +
+            "https://github.com/tomacheese/" + AppConstants.AppName + "/issues\n" +
             "\n" +
             errorDetailAndStacktrace +
             "\n" +
@@ -107,7 +107,7 @@ internal static partial class Program
         {
             Process.Start(new ProcessStartInfo()
             {
-                FileName = "https://github.com/tomacheese/VRCXDiscordTracker/issues/new?body=" + Uri.EscapeDataString(errorDetailAndStacktrace),
+                FileName = "https://github.com/tomacheese/" + AppConstants.AppName + "/issues/new?body=" + Uri.EscapeDataString(errorDetailAndStacktrace),
                 UseShellExecute = true,
             });
         }

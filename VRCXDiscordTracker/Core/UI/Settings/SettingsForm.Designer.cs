@@ -122,7 +122,7 @@ partial class SettingsForm
         Margin = new Padding(3, 4, 3, 4);
         MaximizeBox = false;
         Name = "SettingsForm";
-        Text = "VRCXDiscordTracker Settings";
+        Text = AppConstants.AppName + " Settings";
         FormClosing += OnFormClosing;
         Load += OnLoad;
         ResumeLayout(false);

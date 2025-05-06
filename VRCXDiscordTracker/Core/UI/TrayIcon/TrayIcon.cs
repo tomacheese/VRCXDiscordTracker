@@ -22,7 +22,7 @@ internal class TrayIcon : ApplicationContext
 
         _trayIcon.Icon = Properties.Resources.AppIcon;
         _trayIcon.ContextMenuStrip = contextMenu;
-        _trayIcon.Text = "VRCXDiscordTracker";
+        _trayIcon.Text = AppConstants.AppName;
         _trayIcon.Visible = true;
         _trayIcon.MouseClick += (sender, e) =>
         {
