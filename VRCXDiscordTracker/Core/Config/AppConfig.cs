@@ -106,4 +106,38 @@ internal class AppConfig
             Save();
         }
     }
+
+    /// <summary>
+    /// アプリケーション起動時に通知を送信するかどうかを取得または設定するプロパティ
+    /// </summary>
+    public static bool NotifyOnStart
+    {
+        get
+        {
+            Load();
+            return _config.NotifyOnStart;
+        }
+        set
+        {
+            _config.NotifyOnStart = value;
+            Save();
+        }
+    }
+
+    /// <summary>
+    /// アプリケーション終了時に通知を送信するかどうかを取得または設定するプロパティ
+    /// </summary>
+    public static bool NotifyOnExit
+    {
+        get
+        {
+            Load();
+            return _config.NotifyOnExit;
+        }
+        set
+        {
+            _config.NotifyOnExit = value;
+            Save();
+        }
+    }
 }

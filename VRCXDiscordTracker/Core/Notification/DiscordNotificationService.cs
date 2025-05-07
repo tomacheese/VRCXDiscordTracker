@@ -68,6 +68,44 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     }
 
     /// <summary>
+    /// アプリケーションの起動メッセージを送信する
+    /// </summary>
+    /// <returns>Task</returns>
+    public static async Task SendAppStartMessage()
+    {
+        await SendNewMessage(new EmbedBuilder
+        {
+            Title = AppConstants.AppName,
+            Description = "Application has started.",
+            Color = Color.Green,
+            Timestamp = DateTime.UtcNow,
+            Footer = new EmbedFooterBuilder
+            {
+                Text = $"{AppConstants.AppName} {Assembly.GetExecutingAssembly().GetName().Version}",
+            }
+        }.Build());
+    }
+
+    /// <summary>
+    /// アプリケーションの終了メッセージを送信する
+    /// </summary>
+    /// <returns>Task</returns>
+    public static async Task SendAppExitMessage()
+    {
+        await SendNewMessage(new EmbedBuilder
+        {
+            Title = AppConstants.AppName,
+            Description = "Application has exited",
+            Color = Color.DarkGrey,
+            Timestamp = DateTime.UtcNow,
+            Footer = new EmbedFooterBuilder
+            {
+                Text = $"{AppConstants.AppName} {Assembly.GetExecutingAssembly().GetName().Version}",
+            }
+        }.Build());
+    }
+
+    /// <summary>
     /// DiscordのWebhookを使用して新しいメッセージを送信する
     /// </summary>
     /// <param name="embed">メッセージのEmbed</param>
@@ -177,7 +215,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"VRCXDiscordTracker {version.Major}.{version.Minor}.{version.Build}",
+                Text = $"{AppConstants.AppName} {version.Major}.{version.Minor}.{version.Build}",
             }
         };
 

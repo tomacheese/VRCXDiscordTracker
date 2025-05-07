@@ -14,6 +14,16 @@ public partial class SettingsForm : Form
     /// </summary>
     private string _lastSavedDiscordWebhookUrl = string.Empty;
 
+    /// <summary>
+    /// 最後に保存した起動時通知の設定
+    /// </summary>
+    private bool _lastSavedNotifyOnStart = true;
+
+    /// <summary>
+    /// 最後に保存した終了時通知の設定
+    /// </summary>
+    private bool _lastSavedNotifyOnExit = true;
+
     public SettingsForm() => InitializeComponent();
 
     /// <summary>
@@ -29,9 +39,13 @@ public partial class SettingsForm : Form
             textBoxDatabasePath.Text = Program.Controller?.GetDatabasePath() ?? string.Empty;
         }
         textBoxDiscordWebhookUrl.Text = AppConfig.DiscordWebhookUrl;
+        checkBoxNotifyOnStart.Checked = AppConfig.NotifyOnStart;
+        checkBoxNotifyOnExit.Checked = AppConfig.NotifyOnExit;
 
         _lastSavedDatabasePath = textBoxDatabasePath.Text;
         _lastSavedDiscordWebhookUrl = textBoxDiscordWebhookUrl.Text;
+        _lastSavedNotifyOnStart = AppConfig.NotifyOnStart;
+        _lastSavedNotifyOnExit = AppConfig.NotifyOnExit;
     }
 
     /// <summary>
@@ -44,6 +58,8 @@ public partial class SettingsForm : Form
         {
             AppConfig.DatabasePath = textBoxDatabasePath.Text;
             AppConfig.DiscordWebhookUrl = textBoxDiscordWebhookUrl.Text;
+            AppConfig.NotifyOnStart = checkBoxNotifyOnStart.Checked;
+            AppConfig.NotifyOnExit = checkBoxNotifyOnExit.Checked;
 
             Program.Controller?.Dispose();
             Program.Controller = new VRCXDiscordTrackerController(textBoxDatabasePath.Text);
@@ -51,6 +67,8 @@ public partial class SettingsForm : Form
 
             _lastSavedDatabasePath = textBoxDatabasePath.Text;
             _lastSavedDiscordWebhookUrl = textBoxDiscordWebhookUrl.Text;
+            _lastSavedNotifyOnStart = checkBoxNotifyOnStart.Checked;
+            _lastSavedNotifyOnExit = checkBoxNotifyOnExit.Checked;
 
             UwpNotificationService.Notify("Settings Saved", "Settings have been saved successfully.");
             return true;
@@ -95,7 +113,10 @@ public partial class SettingsForm : Form
             return;
         }
 
-        var changed = _lastSavedDatabasePath != textBoxDatabasePath.Text.Trim() || _lastSavedDiscordWebhookUrl != textBoxDiscordWebhookUrlText;
+        var changed = _lastSavedDatabasePath != textBoxDatabasePath.Text.Trim() ||
+                      _lastSavedDiscordWebhookUrl != textBoxDiscordWebhookUrlText ||
+                      _lastSavedNotifyOnStart != checkBoxNotifyOnStart.Checked ||
+                      _lastSavedNotifyOnExit != checkBoxNotifyOnExit.Checked;
         if (!changed)
         {
             return;

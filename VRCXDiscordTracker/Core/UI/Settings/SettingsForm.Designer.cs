@@ -28,12 +28,14 @@ partial class SettingsForm
     /// </summary>
     private void InitializeComponent()
     {
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
+        var resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
         label2 = new Label();
         textBoxDatabasePath = new TextBox();
         label3 = new Label();
         textBoxDiscordWebhookUrl = new TextBox();
         buttonSave = new Button();
+        checkBoxNotifyOnStart = new CheckBox();
+        checkBoxNotifyOnExit = new CheckBox();
         SuspendLayout();
         // 
         // label2
@@ -74,7 +76,7 @@ partial class SettingsForm
         // 
         // buttonSave
         // 
-        buttonSave.Location = new Point(653, 254);
+        buttonSave.Location = new Point(656, 353);
         buttonSave.Margin = new Padding(3, 4, 3, 4);
         buttonSave.Name = "buttonSave";
         buttonSave.Size = new Size(103, 53);
@@ -83,11 +85,33 @@ partial class SettingsForm
         buttonSave.UseVisualStyleBackColor = true;
         buttonSave.Click += OnSaveButtonClicked;
         // 
+        // checkBoxNotifyOnStart
+        // 
+        checkBoxNotifyOnStart.AutoSize = true;
+        checkBoxNotifyOnStart.Location = new Point(30, 268);
+        checkBoxNotifyOnStart.Name = "checkBoxNotifyOnStart";
+        checkBoxNotifyOnStart.Size = new Size(413, 29);
+        checkBoxNotifyOnStart.TabIndex = 7;
+        checkBoxNotifyOnStart.Text = "Send a message when the application is started";
+        checkBoxNotifyOnStart.UseVisualStyleBackColor = true;
+        // 
+        // checkBoxNotifyOnExit
+        // 
+        checkBoxNotifyOnExit.AutoSize = true;
+        checkBoxNotifyOnExit.Location = new Point(30, 303);
+        checkBoxNotifyOnExit.Name = "checkBoxNotifyOnExit";
+        checkBoxNotifyOnExit.Size = new Size(405, 29);
+        checkBoxNotifyOnExit.TabIndex = 8;
+        checkBoxNotifyOnExit.Text = "Send a message when the application is exited";
+        checkBoxNotifyOnExit.UseVisualStyleBackColor = true;
+        // 
         // SettingsForm
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(800, 329);
+        ClientSize = new Size(800, 419);
+        Controls.Add(checkBoxNotifyOnExit);
+        Controls.Add(checkBoxNotifyOnStart);
         Controls.Add(buttonSave);
         Controls.Add(textBoxDiscordWebhookUrl);
         Controls.Add(label3);
@@ -98,7 +122,7 @@ partial class SettingsForm
         Margin = new Padding(3, 4, 3, 4);
         MaximizeBox = false;
         Name = "SettingsForm";
-        Text = "VRCXDiscordTracker Settings";
+        Text = AppConstants.AppName + " Settings";
         FormClosing += OnFormClosing;
         Load += OnLoad;
         ResumeLayout(false);
@@ -112,4 +136,6 @@ partial class SettingsForm
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.TextBox textBoxDiscordWebhookUrl;
     private System.Windows.Forms.Button buttonSave;
+    private CheckBox checkBoxNotifyOnStart;
+    private CheckBox checkBoxNotifyOnExit;
 }
