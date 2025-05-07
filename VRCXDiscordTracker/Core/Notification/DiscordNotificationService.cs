@@ -75,13 +75,13 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     {
         await SendNewMessage(new EmbedBuilder
         {
-            Title = "VRCXDiscordTracker",
+            Title = AppConstants.AppName,
             Description = "Application has started.",
             Color = Color.Green,
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"VRCXDiscordTracker {Assembly.GetExecutingAssembly().GetName().Version}",
+                Text = $"{AppConstants.AppName} {Assembly.GetExecutingAssembly().GetName().Version}",
             }
         }.Build());
     }
@@ -94,13 +94,13 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     {
         await SendNewMessage(new EmbedBuilder
         {
-            Title = "VRCXDiscordTracker",
+            Title = AppConstants.AppName,
             Description = "Application has exited",
             Color = Color.DarkGrey,
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"VRCXDiscordTracker {Assembly.GetExecutingAssembly().GetName().Version}",
+                Text = $"{AppConstants.AppName} {Assembly.GetExecutingAssembly().GetName().Version}",
             }
         }.Build());
     }
