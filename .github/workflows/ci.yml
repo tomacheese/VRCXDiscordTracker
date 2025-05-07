@@ -19,8 +19,8 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - name: Restore NuGet packages
-        run: nuget restore VRCXDiscordTracker.sln
+      - name: Restore dotnet packages
+        run: dotnet restore VRCXDiscordTracker.sln
 
       - name: Build solution
         run: dotnet build VRCXDiscordTracker.sln /p:Configuration=Release
