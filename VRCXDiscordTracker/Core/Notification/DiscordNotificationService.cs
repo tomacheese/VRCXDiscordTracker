@@ -169,11 +169,4 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
 
         return leftWithoutTimestamp.Equals(rightWithoutTimestamp);
     }
-
-    /// <summary>
-    /// DateTimeをフォーマットする
-    /// </summary>
-    /// <param name="dateTime">フォーマットするDateTime</param>
-    /// <returns>フォーマットされたDateTime文字列</returns>
-    private static string FormatDateTime(DateTime? dateTime) => dateTime?.ToString("G", CultureInfo.CurrentCulture) ?? string.Empty;
 }
