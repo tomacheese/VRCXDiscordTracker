@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "VRCXDiscordTracker": {
+      "commandName": "Project",
+      "commandLineArgs": "--debug"
+    }
+  }
+}

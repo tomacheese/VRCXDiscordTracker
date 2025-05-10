@@ -1,12 +1,9 @@
 using System.Globalization;
-using System.Reflection;
 using System.Text.Json;
 using Discord;
 using Discord.Webhook;
 using VRCXDiscordTracker.Core.Config;
 using VRCXDiscordTracker.Core.VRCX;
-using Color = Discord.Color;
-using Format = Discord.Format;
 
 namespace VRCXDiscordTracker.Core.Notification;
 
@@ -51,7 +48,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
         var joinId = GetJoinId();
         var messageId = _joinIdMessageIdPairs.TryGetValue(joinId, out var value) ? (ulong?)value : null;
 
-        Embed embed = GetEmbed();
+        Embed embed = new DiscordEmbedMembers(myLocation, instanceMembers).GetEmbed();
 
         if (messageId != null)
         {
@@ -149,69 +146,6 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             Console.WriteLine($"Error saving joinIdMessageIdPairs: {ex.Message}");
         }
     }
-
-    /// <summary>
-    /// Embedを取得する
-    /// </summary>
-    /// <returns>Embed</returns>
-    /// <exception cref="FormatException">Location文字列がコロンで区切られていない場合</exception>
-    private Embed GetEmbed()
-    {
-        Version version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0);
-
-        // インスタンスIDは、Locationの:よりあと
-        var locationParts = myLocation.LocationId.Split(':');
-        if (locationParts.Length != 2)
-        {
-            throw new FormatException("Location string is not in the expected format with a colon.");
-        }
-        var instanceId = locationParts[1];
-        var embed = new EmbedBuilder
-        {
-            Title = $"{myLocation.WorldName} ({myLocation.LocationInstance.Type})",
-            Url = $"https://vrchat.com/home/launch?worldId={myLocation.WorldId}&instanceId={instanceId}",
-            Author = new EmbedAuthorBuilder
-            {
-                Name = Format.Sanitize(myLocation.DisplayName),
-            },
-            Timestamp = DateTime.UtcNow,
-            Footer = new EmbedFooterBuilder
-            {
-                Text = $"VRCXDiscordTracker {version.Major}.{version.Minor}.{version.Build}",
-            }
-        };
-
-        // 自身が IsCurrently=true の場合、色は緑。そうではない場合は黄色
-        var isCurrently = instanceMembers.Exists(member => member.UserId == myLocation.UserId && member.IsCurrently);
-        embed.Color = isCurrently ? Color.Green : new Color(0xFFFF00);
-
-        // isCurrently=true のメンバーは、CurrentMembers として表示する
-        // フォーマットは "{emoji} [{member.DisplayName}](https://vrchat.com/home/user/{member.UserId})]: {member.LastJoinAt} - {member.LastLeaveAt}"
-        List<InstanceMember> currentMembers = instanceMembers.FindAll(member => member.IsCurrently);
-        if (currentMembers.Count > 0)
-        {
-            embed.AddField(new EmbedFieldBuilder
-            {
-                Name = "Current Members",
-                Value = GetMembersString(currentMembers),
-                IsInline = false
-            });
-        }
-
-        List<InstanceMember> pastMembers = instanceMembers.FindAll(member => !member.IsCurrently);
-        if (pastMembers.Count > 0)
-        {
-            embed.AddField(new EmbedFieldBuilder
-            {
-                Name = "Past Members",
-                Value = GetMembersString(pastMembers),
-                IsInline = false
-            });
-        }
-
-        return embed.Build();
-    }
-
     /// <summary>
     /// JoinIdを取得する
     /// </summary>
@@ -242,83 +176,4 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     /// <param name="dateTime">フォーマットするDateTime</param>
     /// <returns>フォーマットされたDateTime文字列</returns>
     private static string FormatDateTime(DateTime? dateTime) => dateTime?.ToString("G", CultureInfo.CurrentCulture) ?? string.Empty;
-
-    /// <summary>
-    /// メンバーの絵文字を取得する。インスタンスオーナー、自分自身、フレンド、それ以外で絵文字を設定する。
-    /// </summary>
-    /// <param name="member">対象のメンバー</param>
-    /// <returns>メンバーの絵文字</returns>
-    private string GetMemberEmoji(InstanceMember member)
-    {
-        // インスタンスオーナーの場合は "👑"
-        if (member.IsInstanceOwner)
-        {
-            return "👑";
-        }
-
-        // 自分自身の場合は "👤"
-        if (member.UserId == myLocation.UserId)
-        {
-            return "👤";
-        }
-
-        // フレンドの場合は "⭐️"
-        if (member.IsFriend)
-        {
-            return "⭐️";
-        }
-
-        // それ以外は "⬜️"
-        return "⬜️";
-    }
-
-    /// <summary>
-    /// メンバーの情報をリスト化された文字列として取得する
-    /// </summary>
-    /// <param name="members">メンバーのリスト</param>
-    /// <param name="includeJoinLeaveAt">参加・退出時間を含めるかどうか</param>
-    /// <param name="includeUserPageLink">ユーザーページのリンクを含めるかどうか</param>
-    /// <returns>リスト化されたメンバー情報</returns>
-    private string GetMembersString(List<InstanceMember> members, bool includeJoinLeaveAt = true, bool includeUserPageLink = true)
-    {
-        var result = string.Join("\n", members.ConvertAll(member =>
-        {
-            var baseText = $"{GetMemberEmoji(member)} ";
-            var escapedName = Format.Sanitize(member.DisplayName);
-
-            // includeUserPageLink が true の場合は、ユーザーページのリンクを追加する
-            if (includeUserPageLink)
-            {
-                baseText += $"[{escapedName}](https://vrchat.com/home/user/{member.UserId})";
-            }
-            else
-            {
-                baseText += escapedName;
-            }
-
-            // includeJoinLeaveAt が true の場合は、JoinAt と LeaveAt を追加する
-            if (includeJoinLeaveAt)
-            {
-                // LastLeaveAt が LastJoinAt より後の場合に値を代入し、それ以外は null
-                DateTime? lastLeaveAt = member.LastLeaveAt > member.LastJoinAt ? member.LastLeaveAt : null;
-                baseText += $": {FormatDateTime(member.LastJoinAt)} - {FormatDateTime(lastLeaveAt)}";
-            }
-
-            return baseText;
-        }));
-
-        if (result.Length >= 1000 && includeJoinLeaveAt && includeUserPageLink)
-        {
-            // 1000文字を超える場合は、JoinLeaveAtを省略する
-            result = GetMembersString(members, false, true);
-        }
-        if (result.Length >= 1000)
-        {
-            // 1000文字を超える場合は、ユーザーページのリンクを省略する
-            result = GetMembersString(members, includeJoinLeaveAt, false);
-        }
-
-        // それでも1000文字を超える場合は、メッセージを切り落とす
-        return result.Length > 1000 ? string.Concat(result.AsSpan(0, 1000), "...") : result;
-    }
 }
