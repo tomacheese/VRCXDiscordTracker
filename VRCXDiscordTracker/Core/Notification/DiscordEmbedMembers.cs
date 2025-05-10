@@ -232,10 +232,11 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
             for (var i = fields.Count - 1; i >= 0; i--)
             {
                 Console.WriteLine($"Reducing field {i + 1}/{fields.Count}");
+                var removedField = fields[i]; // Store the removed field
                 fields.RemoveAt(i);
                 if (ValidateEmbed(baseEmbed.WithFields(fields)))
                 {
-                    fields.Insert(i, fields[i]);
+                    fields.Insert(i, removedField); // Re-insert the correct field
                     break;
                 }
             }
