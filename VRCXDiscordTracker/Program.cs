@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using VRCXDiscordTracker.Core;
 using VRCXDiscordTracker.Core.Config;
+using VRCXDiscordTracker.Core.Notification;
 using VRCXDiscordTracker.Core.UI.TrayIcon;
 
 namespace VRCXDiscordTracker;
@@ -50,7 +51,27 @@ internal static partial class Program
         else
         {
             Controller.Start();
+
+            if (AppConfig.NotifyOnStart)
+            {
+                DiscordNotificationService.SendAppStartMessage().ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        Console.WriteLine($"Error sending app start message: {t.Exception?.Message}");
+                    }
+                });
+            }
         }
+
+        Application.ApplicationExit += async (s, e) =>
+        {
+            if (AppConfig.NotifyOnExit)
+            {
+                await DiscordNotificationService.SendAppExitMessage();
+            }
+            Controller?.Dispose();
+        };
 
         Application.Run(trayIcon);
     }
@@ -72,7 +93,7 @@ internal static partial class Program
         DialogResult result = MessageBox.Show(
             "An error has occurred and the operation has stopped.\n" +
             "It would be helpful if you could report this bug using GitHub issues!\n" +
-            "https://github.com/tomacheese/VRCXDiscordTracker/issues\n" +
+            "https://github.com/tomacheese/" + AppConstants.AppName + "/issues\n" +
             "\n" +
             errorDetailAndStacktrace +
             "\n" +
@@ -86,7 +107,7 @@ internal static partial class Program
         {
             Process.Start(new ProcessStartInfo()
             {
-                FileName = "https://github.com/tomacheese/VRCXDiscordTracker/issues/new?body=" + Uri.EscapeDataString(errorDetailAndStacktrace),
+                FileName = "https://github.com/tomacheese/" + AppConstants.AppName + "/issues/new?body=" + Uri.EscapeDataString(errorDetailAndStacktrace),
                 UseShellExecute = true,
             });
         }
