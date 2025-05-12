@@ -81,7 +81,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"{AppConstants.AppName} {Assembly.GetExecutingAssembly().GetName().Version}",
+                Text = $"{AppConstants.AppName} {version.Major}.{version.Minor}.{version.Build}",
             }
         }.Build());
     }
@@ -100,7 +100,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"{AppConstants.AppName} {Assembly.GetExecutingAssembly().GetName().Version}",
+                Text = $"{AppConstants.AppName} {version.Major}.{version.Minor}.{version.Build}",
             }
         }.Build());
     }
