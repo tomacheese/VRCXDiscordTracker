@@ -1,9 +1,11 @@
 using System.Globalization;
+using System.Reflection;
 using System.Text.Json;
 using Discord;
 using Discord.Webhook;
 using VRCXDiscordTracker.Core.Config;
 using VRCXDiscordTracker.Core.VRCX;
+using Color = Discord.Color;
 
 namespace VRCXDiscordTracker.Core.Notification;
 
@@ -62,6 +64,44 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
         ulong? newMessageId = await SendNewMessage(embed) ?? throw new Exception("Failed to send new message. Webhook URL is empty.");
         _joinIdMessageIdPairs[joinId] = (ulong)newMessageId;
         SaveJoinIdMessageIdPairs();
+    }
+
+    /// <summary>
+    /// アプリケーションの起動メッセージを送信する
+    /// </summary>
+    /// <returns>Task</returns>
+    public static async Task SendAppStartMessage()
+    {
+        await SendNewMessage(new EmbedBuilder
+        {
+            Title = AppConstants.AppName,
+            Description = "Application has started.",
+            Color = Color.Green,
+            Timestamp = DateTime.UtcNow,
+            Footer = new EmbedFooterBuilder
+            {
+                Text = $"{AppConstants.AppName} {Assembly.GetExecutingAssembly().GetName().Version}",
+            }
+        }.Build());
+    }
+
+    /// <summary>
+    /// アプリケーションの終了メッセージを送信する
+    /// </summary>
+    /// <returns>Task</returns>
+    public static async Task SendAppExitMessage()
+    {
+        await SendNewMessage(new EmbedBuilder
+        {
+            Title = AppConstants.AppName,
+            Description = "Application has exited",
+            Color = Color.DarkGrey,
+            Timestamp = DateTime.UtcNow,
+            Footer = new EmbedFooterBuilder
+            {
+                Text = $"{AppConstants.AppName} {Assembly.GetExecutingAssembly().GetName().Version}",
+            }
+        }.Build());
     }
 
     /// <summary>
