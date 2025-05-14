@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Reflection;
 using System.Text.Json;
 using Discord;
 using Discord.Webhook;
@@ -81,7 +80,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"{AppConstants.AppName} {Assembly.GetExecutingAssembly().GetName().Version}",
+                Text = $"{AppConstants.AppName} {AppConstants.AppVersion.Major}.{AppConstants.AppVersion.Minor}.{AppConstants.AppVersion.Build}",
             }
         }.Build());
     }
@@ -100,7 +99,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"{AppConstants.AppName} {Assembly.GetExecutingAssembly().GetName().Version}",
+                Text = $"{AppConstants.AppName} {AppConstants.AppVersion.Major}.{AppConstants.AppVersion.Minor}.{AppConstants.AppVersion.Build}",
             }
         }.Build());
     }
@@ -195,8 +194,6 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     /// <exception cref="FormatException">Location文字列がコロンで区切られていない場合</exception>
     private Embed GetEmbed()
     {
-        Version version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0);
-
         // インスタンスIDは、Locationの:よりあと
         var locationParts = myLocation.LocationId.Split(':');
         if (locationParts.Length != 2)
@@ -215,7 +212,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"{AppConstants.AppName} {version.Major}.{version.Minor}.{version.Build}",
+                Text = $"{AppConstants.AppName} {AppConstants.AppVersion.Major}.{AppConstants.AppVersion.Minor}.{AppConstants.AppVersion.Build}",
             }
         };
 
