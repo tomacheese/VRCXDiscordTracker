@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Reflection;
 using System.Text.Json;
 using Discord;
 using Discord.Webhook;
@@ -80,7 +79,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"{AppConstants.AppName} {Assembly.GetExecutingAssembly().GetName().Version}",
+                Text = $"{AppConstants.AppName} {AppConstants.AppVersion}",
             }
         }.Build());
     }
@@ -99,7 +98,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"{AppConstants.AppName} {Assembly.GetExecutingAssembly().GetName().Version}",
+                Text = $"{AppConstants.AppName} {AppConstants.AppVersion}",
             }
         }.Build());
     }
