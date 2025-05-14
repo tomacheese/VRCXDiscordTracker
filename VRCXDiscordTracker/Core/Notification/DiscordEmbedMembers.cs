@@ -129,7 +129,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"VRCXDiscordTracker {version.Major}.{version.Minor}.{version.Build}",
+                Text = $"{AppConstants.AppName} {AppConstants.AppVersion}",
             }
         };
 
