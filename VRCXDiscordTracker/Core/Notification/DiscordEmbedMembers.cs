@@ -14,7 +14,6 @@ namespace VRCXDiscordTracker.Core.Notification;
 /// <param name="instanceMembers">インスタンスのメンバーリスト</param>
 internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceMember> instanceMembers)
 {
-
     /// <summary>
     /// 連続するアンダースコアをエスケープする Regex を生成する
     /// </summary>
