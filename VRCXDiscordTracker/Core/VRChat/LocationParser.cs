@@ -11,7 +11,7 @@ internal partial class LocationParser
     /// ロケーションIDの正規表現
     /// </summary>
     [GeneratedRegex(@"^(?<world>wrld_[0-9a-fA-F-]+):(?<instance>[A-z0-9_-]+)(?<tokens>(~[^~]+)*)$", RegexOptions.Compiled)]
-    private static partial Regex LocationRegex();
+    internal static partial Regex LocationRegex();
 
     /// <summary>
     /// ユーザーIDの正規表現
@@ -69,7 +69,7 @@ internal partial class LocationParser
     /// </summary>
     /// <param name="extractedTokens">抽出トークン</param>
     /// <returns>インスタンスタイプ</returns>
-    private static InstanceType GetInstanceType(ExtractedTokens extractedTokens)
+    internal static InstanceType GetInstanceType(ExtractedTokens extractedTokens)
     {
         // デフォルトは Public
         InstanceType type = InstanceType.Public;
@@ -113,7 +113,7 @@ internal partial class LocationParser
     /// <summary>
     /// ロケーションIDから抽出したトークンを解析し、情報種別ごとに保持するクラス
     /// </summary>
-    private class ExtractedTokens
+    internal class ExtractedTokens
     {
         public InstanceRegion? Region { get; set; }
         public string? GroupId { get; set; }
