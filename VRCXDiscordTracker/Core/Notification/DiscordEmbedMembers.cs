@@ -96,7 +96,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
 
         // 最終パターン: 最小限フィールドをReduceFieldsでさらに文字数調整
         var patternFieldsLast = currentMinimumFields.Concat(pastMinimumFields).ToList();
-        EmbedBuilder patternLast = baseEmbed.WithFields(ReduceFields(baseEmbed, patternFieldsLast));
+        EmbedBuilder patternLast = SetFields(baseEmbed, patternFieldsLast);
         return patternLast.Build();
     }
 
