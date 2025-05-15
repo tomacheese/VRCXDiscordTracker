@@ -34,19 +34,17 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         var baseEmbedLength = baseEmbed.Length;
         var remainingLength = EmbedFieldBuilder.MaxFieldValueLength - baseEmbedLength;
 
-        var currentFieldTitle = "Current Members";
         List<InstanceMember> currentMembers = instanceMembers.FindAll(member => member.IsCurrently);
         Console.WriteLine($"CurrentMembers count: {currentMembers.Count}");
-        List<EmbedFieldBuilder> currentFullFields = GetMemberFields(currentFieldTitle, currentMembers, MemberTextFormat.Full);
-        List<EmbedFieldBuilder> currentExcludedLinksFields = GetMemberFields(currentFieldTitle, currentMembers, MemberTextFormat.ExcludeLinks);
-        List<EmbedFieldBuilder> currentMinimumFields = GetMemberFields(currentFieldTitle, currentMembers, MemberTextFormat.NameOnly);
+        List<EmbedFieldBuilder> currentFullFields = GetMemberFields(MemberStatus.Currently, currentMembers, MemberTextFormat.Full);
+        List<EmbedFieldBuilder> currentExcludedLinksFields = GetMemberFields(MemberStatus.Currently, currentMembers, MemberTextFormat.ExcludeLinks);
+        List<EmbedFieldBuilder> currentMinimumFields = GetMemberFields(MemberStatus.Currently, currentMembers, MemberTextFormat.NameOnly);
 
-        var pastFieldTitle = "Past Members";
         List<InstanceMember> pastMembers = instanceMembers.FindAll(member => !member.IsCurrently);
         Console.WriteLine($"PastMembers count: {pastMembers.Count}");
-        List<EmbedFieldBuilder> pastFullFields = GetMemberFields(pastFieldTitle, pastMembers, MemberTextFormat.Full);
-        List<EmbedFieldBuilder> pastExcludedLinksFields = GetMemberFields(pastFieldTitle, pastMembers, MemberTextFormat.ExcludeLinks);
-        List<EmbedFieldBuilder> pastMinimumFields = GetMemberFields(pastFieldTitle, pastMembers, MemberTextFormat.NameOnly);
+        List<EmbedFieldBuilder> pastFullFields = GetMemberFields(MemberStatus.Past, pastMembers, MemberTextFormat.Full);
+        List<EmbedFieldBuilder> pastExcludedLinksFields = GetMemberFields(MemberStatus.Past, pastMembers, MemberTextFormat.ExcludeLinks);
+        List<EmbedFieldBuilder> pastMinimumFields = GetMemberFields(MemberStatus.Past, pastMembers, MemberTextFormat.NameOnly);
 
         // フィールドパターン1: フルフォーマットのCurrent+Pastで
         var patternFields1 = currentFullFields.Concat(pastFullFields).ToList();
@@ -95,7 +93,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         }
 
         // 最終パターン: 最小限フィールドをReduceFieldsでさらに文字数調整
-        var patternFieldsLast = currentMinimumFields.Concat(pastMinimumFields).ToList();
+        var patternFieldsLast = ReduceFields(baseEmbed, currentMinimumFields.Concat(pastMinimumFields).ToList());
         EmbedBuilder patternLast = SetFields(baseEmbed, patternFieldsLast);
         return patternLast.Build();
     }
@@ -278,12 +276,19 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
     /// <summary>
     /// メンバー情報から EmbedFieldBuilder リストを生成する
     /// </summary>
-    /// <param name="title">フィールドタイトル</param>
+    /// <param name="memberStatus">メンバー状態</param>
     /// <param name="members">メンバーリスト</param>
     /// <param name="memberTextFormat">メンバー表示形式</param>
     /// <returns>生成済み EmbedFieldBuilder リスト。メンバー無しは空リスト</returns>
-    private List<EmbedFieldBuilder> GetMemberFields(string title, List<InstanceMember> members, MemberTextFormat memberTextFormat)
+    private List<EmbedFieldBuilder> GetMemberFields(MemberStatus memberStatus, List<InstanceMember> members, MemberTextFormat memberTextFormat)
     {
+        var title = memberStatus switch
+        {
+            MemberStatus.Currently => "Current Members",
+            MemberStatus.Past => "Past Members",
+            _ => throw new ArgumentOutOfRangeException(nameof(memberStatus), memberStatus, null)
+        };
+
         var membersString = GetMembersString(members, memberTextFormat);
         var splitMembers = membersString.Split('\n').Where(line => !string.IsNullOrWhiteSpace(line)).ToList();
         Console.WriteLine($"Split members lines: {splitMembers.Count}");
@@ -376,6 +381,22 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         }
 
         return "⬜️";
+    }
+
+    /// <summary>
+    /// メンバーの状態を定義する列挙体
+    /// </summary>
+    private enum MemberStatus
+    {
+        /// <summary>
+        /// 現在のインスタンスに参加中
+        /// </summary>
+
+        Currently,
+        /// <summary>
+        /// 過去のインスタンスに参加していた
+        /// </summary>
+        Past,
     }
 
     /// <summary>
