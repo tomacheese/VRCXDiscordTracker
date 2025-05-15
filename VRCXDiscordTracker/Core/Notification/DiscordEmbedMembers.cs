@@ -129,7 +129,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"{AppConstants.AppName} {AppConstants.AppVersion}",
+                Text = DiscordNotificationService.EmbedFooterText,
             }
         };
 

@@ -39,6 +39,12 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     };
 
     /// <summary>
+    /// Embed のフッターに表示するテキストを取得する
+    /// </summary>
+    /// <returns>Embed フッター用テキスト</returns>
+    public static string EmbedFooterText => $"{AppConstants.AppName} {AppConstants.AppVersion.Major}.{AppConstants.AppVersion.Minor}.{AppConstants.AppVersion.Build}";
+
+    /// <summary>
     /// DIscordにメッセージを送信、もしくは更新する
     /// </summary>
     /// <returns>タスク</returns>
@@ -79,7 +85,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"{AppConstants.AppName} {AppConstants.AppVersion}",
+                Text = EmbedFooterText,
             }
         }.Build());
     }
@@ -98,7 +104,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             Timestamp = DateTime.UtcNow,
             Footer = new EmbedFooterBuilder
             {
-                Text = $"{AppConstants.AppName} {AppConstants.AppVersion}",
+                Text = EmbedFooterText,
             }
         }.Build());
     }
