@@ -34,68 +34,47 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         var baseEmbedLength = baseEmbed.Length;
         var remainingLength = EmbedFieldBuilder.MaxFieldValueLength - baseEmbedLength;
 
+        EmbedFieldPattern[] patterns = [
+            // フィールドパターン1: フルフォーマットのCurrent+Past
+            new EmbedFieldPattern { CurrentFormat = MemberTextFormat.Full, PastFormat = MemberTextFormat.Full, IsReducible = false },
+            // フィールドパターン2: Currentはフル、Pastはリンク省略
+            new EmbedFieldPattern { CurrentFormat = MemberTextFormat.Full, PastFormat = MemberTextFormat.ExcludeLinks, IsReducible = false },
+            // フィールドパターン3: Currentはフル、Pastは最小限
+            new EmbedFieldPattern { CurrentFormat = MemberTextFormat.Full, PastFormat = MemberTextFormat.NameOnly, IsReducible = false },
+            // フィールドパターン4: Currentはリンク省略、Pastは最小限
+            new EmbedFieldPattern { CurrentFormat = MemberTextFormat.ExcludeLinks, PastFormat = MemberTextFormat.NameOnly, IsReducible = false },
+            // フィールドパターン5: 両方とも最小限
+            new EmbedFieldPattern { CurrentFormat = MemberTextFormat.NameOnly, PastFormat = MemberTextFormat.NameOnly, IsReducible = false },
+            // 最終パターン: 最小限フィールドをReduceFieldsでさらに文字数調整
+            new EmbedFieldPattern { CurrentFormat = MemberTextFormat.NameOnly, PastFormat = MemberTextFormat.NameOnly, IsReducible = true }
+        ];
+
+
         List<InstanceMember> currentMembers = instanceMembers.FindAll(member => member.IsCurrently);
-        Console.WriteLine($"CurrentMembers count: {currentMembers.Count}");
-        List<EmbedFieldBuilder> currentFullFields = GetMemberFields(MemberStatus.Currently, currentMembers, MemberTextFormat.Full);
-        List<EmbedFieldBuilder> currentExcludedLinksFields = GetMemberFields(MemberStatus.Currently, currentMembers, MemberTextFormat.ExcludeLinks);
-        List<EmbedFieldBuilder> currentMinimumFields = GetMemberFields(MemberStatus.Currently, currentMembers, MemberTextFormat.NameOnly);
-
         List<InstanceMember> pastMembers = instanceMembers.FindAll(member => !member.IsCurrently);
+        Console.WriteLine($"CurrentMembers count: {currentMembers.Count}");
         Console.WriteLine($"PastMembers count: {pastMembers.Count}");
-        List<EmbedFieldBuilder> pastFullFields = GetMemberFields(MemberStatus.Past, pastMembers, MemberTextFormat.Full);
-        List<EmbedFieldBuilder> pastExcludedLinksFields = GetMemberFields(MemberStatus.Past, pastMembers, MemberTextFormat.ExcludeLinks);
-        List<EmbedFieldBuilder> pastMinimumFields = GetMemberFields(MemberStatus.Past, pastMembers, MemberTextFormat.NameOnly);
 
-        // フィールドパターン1: フルフォーマットのCurrent+Pastで
-        var patternFields1 = currentFullFields.Concat(pastFullFields).ToList();
-        Console.WriteLine($"Trying pattern1 with fields count: {patternFields1.Count}");
-        EmbedBuilder pattern1 = SetFields(baseEmbed, patternFields1);
-        if (ValidateEmbed(pattern1))
+        foreach (EmbedFieldPattern pattern in patterns)
         {
-            Console.WriteLine("Build pattern1");
-            return pattern1.Build();
+            Console.WriteLine($"Trying pattern with Current: {pattern.CurrentFormat}, Past: {pattern.PastFormat}");
+            List<EmbedFieldBuilder> currentFields = GetMemberFields(MemberStatus.Currently, currentMembers, pattern.CurrentFormat);
+            List<EmbedFieldBuilder> pastFields = GetMemberFields(MemberStatus.Past, pastMembers, pattern.PastFormat);
+            var combinedFields = currentFields.Concat(pastFields).ToList();
+            if (pattern.IsReducible)
+            {
+                combinedFields = ReduceFields(baseEmbed, combinedFields);
+            }
+
+            EmbedBuilder patternEmbed = SetFields(baseEmbed, combinedFields);
+            if (ValidateEmbed(patternEmbed))
+            {
+                Console.WriteLine($"Selected build pattern with Current: {pattern.CurrentFormat}, Past: {pattern.PastFormat}");
+                return patternEmbed.Build();
+            }
         }
 
-        // フィールドパターン2: Currentはフル、Pastはリンク省略
-        var patternFields2 = currentFullFields.Concat(pastExcludedLinksFields).ToList();
-        EmbedBuilder pattern2 = SetFields(baseEmbed, patternFields2);
-        if (ValidateEmbed(pattern2))
-        {
-            Console.WriteLine("Build pattern2");
-            return pattern2.Build();
-        }
-
-        // フィールドパターン3: Currentはフル、Pastは最小限
-        var patternFields3 = currentFullFields.Concat(pastMinimumFields).ToList();
-        EmbedBuilder pattern3 = SetFields(baseEmbed, patternFields3);
-        if (ValidateEmbed(pattern3))
-        {
-            Console.WriteLine("Build pattern3");
-            return pattern3.Build();
-        }
-
-        // フィールドパターン4: Currentはリンク省略、Pastは最小限
-        var patternFields4 = currentExcludedLinksFields.Concat(pastMinimumFields).ToList();
-        EmbedBuilder pattern4 = SetFields(baseEmbed, patternFields4);
-        if (ValidateEmbed(pattern4))
-        {
-            Console.WriteLine("Build pattern4");
-            return pattern4.Build();
-        }
-
-        // フィールドパターン5: 両方とも最小限
-        var patternFields5 = currentMinimumFields.Concat(pastMinimumFields).ToList();
-        EmbedBuilder pattern5 = SetFields(baseEmbed, patternFields5);
-        if (ValidateEmbed(pattern5))
-        {
-            Console.WriteLine("Build pattern5");
-            return pattern5.Build();
-        }
-
-        // 最終パターン: 最小限フィールドをReduceFieldsでさらに文字数調整
-        var patternFieldsLast = ReduceFields(baseEmbed, [.. currentMinimumFields, .. pastMinimumFields]);
-        EmbedBuilder patternLast = SetFields(baseEmbed, patternFieldsLast);
-        return patternLast.Build();
+        throw new Exception("Failed to build a valid embed with the given patterns.");
     }
 
     /// <summary>
@@ -381,6 +360,27 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         }
 
         return "⬜️";
+    }
+
+    /// <summary>
+    /// EmbedField のパターンを定義するレコード
+    /// </summary>
+    private record EmbedFieldPattern
+    {
+        /// <summary>
+        /// Current Members の表示形式
+        /// </summary>
+        public required MemberTextFormat CurrentFormat { get; init; }
+
+        /// <summary>
+        /// Past Members の表示形式
+        /// </summary>
+        public required MemberTextFormat PastFormat { get; init; }
+
+        /// <summary>
+        /// フィールドが削減可能とするかどうか
+        /// </summary>
+        public required bool IsReducible { get; init; }
     }
 
     /// <summary>
