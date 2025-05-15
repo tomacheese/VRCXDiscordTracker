@@ -37,16 +37,16 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         var currentFieldTitle = "Current Members";
         List<InstanceMember> currentMembers = instanceMembers.FindAll(member => member.IsCurrently);
         Console.WriteLine($"CurrentMembers count: {currentMembers.Count}");
-        List<EmbedFieldBuilder> currentFullFields = GetMemberFields(currentFieldTitle, currentMembers, includeJoinLeaveAt: true, includeUserPageLink: true);
-        List<EmbedFieldBuilder> currentExcludedLinksFields = GetMemberFields(currentFieldTitle, currentMembers, includeJoinLeaveAt: true, includeUserPageLink: false);
-        List<EmbedFieldBuilder> currentMinimumFields = GetMemberFields(currentFieldTitle, currentMembers, includeJoinLeaveAt: false, includeUserPageLink: false);
+        List<EmbedFieldBuilder> currentFullFields = GetMemberFields(currentFieldTitle, currentMembers, MemberTextFormat.Full);
+        List<EmbedFieldBuilder> currentExcludedLinksFields = GetMemberFields(currentFieldTitle, currentMembers, MemberTextFormat.ExcludeLinks);
+        List<EmbedFieldBuilder> currentMinimumFields = GetMemberFields(currentFieldTitle, currentMembers, MemberTextFormat.NameOnly);
 
         var pastFieldTitle = "Past Members";
         List<InstanceMember> pastMembers = instanceMembers.FindAll(member => !member.IsCurrently);
         Console.WriteLine($"PastMembers count: {pastMembers.Count}");
-        List<EmbedFieldBuilder> pastFullFields = GetMemberFields(pastFieldTitle, pastMembers, includeJoinLeaveAt: true, includeUserPageLink: true);
-        List<EmbedFieldBuilder> pastExcludedLinksFields = GetMemberFields(pastFieldTitle, pastMembers, includeJoinLeaveAt: true, includeUserPageLink: false);
-        List<EmbedFieldBuilder> pastMinimumFields = GetMemberFields(pastFieldTitle, pastMembers, includeJoinLeaveAt: false, includeUserPageLink: false);
+        List<EmbedFieldBuilder> pastFullFields = GetMemberFields(pastFieldTitle, pastMembers, MemberTextFormat.Full);
+        List<EmbedFieldBuilder> pastExcludedLinksFields = GetMemberFields(pastFieldTitle, pastMembers, MemberTextFormat.ExcludeLinks);
+        List<EmbedFieldBuilder> pastMinimumFields = GetMemberFields(pastFieldTitle, pastMembers, MemberTextFormat.NameOnly);
 
         // フィールドパターン1: フルフォーマットのCurrent+Pastで
         var patternFields1 = currentFullFields.Concat(pastFullFields).ToList();
@@ -280,12 +280,11 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
     /// </summary>
     /// <param name="title">フィールドタイトル</param>
     /// <param name="members">メンバーリスト</param>
-    /// <param name="includeJoinLeaveAt">参加・退出時刻を含めるか</param>
-    /// <param name="includeUserPageLink">ユーザーページリンクを含めるか</param>
+    /// <param name="memberTextFormat">メンバー表示形式</param>
     /// <returns>生成済み EmbedFieldBuilder リスト。メンバー無しは空リスト</returns>
-    private List<EmbedFieldBuilder> GetMemberFields(string title, List<InstanceMember> members, bool includeJoinLeaveAt = true, bool includeUserPageLink = true)
+    private List<EmbedFieldBuilder> GetMemberFields(string title, List<InstanceMember> members, MemberTextFormat memberTextFormat)
     {
-        var membersString = GetMembersString(members, includeJoinLeaveAt, includeUserPageLink);
+        var membersString = GetMembersString(members, memberTextFormat);
         var splitMembers = membersString.Split('\n').Where(line => !string.IsNullOrWhiteSpace(line)).ToList();
         Console.WriteLine($"Split members lines: {splitMembers.Count}");
         if (splitMembers.Count == 0)
@@ -328,33 +327,26 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
     /// メンバーリストを行区切りの文字列に整形する
     /// </summary>
     /// <param name="members">メンバーリスト</param>
-    /// <param name="includeJoinLeaveAt">参加・退出時刻を含めるか</param>
-    /// <param name="includeUserPageLink">ユーザーページリンクを含めるか</param>
+    /// <param name="memberTextFormat">メンバー表示形式</param>
     /// <returns>改行区切り整形文字列</returns>
-    private string GetMembersString(List<InstanceMember> members, bool includeJoinLeaveAt = true, bool includeUserPageLink = true)
+    private string GetMembersString(List<InstanceMember> members, MemberTextFormat memberTextFormat)
     {
         // ユーザー名をバッククオートで囲み、オプションでリンクや参加時刻を追記
         var result = string.Join("\n", members.ConvertAll(member =>
         {
-            var baseText = $"{GetMemberEmoji(member)} ";
+            var emoji = GetMemberEmoji(member);
             var escapedName = $"`{member.DisplayName}`";
 
-            if (includeUserPageLink)
+            var text = memberTextFormat switch
             {
-                baseText += $"[{escapedName}](https://vrchat.com/home/user/{member.UserId})";
-            }
-            else
-            {
-                baseText += escapedName;
-            }
-
-            if (includeJoinLeaveAt)
-            {
-                DateTime? lastLeaveAt = member.LastLeaveAt > member.LastJoinAt ? member.LastLeaveAt : null;
-                baseText += $": {FormatDateTime(member.LastJoinAt)} - {FormatDateTime(lastLeaveAt)}";
-            }
-
-            return baseText;
+                MemberTextFormat.Full => $"{emoji} [{escapedName}](https://vrchat.com/home/user/{member.UserId}): {FormatDateTime(member.LastJoinAt)}" +
+                    (member.LastLeaveAt.HasValue && member.LastLeaveAt > member.LastJoinAt ? $" - {FormatDateTime(member.LastLeaveAt)}" : ""),
+                MemberTextFormat.ExcludeLinks => $"{emoji} {escapedName}: {FormatDateTime(member.LastJoinAt)}" +
+                    (member.LastLeaveAt.HasValue && member.LastLeaveAt > member.LastJoinAt ? $" - {FormatDateTime(member.LastLeaveAt)}" : ""),
+                MemberTextFormat.NameOnly => $"{emoji} {escapedName}",
+                _ => throw new ArgumentOutOfRangeException(nameof(memberTextFormat), memberTextFormat, null)
+            };
+            return text;
         }));
 
         Console.WriteLine($"MembersString length: {result.Length}");
@@ -384,5 +376,29 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         }
 
         return "⬜️";
+    }
+
+    /// <summary>
+    /// メンバー表示形式を定義する列挙体
+    /// </summary>
+    private enum MemberTextFormat
+    {
+        /// <summary>
+        /// フルフォーマット
+        /// </summary>
+        /// <example>{絵文字} [ユーザー名](https://vrchat.com/home/user/{ユーザーID}): {参加時刻} - {退出時刻}</example>
+        Full,
+
+        /// <summary>
+        /// リンク省略
+        /// </summary>
+        /// <example>{絵文字} ユーザー名: {参加時刻} - {退出時刻}</example>
+        ExcludeLinks,
+
+        /// <summary>
+        /// 名前のみ
+        /// </summary>
+        /// <example>{絵文字} ユーザー名</example>
+        NameOnly,
     }
 }
