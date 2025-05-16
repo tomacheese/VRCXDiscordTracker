@@ -30,6 +30,8 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         Console.WriteLine($"GetEmbed started. Total members: {instanceMembers.Count}");
         EmbedBuilder baseEmbed = GetBaseEmbed();
 
+        var baseEmbedLength = baseEmbed.Length;
+        var remainingLength = EmbedFieldBuilder.MaxFieldValueLength - baseEmbedLength;
 
         EmbedFieldPattern[] patterns = [
             // フィールドパターン1: フルフォーマットのCurrent+Past
@@ -182,15 +184,6 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
     /// <exception cref="Exception">サイズ制限超過時</exception>
     internal static List<EmbedFieldBuilder> ReduceFields(EmbedBuilder baseEmbed, List<EmbedFieldBuilder> fields)
     {
-        // まず25件超過なら必ず25件にトリム
-        if (fields.Count > 25)
-        {
-            fields = [.. fields.Take(25)];
-            Console.WriteLine("Fields truncated to 25 due to limit");
-        }
-
-        // Embedがサイズ制限を超える場合、以下ステップで段階的に削減
-        fields = fields.Take(25).ToList();
         if (ValidateEmbed(baseEmbed.WithFields(fields)))
         {
             return fields;
@@ -212,7 +205,6 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
                 Console.WriteLine($"Reducing field {i + 1}/{fields.Count}");
                 EmbedFieldBuilder removedField = fields[i];
                 fields.RemoveAt(i);
-                fields = fields.Take(25).ToList();
                 if (ValidateEmbed(baseEmbed.WithFields(fields)))
                 {
                     fields.Insert(i, removedField);
@@ -222,11 +214,6 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         }
 
         // 最後のフィールドのテキストを行単位で削減して調整
-        fields = fields.Take(25).ToList();
-        if (fields.Count == 0)
-        {
-            return fields;
-        }
         var lastFieldValue = fields.Last().Value.ToString();
         if (string.IsNullOrEmpty(lastFieldValue))
         {
@@ -235,32 +222,9 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         var lastFieldValueLines = lastFieldValue.Split('\n');
         for (var i = lastFieldValueLines.Length - 1; i >= 0; i--)
         {
-            if (fields.Count == 0)
-            {
-                throw new Exception("Embed is too long after reducing fields (all fields removed).");
-            }
             Console.WriteLine($"Reducing field value {i + 1}/{lastFieldValueLines.Length} ({fields.Last().Value.ToString()?.Length})");
             lastFieldValueLines = lastFieldValueLines[..^1];
             fields.Last().Value = string.Join("\n", lastFieldValueLines);
-            // Valueが空になったらRemoveAt
-            if (string.IsNullOrEmpty(fields.Last().Value.ToString()))
-            {
-                fields.RemoveAt(fields.Count - 1);
-                if (fields.Count == 0)
-                {
-                    throw new Exception("Embed is too long after reducing fields (all fields removed).");
-                }
-                continue;
-            }
-            // フィールド数が25を超えないように調整
-            while (fields.Count > 25)
-            {
-                fields.RemoveAt(fields.Count - 1);
-                if (fields.Count == 0)
-                {
-                    throw new Exception("Embed is too long after reducing fields (all fields removed).");
-                }
-            }
             if (!ValidateEmbed(baseEmbed.WithFields(fields)))
             {
                 continue;
@@ -268,53 +232,13 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
             fields.Last().Value += "\n...";
             break;
         }
-        // 念のため空フィールドを除去
-        fields = fields.Where(f => !string.IsNullOrWhiteSpace(f.Value?.ToString())).ToList();
 
-        // 25件超過時は24件＋「...」フィールドにする
-        if (fields.Count > 25)
+        if (string.IsNullOrEmpty(fields.Last().Value.ToString()))
         {
-            fields = fields.Take(24).ToList();
-            fields.Add(new EmbedFieldBuilder
-            {
-                Name = "\u200B",
-                Value = "...",
-                IsInline = false
-            });
-        }
-        else if (fields.Count == 25)
-        {
-            // 25件目のValueが長すぎる場合は25件目を削除し、24件＋「...」フィールドにする
-            while (fields.Count == 25 && fields[24].Value?.ToString()?.Length > EmbedFieldBuilder.MaxFieldValueLength)
-            {
-                fields = fields.Take(24).ToList();
-                fields.Add(new EmbedFieldBuilder
-                {
-                    Name = "\u200B",
-                    Value = "...",
-                    IsInline = false
-                });
-            }
-            fields = fields.Take(25).ToList();
-        }
-
-        // 25件でも収まらない場合はさらに減らしていく
-        while (fields.Count > 0)
-        {
-            try
-            {
-                if (ValidateEmbed(baseEmbed.WithFields(fields)))
-                {
-                    break;
-                }
-            }
-            catch (ArgumentException)
-            {
-                // Discord.NETのフィールド数・長さ制限例外
-            }
             fields.RemoveAt(fields.Count - 1);
         }
-        if (fields.Count == 0 || !ValidateEmbed(baseEmbed.WithFields(fields)))
+
+        if (!ValidateEmbed(baseEmbed.WithFields(fields)))
         {
             throw new Exception("Embed is too long after reducing fields.");
         }
