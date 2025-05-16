@@ -22,15 +22,7 @@ internal static partial class Program
         TaskScheduler.UnobservedTaskException += (s, e) => OnException(e.Exception, "UnobservedTaskException");
 
         var cmds = Environment.GetCommandLineArgs();
-        var isDebugMode = false;
-        foreach (var cmd in cmds)
-        {
-            if (cmd.Equals("--debug"))
-            {
-                isDebugMode = true;
-            }
-        }
-        if (isDebugMode)
+        if (cmds.Any(cmd => cmd.Equals("--debug")))
         {
             AllocConsole();
             Console.SetOut(new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true });
