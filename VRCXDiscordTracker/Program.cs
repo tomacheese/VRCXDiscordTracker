@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Microsoft.Toolkit.Uwp.Notifications;
 using VRCXDiscordTracker.Core;
 using VRCXDiscordTracker.Core.Config;
 using VRCXDiscordTracker.Core.Notification;
@@ -29,6 +30,14 @@ internal static partial class Program
         }
 
         Console.WriteLine("Program.Main");
+
+        if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
+        {
+            // トースト通知から起動された場合、なにもしない
+            ToastNotificationManagerCompat.Uninstall();
+            return;
+        }
+
         ApplicationConfiguration.Initialize();
 
         var trayIcon = new TrayIcon();
@@ -63,6 +72,7 @@ internal static partial class Program
                 await DiscordNotificationService.SendAppExitMessage();
             }
             Controller?.Dispose();
+            ToastNotificationManagerCompat.Uninstall();
         };
 
         Application.Run(trayIcon);
