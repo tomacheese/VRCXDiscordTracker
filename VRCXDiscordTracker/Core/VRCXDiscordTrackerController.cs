@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using VRCXDiscordTracker.Core.Config;
 using VRCXDiscordTracker.Core.Notification;
 using VRCXDiscordTracker.Core.VRCX;
 using Timer = System.Windows.Forms.Timer;
@@ -99,7 +100,7 @@ internal class VRCXDiscordTrackerController
         var userId = _vrcxDatabase.GetVRChatUserId();
         Debug.WriteLine($"GetVRChatUserId: {userId}");
 
-        List<MyLocation> myLocations = _vrcxDatabase.GetMyLocations(userId);
+        List<MyLocation> myLocations = _vrcxDatabase.GetMyLocations(userId, AppConfig.LocationCount);
         Debug.WriteLine($"GetMyLocations: {myLocations.Count}");
 
         foreach (MyLocation myLocation in myLocations)

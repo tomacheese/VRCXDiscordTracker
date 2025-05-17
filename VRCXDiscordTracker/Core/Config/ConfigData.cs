@@ -31,4 +31,10 @@ internal class ConfigData
     /// </summary>
     [JsonPropertyName("notifyOnExit")]
     public bool NotifyOnExit { get; set; } = true;
+
+    /// <summary>
+    /// 通知対象とするロケーションの数
+    /// </summary>
+    [JsonPropertyName("locationCount")]
+    public int LocationCount { get; set; } = 5;
 }

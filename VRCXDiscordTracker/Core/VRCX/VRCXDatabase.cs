@@ -87,8 +87,9 @@ internal class VRCXDatabase
     /// 居た/居るインスタンス群の情報を取得する
     /// </summary>
     /// <param name="vrchatUserId">取得する対象ユーザーのVRChatユーザーID</param>
+    /// <param name="locationCount">取得するインスタンスの数</param>
     /// <returns>居た/居るインスタンス群の情報</returns>
-    public List<MyLocation> GetMyLocations(string vrchatUserId)
+    public List<MyLocation> GetMyLocations(string vrchatUserId, int locationCount)
     {
         Console.WriteLine($"VRCXDatabase.GetMyLocations(): {vrchatUserId}");
         var sql = GetEmbedFileContent("VRCXDiscordTracker.Core.VRCX.Queries.myLocations.sql");
@@ -98,6 +99,7 @@ internal class VRCXDatabase
         {
             cmd.CommandText = sql;
             cmd.Parameters.AddWithValue(":target_user_id", vrchatUserId);
+            cmd.Parameters.AddWithValue(":location_count", locationCount);
             using SQLiteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {

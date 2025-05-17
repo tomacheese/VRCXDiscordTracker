@@ -140,4 +140,25 @@ internal class AppConfig
             Save();
         }
     }
+
+    /// <summary>
+    /// 通知対象とするロケーションの数を取得または設定するプロパティ
+    /// </summary>
+    public static int LocationCount
+    {
+        get
+        {
+            Load();
+            return _config.LocationCount;
+        }
+        set
+        {
+            if (value < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), "LocationCount must be greater than 0.");
+            }
+            _config.LocationCount = value;
+            Save();
+        }
+    }
 }
