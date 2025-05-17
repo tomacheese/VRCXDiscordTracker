@@ -95,19 +95,29 @@ internal class VRCXDiscordTrackerController
     /// <returns>Task</returns>
     private async Task Run()
     {
-        Console.WriteLine("VRCXDiscordTrackerController.Run()");
-        var userId = _vrcxDatabase.GetVRChatUserId();
-        Debug.WriteLine($"GetVRChatUserId: {userId}");
-
-        List<MyLocation> myLocations = _vrcxDatabase.GetMyLocations(userId);
-        Debug.WriteLine($"GetMyLocations: {myLocations.Count}");
-
-        foreach (MyLocation myLocation in myLocations)
+        try
         {
-            List<InstanceMember> instanceMembers = _vrcxDatabase.GetInstanceMembers(userId, myLocation);
-            Console.WriteLine($"GetInstanceMembers: {instanceMembers.Count}");
+            Console.WriteLine("VRCXDiscordTrackerController.Run()");
+            var userId = _vrcxDatabase.GetVRChatUserId();
+            Debug.WriteLine($"GetVRChatUserId: {userId}");
 
-            await new DiscordNotificationService(myLocation, instanceMembers).SendUpdateMessageAsync();
+            List<MyLocation> myLocations = _vrcxDatabase.GetMyLocations(userId);
+            Debug.WriteLine($"GetMyLocations: {myLocations.Count}");
+
+            foreach (MyLocation myLocation in myLocations)
+            {
+                List<InstanceMember> instanceMembers = _vrcxDatabase.GetInstanceMembers(userId, myLocation);
+                Console.WriteLine($"GetInstanceMembers: {instanceMembers.Count}");
+
+                await new DiscordNotificationService(myLocation, instanceMembers).SendUpdateMessageAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine(ex.StackTrace);
+
+            throw;
         }
     }
 }
