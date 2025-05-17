@@ -11,11 +11,11 @@ internal class UpdateChecker(GitHubReleaseService gh)
         return _latest;
     }
 
-    public bool IsUpdateAvailableAsync()
+    public bool IsUpdateAvailable()
     {
         if (_latest == null)
         {
-            throw new InvalidOperationException("GetLatestReleaseAsync must be called before IsUpdateAvailableAsync.");
+            throw new InvalidOperationException("GetLatestReleaseAsync must be called before IsUpdateAvailable.");
         }
 
         var localVersion = SemanticVersion.Parse(AppConstants.AppVersionString);
@@ -29,7 +29,7 @@ internal class UpdateChecker(GitHubReleaseService gh)
             var gh = new GitHubReleaseService(AppConstants.GitHubRepoOwner, AppConstants.GitHubRepoName);
             var checker = new UpdateChecker(gh);
             ReleaseInfo latest = await checker.GetLatestRelease();
-            if (!checker.IsUpdateAvailableAsync())
+            if (!checker.IsUpdateAvailable())
             {
                 Console.WriteLine("No update available.");
                 return false;
