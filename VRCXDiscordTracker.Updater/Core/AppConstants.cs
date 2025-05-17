@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace VRCXDiscordTracker.Core;
+namespace VRCXDiscordTracker.Updater.Core;
 internal class AppConstants
 {
     /// <summary>
@@ -17,19 +17,4 @@ internal class AppConstants
     /// アプリケーションバージョンの文字列
     /// </summary>
     public static readonly string AppVersionString = AppVersion.ToString(3); // Major.Minor.Patch
-
-    /// <summary>
-    /// VRCXのデフォルトのSQLiteデータベースのパス
-    /// </summary>
-    public static readonly string VRCXDefaultDatabasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX", "VRCX.sqlite3");
-
-    /// <summary>
-    /// GitHub リポジトリのオーナー名
-    /// </summary>
-    public static readonly string GitHubRepoOwner = "tomacheese";
-
-    /// <summary>
-    /// GitHub リポジトリ名
-    /// </summary>
-    public static readonly string GitHubRepoName = "VRCXDiscordTracker";
 }

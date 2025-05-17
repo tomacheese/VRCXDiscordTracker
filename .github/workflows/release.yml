@@ -69,7 +69,7 @@ jobs:
       - name: Create zip
         run: |
           $zipFilePath = "VRCXDiscordTracker.zip"
-          $sourceDir = "VRCXDiscordTracker/bin/Publish/*"
+          $sourceDir = "bin/Publish/*"
           Compress-Archive -Path $sourceDir -DestinationPath $zipFilePath -Force
         shell: pwsh
 
