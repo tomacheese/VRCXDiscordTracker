@@ -34,6 +34,7 @@ internal static partial class Program
         if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
         {
             // トースト通知から起動された場合、なにもしない
+            ToastNotificationManagerCompat.Uninstall();
             return;
         }
 
