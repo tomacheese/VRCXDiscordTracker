@@ -5,7 +5,7 @@ VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VRCXDiscordTracker", "VRCXDiscordTracker\VRCXDiscordTracker.csproj", "{E1F0E2A1-663A-43A5-B60E-EB80E4B30F44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.csproj", "{713F44BD-BCD6-44ED-886D-80A80FEA73EE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VRCXDiscordTracker.Updater", "VRCXDiscordTracker.Updater\VRCXDiscordTracker.Updater.csproj", "{713F44BD-BCD6-44ED-886D-80A80FEA73EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
