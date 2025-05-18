@@ -18,6 +18,13 @@ internal static partial class Program
     [STAThread]
     static void Main()
     {
+        if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
+        {
+            // トースト通知から起動された場合、なにもしない
+            ToastNotificationManagerCompat.Uninstall();
+            return;
+        }
+
         Application.ThreadException += (s, e) => OnException(e.Exception, "ThreadException");
         Thread.GetDomain().UnhandledException += (s, e) => OnException((Exception)e.ExceptionObject, "UnhandledException");
         TaskScheduler.UnobservedTaskException += (s, e) => OnException(e.Exception, "UnobservedTaskException");
@@ -30,13 +37,6 @@ internal static partial class Program
         }
 
         Console.WriteLine("Program.Main");
-
-        if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
-        {
-            // トースト通知から起動された場合、なにもしない
-            ToastNotificationManagerCompat.Uninstall();
-            return;
-        }
 
         ApplicationConfiguration.Initialize();
 
