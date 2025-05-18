@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.Toolkit.Uwp.Notifications;
 using VRCXDiscordTracker.Core;
 using VRCXDiscordTracker.Core.Config;
@@ -7,6 +8,7 @@ using VRCXDiscordTracker.Core.Notification;
 using VRCXDiscordTracker.Core.UI.TrayIcon;
 
 namespace VRCXDiscordTracker;
+
 internal static partial class Program
 {
     public static VRCXDiscordTrackerController? Controller;
@@ -34,6 +36,7 @@ internal static partial class Program
         {
             AllocConsole();
             Console.SetOut(new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true });
+            Console.OutputEncoding = Encoding.UTF8;
         }
 
         Console.WriteLine("Program.Main");
