@@ -37,3 +37,11 @@ jobs:
 
       - name: Check code style
         run: dotnet format VRCXDiscordTracker.sln --verify-no-changes --severity warn
+
+      - name: VirusTotal Scan
+        uses: crazy-max/ghaction-virustotal@v4
+        if: github.event_name == 'push'
+        with:
+          vt_api_key: ${{ secrets.VT_API_KEY }}
+          files: |
+            **/bin/*

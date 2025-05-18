@@ -80,3 +80,10 @@ jobs:
           tag_name: ${{ needs.bump-version.outputs.tag }}
           target_commitish: ${{ github.sha }}
           files: VRCXDiscordTracker.zip
+
+      - name: VirusTotal Scan
+        uses: crazy-max/ghaction-virustotal@v4
+        with:
+          vt_api_key: ${{ secrets.VT_API_KEY }}
+          files: |
+            VRCXDiscordTracker/bin/Publish/*
