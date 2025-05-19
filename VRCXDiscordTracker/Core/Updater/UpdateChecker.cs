@@ -1,16 +1,33 @@
 using System.Diagnostics;
 
 namespace VRCXDiscordTracker.Core.Updater;
+
+/// <summary>
+/// アップデートを確認するクラス
+/// </summary>
+/// <param name="gh">GitHubReleaseService</param>
 internal class UpdateChecker(GitHubReleaseService gh)
 {
+    /// <summary>
+    /// 最新リリース情報
+    /// </summary>
     private ReleaseInfo? _latest = null;
 
+    /// <summary>
+    /// 最新リリース情報を取得する
+    /// </summary>
+    /// <returns>最新リリース情報</returns>
     public async Task<ReleaseInfo> GetLatestRelease()
     {
         _latest = await gh.GetLatestReleaseAsync("VRCXDiscordTracker.zip");
         return _latest;
     }
 
+    /// <summary>
+    /// アップデートが可能かどうかを確認する
+    /// </summary>
+    /// <returns>アップデート可能な場合はtrue</returns>
+    /// <exception cref="InvalidOperationException">GetLatestReleaseAsyncが呼ばれていない場合</exception>
     public bool IsUpdateAvailable()
     {
         if (_latest == null)
@@ -22,6 +39,11 @@ internal class UpdateChecker(GitHubReleaseService gh)
         return _latest.Version > localVersion;
     }
 
+    /// <summary>
+    /// アップデートを確認する
+    /// </summary>
+    /// <returns>アップデート処理の開始に成功した場合はtrue</returns>
+    /// <exception cref="FileNotFoundException">アップデータが見つからない場合</exception>
     public static async Task<bool> Check()
     {
         try
