@@ -42,7 +42,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     /// Embed のフッターに表示するテキストを取得する
     /// </summary>
     /// <returns>Embed フッター用テキスト</returns>
-    public static string EmbedFooterText => $"{AppConstants.AppName} {AppConstants.AppVersion.Major}.{AppConstants.AppVersion.Minor}.{AppConstants.AppVersion.Build}";
+    public static string EmbedFooterText => $"{AppConstants.AppName} {AppConstants.AppVersionString}";
 
     /// <summary>
     /// DIscordにメッセージを送信、もしくは更新する

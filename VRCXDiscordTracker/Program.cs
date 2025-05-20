@@ -6,6 +6,7 @@ using VRCXDiscordTracker.Core;
 using VRCXDiscordTracker.Core.Config;
 using VRCXDiscordTracker.Core.Notification;
 using VRCXDiscordTracker.Core.UI.TrayIcon;
+using VRCXDiscordTracker.Core.Updater;
 
 namespace VRCXDiscordTracker;
 
@@ -18,7 +19,7 @@ internal static partial class Program
     private static partial bool AllocConsole();
 
     [STAThread]
-    static void Main()
+    static async Task Main()
     {
         if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
         {
@@ -41,6 +42,20 @@ internal static partial class Program
 
         Console.WriteLine("Program.Main");
 
+        if (cmds.Any(cmd => cmd.Equals("--skip-update")))
+        {
+            Console.WriteLine("Skip update check");
+        }
+        else
+        {
+            var existsUpdate = await UpdateChecker.Check();
+            if (existsUpdate)
+            {
+                Console.WriteLine("Found update. Exiting...");
+                return;
+            }
+        }
+
         ApplicationConfiguration.Initialize();
 
         var trayIcon = new TrayIcon();
@@ -58,7 +73,7 @@ internal static partial class Program
 
             if (AppConfig.NotifyOnStart)
             {
-                DiscordNotificationService.SendAppStartMessage().ContinueWith(t =>
+                await DiscordNotificationService.SendAppStartMessage().ContinueWith(t =>
                 {
                     if (t.IsFaulted)
                     {
