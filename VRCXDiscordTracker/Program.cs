@@ -149,7 +149,7 @@ internal static partial class Program
         AppendSection("Environment",
             $"OS: {Environment.OSVersion}\n" +
             $"CLR: {Environment.Version}\n" +
-            $"App: {AppConstants.AppName} {AppConstants.AppVersion}");
+            $"App: {AppConstants.AppName} {AppConstants.AppVersionString}");
 
         return sb.ToString().Trim();
     }
