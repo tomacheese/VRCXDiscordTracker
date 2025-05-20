@@ -107,7 +107,8 @@ internal static partial class Program
         {
             Process.Start(new ProcessStartInfo()
             {
-                FileName = "https://github.com/tomacheese/" + AppConstants.AppName + "/issues/new?body=" + Uri.EscapeDataString(GetErrorDetails(e, true)),
+                FileName = $"https://github.com/tomacheese/{AppConstants.AppName}/issues/new?body={Uri.EscapeDataString(GetErrorDetails(e, true))}",
+
                 UseShellExecute = true,
             });
         }
@@ -138,9 +139,7 @@ internal static partial class Program
             var title = level == 0
                 ? "Error"
                 : $"Inner Exception (Level {level})";
-            AppendSection(title,
-                (current.Message ?? "<no message>") + "\n" +
-                (current.StackTrace ?? "<no trace>"));
+            AppendSection(title, $"{(current.Message ?? "<no message>")}\n{(current.StackTrace ?? "<no trace>")}");
 
             current = current.InnerException;
             level++;
