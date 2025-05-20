@@ -9,8 +9,6 @@ internal class AppConstants
     public static readonly string AppName = Assembly.GetExecutingAssembly().GetName().Name ?? string.Empty;
 
     /// <summary>
-    /// アプリケーションバージョン
-    /// <summary>
     /// アプリケーションバージョンの文字列
     /// </summary>
     public static readonly string AppVersionString = (Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0)).ToString(3); // Major.Minor.Patch
