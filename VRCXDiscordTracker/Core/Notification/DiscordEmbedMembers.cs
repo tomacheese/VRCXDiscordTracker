@@ -320,12 +320,19 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
             var emoji = GetMemberEmoji(member);
             var escapedName = $"`{member.DisplayName}`";
 
+            // 参加日時は、参加時刻がある場合はそれを、無い場合は Unknown を表示
+            var joinText = member.LastJoinAt.HasValue ? FormatDateTime(member.LastJoinAt) : "_Unknown_";
+            // 退出日時は、参加日時よりも新しい場合もしくは参加日時が無い場合は表示。それ以外の場合は空文字
+            var leaveText = (member.LastLeaveAt.HasValue && (member.LastLeaveAt > member.LastJoinAt || !member.LastJoinAt.HasValue))
+                ? FormatDateTime(member.LastLeaveAt)
+                : string.Empty;
+
+            var joinLeave = $"{joinText} - {leaveText}";
+
             var text = memberTextFormat switch
             {
-                MemberTextFormat.Full => $"{emoji} [{escapedName}](https://vrchat.com/home/user/{member.UserId}): {FormatDateTime(member.LastJoinAt)}" +
-                    (member.LastLeaveAt.HasValue && member.LastLeaveAt > member.LastJoinAt ? $" - {FormatDateTime(member.LastLeaveAt)}" : ""),
-                MemberTextFormat.ExcludeLinks => $"{emoji} {escapedName}: {FormatDateTime(member.LastJoinAt)}" +
-                    (member.LastLeaveAt.HasValue && member.LastLeaveAt > member.LastJoinAt ? $" - {FormatDateTime(member.LastLeaveAt)}" : ""),
+                MemberTextFormat.Full => $"{emoji} [{escapedName}](https://vrchat.com/home/user/{member.UserId}): {joinLeave}",
+                MemberTextFormat.ExcludeLinks => $"{emoji} {escapedName}: {joinLeave}",
                 MemberTextFormat.NameOnly => $"{emoji} {escapedName}",
                 _ => throw new ArgumentOutOfRangeException(nameof(memberTextFormat), memberTextFormat, null)
             };

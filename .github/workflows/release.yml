@@ -56,6 +56,10 @@ jobs:
           (Get-Content .\VRCXDiscordTracker\VRCXDiscordTracker.csproj) -replace '<Version>[^<]*(</Version>)', "<Version>$version</Version>" | Set-Content .\VRCXDiscordTracker\VRCXDiscordTracker.csproj
           (Get-Content .\VRCXDiscordTracker\VRCXDiscordTracker.csproj) -replace '<AssemblyVersion>[^<]*</AssemblyVersion>', "<AssemblyVersion>$versionWithRevision</AssemblyVersion>" | Set-Content .\VRCXDiscordTracker\VRCXDiscordTracker.csproj
           (Get-Content .\VRCXDiscordTracker\VRCXDiscordTracker.csproj) -replace '<FileVersion>[^<]*</FileVersion>', "<FileVersion>$versionWithRevision</FileVersion>" | Set-Content .\VRCXDiscordTracker\VRCXDiscordTracker.csproj
+
+          (Get-Content .\VRCXDiscordTracker.Updater\VRCXDiscordTracker.Updater.csproj) -replace '<Version>[^<]*(</Version>)', "<Version>$version</Version>" | Set-Content .\VRCXDiscordTracker.Updater\VRCXDiscordTracker.Updater.csproj
+          (Get-Content .\VRCXDiscordTracker.Updater\VRCXDiscordTracker.Updater.csproj) -replace '<AssemblyVersion>[^<]*</AssemblyVersion>', "<AssemblyVersion>$versionWithRevision</AssemblyVersion>" | Set-Content .\VRCXDiscordTracker.Updater\VRCXDiscordTracker.Updater.csproj
+          (Get-Content .\VRCXDiscordTracker.Updater\VRCXDiscordTracker.Updater.csproj) -replace '<FileVersion>[^<]*</FileVersion>', "<FileVersion>$versionWithRevision</FileVersion>" | Set-Content .\VRCXDiscordTracker.Updater\VRCXDiscordTracker.Updater.csproj
         shell: pwsh
         env:
           APP_VERSION: ${{ needs.bump-version.outputs.version }}
@@ -69,7 +73,7 @@ jobs:
       - name: Create zip
         run: |
           $zipFilePath = "VRCXDiscordTracker.zip"
-          $sourceDir = "VRCXDiscordTracker/bin/Publish/*"
+          $sourceDir = "bin/Publish/*"
           Compress-Archive -Path $sourceDir -DestinationPath $zipFilePath -Force
         shell: pwsh
 

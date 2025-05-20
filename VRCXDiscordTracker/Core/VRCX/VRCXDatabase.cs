@@ -164,15 +164,23 @@ internal class VRCXDatabase
             while (reader.Read())
             {
                 // 取得したデータを処理
+                var userId = reader.GetString(0);
+                var displayName = reader.GetString(1);
+                DateTime? lastJoinAt = reader.IsDBNull(2) ? null : DateTime.Parse(reader.GetString(2), CultureInfo.InvariantCulture);
+                DateTime? lastLeaveAt = reader.IsDBNull(3) ? null : DateTime.Parse(reader.GetString(3), CultureInfo.InvariantCulture);
+                var isCurrently = reader.GetBoolean(4);
+                var isInstanceOwner = reader.GetBoolean(5);
+                var isFriend = reader.GetBoolean(6);
+
                 var instanceMember = new InstanceMember
                 {
-                    UserId = reader.GetString(0),
-                    DisplayName = reader.GetString(1),
-                    LastJoinAt = DateTime.Parse(reader.GetString(2), CultureInfo.InvariantCulture),
-                    LastLeaveAt = reader.IsDBNull(3) ? null : DateTime.Parse(reader.GetString(3), CultureInfo.InvariantCulture),
-                    IsCurrently = reader.GetBoolean(4),
-                    IsInstanceOwner = reader.GetBoolean(5),
-                    IsFriend = reader.GetBoolean(6),
+                    UserId = userId,
+                    DisplayName = displayName,
+                    LastJoinAt = lastJoinAt,
+                    LastLeaveAt = lastLeaveAt,
+                    IsCurrently = isCurrently,
+                    IsInstanceOwner = isInstanceOwner,
+                    IsFriend = isFriend,
                 };
                 instanceMembers.Add(instanceMember);
             }

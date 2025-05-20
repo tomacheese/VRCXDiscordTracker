@@ -18,7 +18,7 @@ internal class InstanceMember
     /// <summary>
     /// 最終参加日時
     /// </summary>
-    public required DateTime LastJoinAt { get; set; }
+    public required DateTime? LastJoinAt { get; set; }
 
     /// <summary>
     /// 最終退出日時
