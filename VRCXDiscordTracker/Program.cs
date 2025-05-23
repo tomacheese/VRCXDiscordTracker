@@ -106,14 +106,17 @@ internal static partial class Program
         Console.WriteLine($"InnerException StackTrace: {e.InnerException?.StackTrace}");
 
         DialogResult result = MessageBox.Show(
-            "An error has occurred and the operation has stopped.\n" +
-            "It would be helpful if you could report this bug using GitHub issues!\n" +
-            "https://github.com/tomacheese/" + AppConstants.AppName + "/issues\n" +
-            "\n" +
-            GetErrorDetails(e, false) +
-            "\n\n" +
-            "Click OK to open the Create GitHub issue page.\n" +
-            "Click Cancel to close this application.",
+            string.Join("\n", new List<string>()
+            {
+                "An error has occurred and the operation has stopped.",
+                "It would be helpful if you could report this bug using GitHub issues!",
+                $"https://github.com/tomacheese/{AppConstants.AppName}/issues",
+                "",
+                GetErrorDetails(e, false),
+                "",
+                "Click OK to open the Create GitHub issue page.",
+                "Click Cancel to close this application.",
+            }),
             $"Error ({exceptionType})",
             MessageBoxButtons.OKCancel,
             MessageBoxIcon.Error);
