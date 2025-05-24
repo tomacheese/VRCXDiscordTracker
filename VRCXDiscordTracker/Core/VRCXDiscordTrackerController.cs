@@ -9,7 +9,7 @@ namespace VRCXDiscordTracker.Core;
 /// <summary>
 /// VRCXDiscordTrackerのコントローラークラス
 /// </summary>
-internal class VRCXDiscordTrackerController
+internal class VRCXDiscordTrackerController : IDisposable
 {
     /// <summary>
     /// VRCXのSQLiteデータベースのパス
@@ -110,7 +110,7 @@ internal class VRCXDiscordTrackerController
                 List<InstanceMember> instanceMembers = _vrcxDatabase.GetInstanceMembers(userId, myLocation);
                 Console.WriteLine($"GetInstanceMembers: {instanceMembers.Count}");
 
-                await new DiscordNotificationService(myLocation, instanceMembers).SendUpdateMessageAsync();
+                await new DiscordNotificationService(myLocation, instanceMembers).SendUpdateMessageAsync().ConfigureAwait(false);
             }
         }
         catch (Exception ex)

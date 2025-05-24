@@ -159,11 +159,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         var idx = 0;
         return SanitizeUnderscoreRegex().Replace(text, match =>
         {
-            if (match.Groups[1].Success)
-            {
-                return ++idx % 2 == 1 ? $"{match.Groups[1].Value}\\_\\_" : $"\\_\\_{match.Groups[1].Value}";
-            }
-            return "\\_\\_";
+            return match.Groups[1].Success ? ++idx % 2 == 1 ? $"{match.Groups[1].Value}\\_\\_" : $"\\_\\_{match.Groups[1].Value}" : "\\_\\_";
         });
     }
 
@@ -243,12 +239,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
             fields.RemoveAt(fields.Count - 1);
         }
 
-        if (!ValidateEmbed(baseEmbed.WithFields(fields)))
-        {
-            throw new Exception("Embed is too long after reducing fields.");
-        }
-
-        return fields;
+        return !ValidateEmbed(baseEmbed.WithFields(fields)) ? throw new Exception("Embed is too long after reducing fields.") : fields;
     }
 
     /// <summary>
@@ -348,25 +339,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
     /// </summary>
     /// <param name="member">対象メンバー</param>
     /// <returns>オーナーは👑、自身は👤、フレンドは⭐️、その他は⬜️</returns>
-    private string GetMemberEmoji(InstanceMember member)
-    {
-        if (member.IsInstanceOwner)
-        {
-            return "👑";
-        }
-
-        if (member.UserId == myLocation.UserId)
-        {
-            return "👤";
-        }
-
-        if (member.IsFriend)
-        {
-            return "⭐️";
-        }
-
-        return "⬜️";
-    }
+    private string GetMemberEmoji(InstanceMember member) => member.IsInstanceOwner ? "👑" : member.UserId == myLocation.UserId ? "👤" : member.IsFriend ? "⭐️" : "⬜️";
 
     /// <summary>
     /// EmbedField のパターンを定義するレコード

@@ -2,10 +2,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace VRCXDiscordTracker.Core.Updater;
+
 /// <summary>
 /// GitHubのリリース情報を取得するサービス
 /// </summary>
-internal class GitHubReleaseService
+internal class GitHubReleaseService : IDisposable
 {
     private readonly HttpClient _http;
     private readonly string _owner;
@@ -34,15 +35,16 @@ internal class GitHubReleaseService
     public async Task<ReleaseInfo> GetLatestReleaseAsync(string assetName)
     {
         var url = $"https://api.github.com/repos/{_owner}/{_repo}/releases/latest";
-        var json = await _http.GetStringAsync(url);
+        var uri = new Uri(url);
+        var json = await _http.GetStringAsync(uri).ConfigureAwait(false);
         JObject obj = JsonConvert.DeserializeObject<JObject>(json)!;
         var tagName = obj["tag_name"]!.ToString();
         var assetUrl = obj["assets"]!
             .FirstOrDefault(x => x["name"]!.ToString() == assetName)?["browser_download_url"]?.ToString();
-        if (string.IsNullOrEmpty(assetUrl))
-        {
-            throw new Exception($"Failed to find asset: {assetName}");
-        }
-        return new ReleaseInfo(tagName, assetUrl);
+        return string.IsNullOrEmpty(assetUrl)
+            ? throw new Exception($"Failed to find asset: {assetName}")
+            : new ReleaseInfo(tagName, assetUrl);
     }
+
+    public void Dispose() => throw new NotImplementedException();
 }

@@ -19,7 +19,7 @@ internal class UpdateChecker(GitHubReleaseService gh)
     /// <returns>最新リリース情報</returns>
     public async Task<ReleaseInfo> GetLatestRelease()
     {
-        _latest = await gh.GetLatestReleaseAsync("VRCXDiscordTracker.zip");
+        _latest = await gh.GetLatestReleaseAsync("VRCXDiscordTracker.zip").ConfigureAwait(false);
         return _latest;
     }
 
@@ -50,7 +50,7 @@ internal class UpdateChecker(GitHubReleaseService gh)
         {
             var gh = new GitHubReleaseService(AppConstants.GitHubRepoOwner, AppConstants.GitHubRepoName);
             var checker = new UpdateChecker(gh);
-            ReleaseInfo latest = await checker.GetLatestRelease();
+            ReleaseInfo latest = await checker.GetLatestRelease().ConfigureAwait(false);
             if (!checker.IsUpdateAvailable())
             {
                 Console.WriteLine("No update available.");
@@ -93,8 +93,8 @@ internal class UpdateChecker(GitHubReleaseService gh)
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"Update check failed: {ex.Message}");
-            Console.Error.WriteLine(ex.StackTrace);
+            await Console.Error.WriteLineAsync($"Update check failed: {ex.Message}").ConfigureAwait(false);
+            await Console.Error.WriteLineAsync(ex.StackTrace).ConfigureAwait(false);
             return false;
         }
     }
