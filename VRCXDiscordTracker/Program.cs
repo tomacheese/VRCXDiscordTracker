@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Toolkit.Uwp.Notifications;
@@ -102,23 +103,20 @@ internal static partial class Program
         Console.WriteLine($"Message: {e.Message}");
         Console.WriteLine($"InnerException: {e.InnerException?.Message}");
         Console.WriteLine($"StackTrace: {e.StackTrace}");
-
-        var errorDetailAndStacktrace = "----- Error Details -----\n" +
-            e.Message + "\n" +
-            e.InnerException?.Message + "\n" +
-            "\n" +
-            "----- StackTrace -----\n" +
-            e.StackTrace + "\n";
+        Console.WriteLine($"InnerException StackTrace: {e.InnerException?.StackTrace}");
 
         DialogResult result = MessageBox.Show(
-            "An error has occurred and the operation has stopped.\n" +
-            "It would be helpful if you could report this bug using GitHub issues!\n" +
-            "https://github.com/tomacheese/" + AppConstants.AppName + "/issues\n" +
-            "\n" +
-            errorDetailAndStacktrace +
-            "\n" +
-            "Click OK to open the Create GitHub issue page.\n" +
-            "Click Cancel to close this application.",
+            string.Join("\n", new List<string>()
+            {
+                "An error has occurred and the operation has stopped.",
+                "It would be helpful if you could report this bug using GitHub issues!",
+                $"https://github.com/tomacheese/{AppConstants.AppName}/issues",
+                "",
+                GetErrorDetails(e, false),
+                "",
+                "Click OK to open the Create GitHub issue page.",
+                "Click Cancel to close this application.",
+            }),
             $"Error ({exceptionType})",
             MessageBoxButtons.OKCancel,
             MessageBoxIcon.Error);
@@ -127,10 +125,50 @@ internal static partial class Program
         {
             Process.Start(new ProcessStartInfo()
             {
-                FileName = "https://github.com/tomacheese/" + AppConstants.AppName + "/issues/new?body=" + Uri.EscapeDataString(errorDetailAndStacktrace),
+                FileName = $"https://github.com/tomacheese/{AppConstants.AppName}/issues/new?body={Uri.EscapeDataString(GetErrorDetails(e, true))}",
+
                 UseShellExecute = true,
             });
         }
         Application.Exit();
+    }
+
+    private static string GetErrorDetails(Exception e, bool isMarkdown)
+    {
+        var sb = new StringBuilder();
+        var fence = isMarkdown ? "```" : string.Empty;
+
+        void AppendSection(string title, string content)
+        {
+            if (isMarkdown)
+            {
+                sb.AppendLine(CultureInfo.InvariantCulture, $"## {title}\n\n{fence}\n{content}\n{fence}\n");
+            }
+            else
+            {
+                sb.AppendLine(CultureInfo.InvariantCulture, $"----- {title} -----\n{content}\n");
+            }
+        }
+
+        Exception? current = e;
+        var level = 0;
+        while (current != null)
+        {
+            var title = level == 0
+                ? "Error"
+                : $"Inner Exception (Level {level})";
+            AppendSection(title, $"{(current.Message ?? "<no message>")}\n{(current.StackTrace ?? "<no trace>")}");
+
+            current = current.InnerException;
+            level++;
+        }
+
+        // Environment info
+        AppendSection("Environment",
+            $"OS: {Environment.OSVersion}\n" +
+            $"CLR: {Environment.Version}\n" +
+            $"App: {AppConstants.AppName} {AppConstants.AppVersionString}");
+
+        return sb.ToString().Trim();
     }
 }
