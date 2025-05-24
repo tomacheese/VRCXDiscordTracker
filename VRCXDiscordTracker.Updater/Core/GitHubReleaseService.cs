@@ -79,5 +79,9 @@ internal class GitHubReleaseService : IDisposable
         return tmp;
     }
 
-    public void Dispose() => throw new NotImplementedException();
+    public void Dispose()
+    {
+        _http.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }

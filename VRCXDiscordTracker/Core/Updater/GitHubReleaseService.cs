@@ -46,5 +46,9 @@ internal class GitHubReleaseService : IDisposable
             : new ReleaseInfo(tagName, assetUrl);
     }
 
-    public void Dispose() => throw new NotImplementedException();
+    public void Dispose()
+    {
+        _http.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }
