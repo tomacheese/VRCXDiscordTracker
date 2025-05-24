@@ -88,13 +88,13 @@ internal class VRCXDiscordTrackerController : IDisposable
     /// </summary>
     /// <param name="sender">Sender</param>
     /// <param name="e">EventArgs</param>
-    private void OnTimerTick(object? sender, EventArgs e) => Task.Run(Run).Wait();
+    private void OnTimerTick(object? sender, EventArgs e) => Task.Run(RunAsync).Wait();
 
     /// <summary>
     /// 監視処理
     /// </summary>
     /// <returns>Task</returns>
-    private async Task Run()
+    private async Task RunAsync()
     {
         try
         {

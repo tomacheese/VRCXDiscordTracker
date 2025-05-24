@@ -600,6 +600,20 @@ dotnet_naming_rule.methods_should_be_pascal_case.symbols = methods
 # メソッド名のスタイル指定（PascalCase）
 dotnet_naming_rule.methods_should_be_pascal_case.style = pascal_case
 
+# 非同期メソッド名をAsyncで終わらせることを強制
+dotnet_naming_rule.async_methods_end_in_async.severity = warning
+# 非同期メソッド名に対するルール適用対象指定
+dotnet_naming_rule.async_methods_end_in_async.symbols = async_methods
+# 非同期メソッド名のスタイル指定（PascalCase+Async）
+dotnet_naming_rule.async_methods_end_in_async.style = end_in_async
+
+# Asyncで終わる名前を持つメソッドはasyncキーワードを持つべき
+dotnet_naming_rule.async_suffix_methods_should_be_async.severity = warning
+# Asyncで終わるメソッド名に対するルール適用対象指定
+dotnet_naming_rule.async_suffix_methods_should_be_async.symbols = async_suffix_methods
+# Asyncで終わるメソッド名のスタイル指定（asyncキーワードを持つべき）
+dotnet_naming_rule.async_suffix_methods_should_be_async.style = must_be_async
+
 # インターフェース名をIで始めることを強制
 dotnet_naming_rule.interface_should_be_prefixed_with_i.severity = warning
 # インターフェース名に対するルール適用対象指定
@@ -685,6 +699,20 @@ dotnet_naming_symbols.types.applicable_kinds = class, struct, enum, interface
 dotnet_naming_symbols.types.applicable_accessibilities = *
 # 型全般の修飾子指定なし
 dotnet_naming_symbols.types.required_modifiers =
+# 非同期メソッドに対する適用範囲指定
+dotnet_naming_symbols.async_methods.applicable_kinds = method
+# 非同期メソッドのアクセス修飾子指定なし
+dotnet_naming_symbols.async_methods.applicable_accessibilities = *
+# 非同期メソッドの修飾子指定（async）
+dotnet_naming_symbols.async_methods.required_modifiers = async
+# Asyncで終わる名前を持つメソッドに対する適用範囲指定
+dotnet_naming_symbols.async_suffix_methods.applicable_kinds = method
+# Asyncで終わる名前を持つメソッドのアクセス修飾子指定なし
+dotnet_naming_symbols.async_suffix_methods.applicable_accessibilities = *
+# Asyncで終わる名前を持つメソッドの修飾子指定なし
+dotnet_naming_symbols.async_suffix_methods.required_modifiers = 
+# Asyncで終わる名前を持つメソッドの名前パターン
+dotnet_naming_symbols.async_suffix_methods.required_suffix = Async
 # privateフィールドに対する適用範囲指定
 dotnet_naming_symbols.private_fields.applicable_kinds = field
 # privateフィールドのアクセス修飾子指定（private）
@@ -749,3 +777,11 @@ dotnet_naming_style.pascal_case.capitalization = pascal_case
 dotnet_naming_style.camel_case_with_underscore.required_prefix = _
 # _+camelCaseの大文字小文字指定
 dotnet_naming_style.camel_case_with_underscore.capitalization = camel_case
+# Asyncで終わるPascalCaseスタイル指定
+dotnet_naming_style.end_in_async.required_suffix = Async
+# Asyncで終わるPascalCaseの大文字小文字指定
+dotnet_naming_style.end_in_async.capitalization = pascal_case
+# asyncキーワードを持つべきスタイル指定
+dotnet_naming_style.must_be_async.required_modifiers = async
+# asyncキーワードを持つべきの大文字小文字指定
+dotnet_naming_style.must_be_async.capitalization = pascal_case
