@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 
 namespace VRCXDiscordTracker.Core.Config;
+
 /// <summary>
 /// 設定データを格納するクラス
 /// </summary>

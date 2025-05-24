@@ -17,9 +17,9 @@ internal class UpdateChecker(GitHubReleaseService gh)
     /// 最新リリース情報を取得する
     /// </summary>
     /// <returns>最新リリース情報</returns>
-    public async Task<ReleaseInfo> GetLatestRelease()
+    public async Task<ReleaseInfo> GetLatestReleaseAsync()
     {
-        _latest = await gh.GetLatestReleaseAsync("VRCXDiscordTracker.zip");
+        _latest = await gh.GetLatestReleaseAsync("VRCXDiscordTracker.zip").ConfigureAwait(false);
         return _latest;
     }
 
@@ -44,13 +44,13 @@ internal class UpdateChecker(GitHubReleaseService gh)
     /// </summary>
     /// <returns>アップデート処理の開始に成功した場合はtrue</returns>
     /// <exception cref="FileNotFoundException">アップデータが見つからない場合</exception>
-    public static async Task<bool> Check()
+    public static async Task<bool> CheckAsync()
     {
         try
         {
             var gh = new GitHubReleaseService(AppConstants.GitHubRepoOwner, AppConstants.GitHubRepoName);
             var checker = new UpdateChecker(gh);
-            ReleaseInfo latest = await checker.GetLatestRelease();
+            ReleaseInfo latest = await checker.GetLatestReleaseAsync().ConfigureAwait(false);
             if (!checker.IsUpdateAvailable())
             {
                 Console.WriteLine("No update available.");
@@ -93,8 +93,8 @@ internal class UpdateChecker(GitHubReleaseService gh)
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"Update check failed: {ex.Message}");
-            Console.Error.WriteLine(ex.StackTrace);
+            await Console.Error.WriteLineAsync($"Update check failed: {ex.Message}").ConfigureAwait(false);
+            await Console.Error.WriteLineAsync(ex.StackTrace).ConfigureAwait(false);
             return false;
         }
     }

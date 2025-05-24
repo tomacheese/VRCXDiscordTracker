@@ -18,7 +18,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     /// <summary>
     /// 保存パス
     /// </summary>
-    private static readonly string _saveFilePath = "discord-messages.json";
+    private const string SaveFilePath = "discord-messages.json";
 
     /// <summary>
     /// JoinIdとMessageIdのペアを保存する辞書
@@ -59,14 +59,14 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
 
         if (messageId != null)
         {
-            var updateResult = await UpdateMessage((ulong)messageId, embed);
+            var updateResult = await UpdateMessageAsync((ulong)messageId, embed).ConfigureAwait(false);
             if (updateResult)
             {
                 return;
             }
         }
 
-        ulong? newMessageId = await SendNewMessage(embed) ?? throw new Exception("Failed to send new message. Webhook URL is empty.");
+        ulong? newMessageId = await SendNewMessageAsync(embed).ConfigureAwait(false) ?? throw new Exception("Failed to send new message. Webhook URL is empty.");
         _joinIdMessageIdPairs[joinId] = (ulong)newMessageId;
         SaveJoinIdMessageIdPairs();
     }
@@ -75,9 +75,9 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     /// アプリケーションの起動メッセージを送信する
     /// </summary>
     /// <returns>Task</returns>
-    public static async Task SendAppStartMessage()
+    public static async Task SendAppStartMessageAsync()
     {
-        await SendNewMessage(new EmbedBuilder
+        await SendNewMessageAsync(new EmbedBuilder
         {
             Title = AppConstants.AppName,
             Description = "Application has started.",
@@ -87,16 +87,16 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             {
                 Text = EmbedFooterText,
             }
-        }.Build());
+        }.Build()).ConfigureAwait(false);
     }
 
     /// <summary>
     /// アプリケーションの終了メッセージを送信する
     /// </summary>
     /// <returns>Task</returns>
-    public static async Task SendAppExitMessage()
+    public static async Task SendAppExitMessageAsync()
     {
-        await SendNewMessage(new EmbedBuilder
+        await SendNewMessageAsync(new EmbedBuilder
         {
             Title = AppConstants.AppName,
             Description = "Application has exited",
@@ -106,7 +106,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             {
                 Text = EmbedFooterText,
             }
-        }.Build());
+        }.Build()).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -114,13 +114,13 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     /// </summary>
     /// <param name="embed">メッセージのEmbed</param>
     /// <returns>メッセージIDを含むTask</returns>
-    private static async Task<ulong?> SendNewMessage(Embed embed)
+    private static async Task<ulong?> SendNewMessageAsync(Embed embed)
     {
         var url = AppConfig.DiscordWebhookUrl;
         if (string.IsNullOrEmpty(url)) return null;
 
         using var client = new DiscordWebhookClient(url);
-        return await client.SendMessageAsync(text: string.Empty, embeds: [embed]);
+        return await client.SendMessageAsync(text: string.Empty, embeds: [embed]).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -129,7 +129,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     /// <param name="messageId">メッセージID</param>
     /// <param name="embed">メッセージのEmbed</param>
     /// <returns>更新が成功した場合はtrue、失敗した場合はfalseを含むTask</returns>
-    private static async Task<bool> UpdateMessage(ulong messageId, Embed embed)
+    private static async Task<bool> UpdateMessageAsync(ulong messageId, Embed embed)
     {
         var url = AppConfig.DiscordWebhookUrl;
         if (string.IsNullOrEmpty(url)) return false;
@@ -143,7 +143,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
         using var client = new DiscordWebhookClient(url);
         try
         {
-            await client.ModifyMessageAsync(messageId, m => m.Embeds = new[] { embed });
+            await client.ModifyMessageAsync(messageId, m => m.Embeds = new[] { embed }).ConfigureAwait(false);
             _lastMessageContent[messageId] = embed;
             return true;
         }
@@ -160,14 +160,14 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     /// <returns>JoinIdとMessageIdのペアを保存する辞書</returns>
     private static Dictionary<string, ulong> LoadJoinIdMessageIdPairs()
     {
-        if (!File.Exists(_saveFilePath))
+        if (!File.Exists(SaveFilePath))
         {
             return [];
         }
 
         try
         {
-            var json = File.ReadAllText(_saveFilePath);
+            var json = File.ReadAllText(SaveFilePath);
             return JsonSerializer.Deserialize<Dictionary<string, ulong>>(json) ?? [];
         }
         catch
@@ -184,7 +184,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
         try
         {
             var json = JsonSerializer.Serialize(_joinIdMessageIdPairs, _jsonSerializerOptions);
-            File.WriteAllText(_saveFilePath, json);
+            File.WriteAllText(SaveFilePath, json);
         }
         catch (Exception ex)
         {

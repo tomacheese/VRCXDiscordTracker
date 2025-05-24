@@ -1,15 +1,15 @@
-namespace VRCXDiscordTracker.Updater;
-
-using System;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using VRCXDiscordTracker.Updater.Core;
 
+namespace VRCXDiscordTracker.Updater;
+
+/// <summary>
+/// アプリケーションアップデータ
+/// </summary>
 internal class Program
 {
-    static async Task Main(string[] args)
+    private static async Task Main(string[] args)
     {
         Console.WriteLine("--------------------------------------------------");
         Console.WriteLine($"Application Updater {AppConstants.AppVersionString}");
@@ -18,7 +18,7 @@ internal class Program
         // 引数のパース
         // --app-name="<アプリ名>"
         // --target="<インストールフォルダ>"
-        // --asset="<ダウンロードアセット名>"
+        // --asset-name="<ダウンロードアセット名>"
         var appName = GetArgValue(args, "--app-name") ?? string.Empty;
         var target = GetArgValue(args, "--target") ?? string.Empty;
         var assetName = GetArgValue(args, "--asset-name") ?? string.Empty;
@@ -77,12 +77,12 @@ internal class Program
 
             // 最新リリースの取得
             var gh = new GitHubReleaseService(repoOwner, repoName);
-            ReleaseInfo latest = await gh.GetLatestReleaseAsync(assetName);
+            ReleaseInfo latest = await gh.GetLatestReleaseAsync(assetName).ConfigureAwait(false);
 
             // ダウンロード
             Console.WriteLine($"Downloading v{latest.Version} ...");
             var userAgent = $"{repoOwner} {repoName} ({AppConstants.AppVersionString})";
-            var zipPath = await gh.DownloadWithProgressAsync(latest.AssetUrl);
+            var zipPath = await gh.DownloadWithProgressAsync(latest.AssetUrl).ConfigureAwait(false);
 
             // アプリ停止
             Console.WriteLine("Stopping running processes...");
@@ -109,9 +109,9 @@ internal class Program
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"Error: {ex.Message}");
-            Console.Error.WriteLine(ex.StackTrace);
-            Console.Error.WriteLine("Press any key to start in update skip mode.");
+            await Console.Error.WriteLineAsync($"Error: {ex.Message}").ConfigureAwait(false);
+            await Console.Error.WriteLineAsync(ex.StackTrace).ConfigureAwait(false);
+            await Console.Error.WriteLineAsync("Press any key to start in update skip mode.").ConfigureAwait(false);
             Console.ReadKey(true);
 
             // アプリケーションをアップデートスキップモードで起動

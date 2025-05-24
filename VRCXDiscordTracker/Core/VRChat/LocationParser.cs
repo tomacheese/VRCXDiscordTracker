@@ -32,13 +32,13 @@ internal partial class LocationParser
             throw new ArgumentException("Location ID cannot be null or empty.", nameof(locationId));
 
         // ローカルインスタンス "local:" は対象外
-        if (locationId.StartsWith("local:"))
+        if (locationId.StartsWith("local:", StringComparison.Ordinal))
             throw new FormatException("Local instances are not supported.");
         // オフラインインスタンス "offline:" は対象外
-        if (locationId.StartsWith("offline:"))
+        if (locationId.StartsWith("offline:", StringComparison.Ordinal))
             throw new FormatException("Offline instances are not supported.");
         // トラベリングインスタンス "traveling:" は対象外
-        if (locationId.StartsWith("traveling:"))
+        if (locationId.StartsWith("traveling:", StringComparison.Ordinal))
             throw new FormatException("Traveling instances are not supported.");
 
         Match m = LocationRegex().Match(locationId);
@@ -133,7 +133,7 @@ internal partial class LocationParser
         /// <returns></returns>
         public static ExtractedTokens Parse(string[] tokens)
         {
-            var regionToken = tokens.FirstOrDefault(t => t.StartsWith("region("))?[7..^1];
+            var regionToken = tokens.FirstOrDefault(t => t.StartsWith("region(", StringComparison.Ordinal))?[7..^1];
             var creatorIdToken = tokens.FirstOrDefault(t => UserRegex().IsMatch(t));
             Match creatorIdMatch = UserRegex().Match(creatorIdToken ?? string.Empty);
             var creatorId = creatorIdMatch.Success ? creatorIdMatch.Groups["userId"].Value : null;
@@ -142,23 +142,23 @@ internal partial class LocationParser
                 // Region: region(jp), region(eu), region(use), region(us)
                 Region = InstanceRegion.GetByToken(regionToken),
                 // Group: group(grp_12345)
-                GroupId = tokens.FirstOrDefault(t => t.StartsWith("group("))?[6..^1],
+                GroupId = tokens.FirstOrDefault(t => t.StartsWith("group(", StringComparison.Ordinal))?[6..^1],
                 // Group Access Type: groupAccessType(members), groupAccessType(plus), groupAccessType(public)
-                GroupAccessType = tokens.FirstOrDefault(t => t.StartsWith("groupAccessType("))?[16..^1],
+                GroupAccessType = tokens.FirstOrDefault(t => t.StartsWith("groupAccessType(", StringComparison.Ordinal))?[16..^1],
                 // Can Request Invite: canRequestInvite
                 CanRequestInvite = tokens.Contains("canRequestInvite"),
                 // CreatorId: (usr_0b83d9be-9852-42dd-98e2-625062400acc)
                 CreatorId = creatorId,
                 // hidden(usr_0b83d9be-9852-42dd-98e2-625062400acc)
-                IsHiddenToken = tokens.FirstOrDefault(t => t.StartsWith("hidden(")) != null,
+                IsHiddenToken = tokens.FirstOrDefault(t => t.StartsWith("hidden(", StringComparison.Ordinal)) != null,
                 // friends(usr_0b83d9be-9852-42dd-98e2-625062400acc)
-                IsFriendsToken = tokens.FirstOrDefault(t => t.StartsWith("friends(")) != null,
+                IsFriendsToken = tokens.FirstOrDefault(t => t.StartsWith("friends(", StringComparison.Ordinal)) != null,
                 // private(usr_0b83d9be-9852-42dd-98e2-625062400acc)
-                IsInviteToken = tokens.FirstOrDefault(t => t.StartsWith("private(")) != null,
+                IsInviteToken = tokens.FirstOrDefault(t => t.StartsWith("private(", StringComparison.Ordinal)) != null,
                 // group(grp_12345)
-                IsGroupToken = tokens.FirstOrDefault(t => t.StartsWith("group(")) != null,
+                IsGroupToken = tokens.FirstOrDefault(t => t.StartsWith("group(", StringComparison.Ordinal)) != null,
                 // Nonce: nonce(6ba04d44-1774-4c70-a92d-4438615d6962)
-                Nonce = tokens.FirstOrDefault(t => t.StartsWith("nonce("))?[6..^1],
+                Nonce = tokens.FirstOrDefault(t => t.StartsWith("nonce(", StringComparison.Ordinal))?[6..^1],
             };
         }
     }

@@ -34,9 +34,9 @@ internal class SemanticVersion(int major, int minor, int patch) : IComparable<Se
     public static SemanticVersion Parse(string s)
     {
         var parts = s.Split('.');
-        if (parts.Length < 3)
-            throw new FormatException("Invalid semantic version");
-        return new SemanticVersion(
+        return parts.Length < 3
+            ? throw new FormatException("Invalid semantic version")
+            : new SemanticVersion(
             int.Parse(parts[0], CultureInfo.InvariantCulture),
             int.Parse(parts[1], CultureInfo.InvariantCulture),
             int.Parse(parts[2], CultureInfo.InvariantCulture)
@@ -50,10 +50,11 @@ internal class SemanticVersion(int major, int minor, int patch) : IComparable<Se
     /// <returns>比較結果 (0:等しい, <0:小さい, >0:大きい)</returns>
     public int CompareTo(SemanticVersion? other)
     {
-        if (other is null) return 1;
-        if (Major != other.Major) return Major.CompareTo(other.Major);
-        if (Minor != other.Minor) return Minor.CompareTo(other.Minor);
-        return Patch.CompareTo(other.Patch);
+        return other is null
+            ? 1
+            : Major != other.Major
+            ? Major.CompareTo(other.Major)
+            : Minor != other.Minor ? Minor.CompareTo(other.Minor) : Patch.CompareTo(other.Patch);
     }
 
     /// <summary>

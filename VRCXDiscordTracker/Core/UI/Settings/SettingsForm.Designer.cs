@@ -37,45 +37,45 @@ partial class SettingsForm
         checkBoxNotifyOnStart = new CheckBox();
         checkBoxNotifyOnExit = new CheckBox();
         SuspendLayout();
-        // 
+        //
         // label2
-        // 
+        //
         label2.AutoSize = true;
         label2.Location = new Point(30, 14);
         label2.Name = "label2";
         label2.Size = new Size(125, 25);
         label2.TabIndex = 2;
         label2.Text = "DatabasePath:";
-        // 
+        //
         // textBoxDatabasePath
-        // 
+        //
         textBoxDatabasePath.Location = new Point(33, 42);
         textBoxDatabasePath.Margin = new Padding(3, 4, 3, 4);
         textBoxDatabasePath.Multiline = true;
         textBoxDatabasePath.Name = "textBoxDatabasePath";
         textBoxDatabasePath.Size = new Size(726, 68);
         textBoxDatabasePath.TabIndex = 3;
-        // 
+        //
         // label3
-        // 
+        //
         label3.AutoSize = true;
         label3.Location = new Point(30, 135);
         label3.Name = "label3";
         label3.Size = new Size(195, 25);
         label3.TabIndex = 4;
         label3.Text = "Discord Webhook URL:";
-        // 
+        //
         // textBoxDiscordWebhookUrl
-        // 
+        //
         textBoxDiscordWebhookUrl.Location = new Point(33, 162);
         textBoxDiscordWebhookUrl.Margin = new Padding(3, 4, 3, 4);
         textBoxDiscordWebhookUrl.Multiline = true;
         textBoxDiscordWebhookUrl.Name = "textBoxDiscordWebhookUrl";
         textBoxDiscordWebhookUrl.Size = new Size(726, 68);
         textBoxDiscordWebhookUrl.TabIndex = 5;
-        // 
+        //
         // buttonSave
-        // 
+        //
         buttonSave.Location = new Point(656, 353);
         buttonSave.Margin = new Padding(3, 4, 3, 4);
         buttonSave.Name = "buttonSave";
@@ -84,9 +84,9 @@ partial class SettingsForm
         buttonSave.Text = "Save";
         buttonSave.UseVisualStyleBackColor = true;
         buttonSave.Click += OnSaveButtonClicked;
-        // 
+        //
         // checkBoxNotifyOnStart
-        // 
+        //
         checkBoxNotifyOnStart.AutoSize = true;
         checkBoxNotifyOnStart.Location = new Point(30, 268);
         checkBoxNotifyOnStart.Name = "checkBoxNotifyOnStart";
@@ -94,9 +94,9 @@ partial class SettingsForm
         checkBoxNotifyOnStart.TabIndex = 7;
         checkBoxNotifyOnStart.Text = "Send a message when the application is started";
         checkBoxNotifyOnStart.UseVisualStyleBackColor = true;
-        // 
+        //
         // checkBoxNotifyOnExit
-        // 
+        //
         checkBoxNotifyOnExit.AutoSize = true;
         checkBoxNotifyOnExit.Location = new Point(30, 303);
         checkBoxNotifyOnExit.Name = "checkBoxNotifyOnExit";
@@ -104,9 +104,9 @@ partial class SettingsForm
         checkBoxNotifyOnExit.TabIndex = 8;
         checkBoxNotifyOnExit.Text = "Send a message when the application is exited";
         checkBoxNotifyOnExit.UseVisualStyleBackColor = true;
-        // 
+        //
         // SettingsForm
-        // 
+        //
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(800, 419);

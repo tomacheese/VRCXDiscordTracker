@@ -6,7 +6,7 @@ namespace VRCXDiscordTracker.Updater.Core;
 /// <summary>
 /// GitHubのリリース情報を取得するサービス
 /// </summary>
-internal class GitHubReleaseService
+internal class GitHubReleaseService : IDisposable
 {
     private readonly HttpClient _http;
     private readonly string _owner;
@@ -36,16 +36,15 @@ internal class GitHubReleaseService
     {
         var url = $"https://api.github.com/repos/{_owner}/{_repo}/releases/latest";
         Console.WriteLine($"GET {url}");
-        var json = await _http.GetStringAsync(url);
+        var uri = new Uri(url);
+        var json = await _http.GetStringAsync(uri).ConfigureAwait(false);
         JObject obj = JsonConvert.DeserializeObject<JObject>(json)!;
         var tagName = obj["tag_name"]!.ToString();
         var assetUrl = obj["assets"]!
             .FirstOrDefault(x => x["name"]!.ToString() == assetName)?["browser_download_url"]?.ToString();
-        if (string.IsNullOrEmpty(assetUrl))
-        {
-            throw new Exception($"Failed to find asset: {assetName}");
-        }
-        return new ReleaseInfo(tagName, assetUrl);
+        return string.IsNullOrEmpty(assetUrl)
+            ? throw new Exception($"Failed to find asset: {assetName}")
+            : new ReleaseInfo(tagName, assetUrl);
     }
 
     /// <summary>
@@ -56,19 +55,20 @@ internal class GitHubReleaseService
     public async Task<string> DownloadWithProgressAsync(string url)
     {
         var tmp = Path.GetTempFileName();
-        using HttpResponseMessage res = await _http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+        var uri = new Uri(url);
+        using HttpResponseMessage res = await _http.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
         res.EnsureSuccessStatusCode();
 
         var total = res.Content.Headers.ContentLength ?? -1L;
-        using Stream stream = await res.Content.ReadAsStreamAsync();
+        using Stream stream = await res.Content.ReadAsStreamAsync().ConfigureAwait(false);
         using FileStream fs = File.OpenWrite(tmp);
 
         var buffer = new byte[81920];
         long downloaded = 0;
         int read;
-        while ((read = await stream.ReadAsync(buffer)) > 0)
+        while ((read = await stream.ReadAsync(buffer).ConfigureAwait(false)) > 0)
         {
-            await fs.WriteAsync(buffer.AsMemory(0, read));
+            await fs.WriteAsync(buffer.AsMemory(0, read)).ConfigureAwait(false);
             downloaded += read;
             if (total > 0)
             {
@@ -79,4 +79,9 @@ internal class GitHubReleaseService
         return tmp;
     }
 
+    public void Dispose()
+    {
+        _http.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }
