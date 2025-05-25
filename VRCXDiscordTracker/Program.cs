@@ -87,11 +87,17 @@ internal static partial class Program
             }
         }
 
-        Application.ApplicationExit += async (s, e) =>
+        Application.ApplicationExit += (s, e) =>
         {
             if (AppConfig.NotifyOnExit)
             {
-                await DiscordNotificationService.SendAppExitMessage();
+                DiscordNotificationService.SendAppExitMessage().ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        Console.WriteLine($"Error sending app exit message: {t.Exception?.Message}");
+                    }
+                });
             }
             Controller?.Dispose();
             ToastNotificationManagerCompat.Uninstall();
