@@ -27,6 +27,11 @@ internal class AppConfig
     };
 
     /// <summary>
+    /// ファイル読み書き時のロックオブジェクト
+    /// </summary>
+    private static readonly Lock _lock = new();
+
+    /// <summary>
     /// 静的コンストラクタ。設定ファイルを読み込む
     /// </summary>
     static AppConfig() => Load();
@@ -36,14 +41,17 @@ internal class AppConfig
     /// </summary>
     private static void Load()
     {
-        if (!File.Exists(_configFilePath))
+        using (_lock.EnterScope())
         {
-            return;
-        }
+            if (!File.Exists(_configFilePath))
+            {
+                return;
+            }
 
-        var json = File.ReadAllText(_configFilePath);
-        ConfigData config = JsonSerializer.Deserialize<ConfigData>(json) ?? throw new InvalidOperationException("Failed to deserialize config file.");
-        _config = config;
+            var json = File.ReadAllText(_configFilePath);
+            ConfigData config = JsonSerializer.Deserialize<ConfigData>(json) ?? throw new InvalidOperationException("Failed to deserialize config file.");
+            _config = config;
+        }
     }
 
     /// <summary>
@@ -51,8 +59,11 @@ internal class AppConfig
     /// </summary>
     private static void Save()
     {
-        var json = JsonSerializer.Serialize(_config, _jsonSerializerOptions);
-        File.WriteAllText(_configFilePath, json);
+        using (_lock.EnterScope())
+        {
+            var json = JsonSerializer.Serialize(_config, _jsonSerializerOptions);
+            File.WriteAllText(_configFilePath, json);
+        }
     }
 
     /// <summary>
