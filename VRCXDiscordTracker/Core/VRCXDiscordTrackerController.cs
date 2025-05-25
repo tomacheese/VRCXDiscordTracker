@@ -9,7 +9,7 @@ namespace VRCXDiscordTracker.Core;
 /// <summary>
 /// VRCXDiscordTrackerのコントローラークラス
 /// </summary>
-internal class VRCXDiscordTrackerController
+internal class VRCXDiscordTrackerController : IDisposable
 {
     /// <summary>
     /// VRCXのSQLiteデータベースのパス

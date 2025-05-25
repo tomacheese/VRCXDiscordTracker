@@ -8,7 +8,7 @@ namespace VRCXDiscordTracker.Core.VRCX;
 /// <summary>
 /// VRCXのSQLiteデータベースを操作するクラス
 /// </summary>
-internal class VRCXDatabase
+internal class VRCXDatabase : IDisposable
 {
     /// <summary>
     /// SQLiteデータベースの接続
