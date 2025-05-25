@@ -1,7 +1,7 @@
 using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace VRCXDiscordTracker.Core.Notification;
-internal class UwpNotificationService
+internal static class UwpNotificationService
 {
     /// <summary>
     /// Windowsのトースト通知を表示する
