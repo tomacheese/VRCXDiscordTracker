@@ -91,13 +91,7 @@ internal static partial class Program
         {
             if (AppConfig.NotifyOnExit)
             {
-                DiscordNotificationService.SendAppExitMessage().ContinueWith(t =>
-                {
-                    if (t.IsFaulted)
-                    {
-                        Console.WriteLine($"Error sending app exit message: {t.Exception?.Message}");
-                    }
-                });
+                DiscordNotificationService.SendAppExitMessage().GetAwaiter().GetResult();
             }
             Controller?.Dispose();
             ToastNotificationManagerCompat.Uninstall();
