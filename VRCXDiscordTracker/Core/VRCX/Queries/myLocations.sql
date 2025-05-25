@@ -66,12 +66,12 @@ WITH
       ) AS estimated_leave_created_at
     FROM paired p
   ),
-  
+
   locations AS (
-  	SELECT
-		DISTINCT location,
-		world_name,
-      	world_id
+    SELECT
+    DISTINCT location,
+      world_name,
+      world_id
     FROM gamelog_location gl
   ),
 
