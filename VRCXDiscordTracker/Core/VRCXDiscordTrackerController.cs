@@ -37,7 +37,6 @@ internal class VRCXDiscordTrackerController
     public VRCXDiscordTrackerController(string databasePath)
     {
         // データベースパスが指定されていない場合は、デフォルトのVRCXデータベースパスを使用する
-        var defaultLogPath = AppConstants.VRCXDefaultDatabasePath;
         _databasePath = string.IsNullOrEmpty(databasePath)
             ? AppConstants.VRCXDefaultDatabasePath
             : databasePath;
