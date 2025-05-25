@@ -20,7 +20,7 @@ internal static partial class Program
     private static partial bool AllocConsole();
 
     [STAThread]
-    static async Task Main()
+    static void Main()
     {
         if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
         {
@@ -49,12 +49,15 @@ internal static partial class Program
         }
         else
         {
-            var existsUpdate = await UpdateChecker.Check();
-            if (existsUpdate)
+            Task.Run(async () =>
             {
-                Console.WriteLine("Found update. Exiting...");
-                return;
-            }
+                var existsUpdate = await UpdateChecker.Check();
+                if (existsUpdate)
+                {
+                    Console.WriteLine("Found update. Exiting...");
+                    return;
+                }
+            }).Wait();
         }
 
         ApplicationConfiguration.Initialize();
@@ -74,7 +77,7 @@ internal static partial class Program
 
             if (AppConfig.NotifyOnStart)
             {
-                await DiscordNotificationService.SendAppStartMessage().ContinueWith(t =>
+                DiscordNotificationService.SendAppStartMessage().ContinueWith(t =>
                 {
                     if (t.IsFaulted)
                     {
@@ -84,11 +87,11 @@ internal static partial class Program
             }
         }
 
-        Application.ApplicationExit += async (s, e) =>
+        Application.ApplicationExit += (s, e) =>
         {
             if (AppConfig.NotifyOnExit)
             {
-                await DiscordNotificationService.SendAppExitMessage();
+                DiscordNotificationService.SendAppExitMessage().GetAwaiter().GetResult();
             }
             Controller?.Dispose();
             ToastNotificationManagerCompat.Uninstall();
