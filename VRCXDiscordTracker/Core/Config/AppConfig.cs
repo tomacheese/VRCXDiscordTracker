@@ -4,7 +4,7 @@ namespace VRCXDiscordTracker.Core.Config;
 /// <summary>
 /// アプリケーションの設定を管理するクラス
 /// </summary>
-internal class AppConfig
+internal static class AppConfig
 {
     /// <summary>
     /// 設定ファイルのパス

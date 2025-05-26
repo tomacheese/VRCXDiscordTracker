@@ -6,7 +6,7 @@ namespace VRCXDiscordTracker.Updater.Core;
 /// <summary>
 /// UpdaterHelper
 /// </summary>
-internal class UpdaterHelper
+internal static class UpdaterHelper
 {
     /// <summary>
     /// 指定したプロセス名のプロセスを全て終了させる。まずは CloseMainWindow() を呼び、5秒待ってから Kill() を呼ぶ。

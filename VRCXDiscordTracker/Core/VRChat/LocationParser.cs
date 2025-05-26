@@ -5,7 +5,7 @@ namespace VRCXDiscordTracker.Core.VRChat;
 /// <summary>
 /// VRChatのロケーションIDを解析するクラス
 /// </summary>
-internal partial class LocationParser
+internal static partial class LocationParser
 {
     /// <summary>
     /// ロケーションIDの正規表現
