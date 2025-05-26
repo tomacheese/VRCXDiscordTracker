@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using VRCXDiscordTracker.Core.Config;
 using VRCXDiscordTracker.Core.Notification;
 using VRCXDiscordTracker.Core.VRCX;
@@ -100,10 +99,10 @@ internal class VRCXDiscordTrackerController
         {
             Console.WriteLine("VRCXDiscordTrackerController.Run()");
             var userId = _vrcxDatabase.GetVRChatUserId();
-            Debug.WriteLine($"GetVRChatUserId: {userId}");
+            Console.WriteLine($"GetVRChatUserId: {userId}");
 
             List<MyLocation> myLocations = _vrcxDatabase.GetMyLocations(userId, AppConfig.LocationCount);
-            Debug.WriteLine($"GetMyLocations: {myLocations.Count}");
+            Console.WriteLine($"GetMyLocations: {myLocations.Count}");
 
             foreach (MyLocation myLocation in myLocations)
             {
