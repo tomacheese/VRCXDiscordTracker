@@ -21,7 +21,7 @@ internal static partial class Program
     private static partial bool AllocConsole();
 
     [STAThread]
-    private static async Task Main()
+    private static void Main()
     {
         if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
         {
@@ -50,12 +50,15 @@ internal static partial class Program
         }
         else
         {
-            var existsUpdate = await UpdateChecker.CheckAsync().ConfigureAwait(false);
-            if (existsUpdate)
+            Task.Run(async () =>
             {
-                Console.WriteLine("Found update. Exiting...");
-                return;
-            }
+                var existsUpdate = await UpdateChecker.Check();
+                if (existsUpdate)
+                {
+                    Console.WriteLine("Found update. Exiting...");
+                    return;
+                }
+            }).Wait();
         }
 
         ApplicationConfiguration.Initialize();
@@ -75,7 +78,7 @@ internal static partial class Program
 
             if (AppConfig.NotifyOnStart)
             {
-                await DiscordNotificationService.SendAppStartMessageAsync().ContinueWith(t =>
+                DiscordNotificationService.SendAppStartMessageAsync().ContinueWith(t =>
                 {
                     if (t.IsFaulted)
                     {
@@ -85,11 +88,17 @@ internal static partial class Program
             }
         }
 
-        Application.ApplicationExit += async (s, e) =>
+        Application.ApplicationExit += (s, e) =>
         {
             if (AppConfig.NotifyOnExit)
             {
-                await DiscordNotificationService.SendAppExitMessageAsync().ConfigureAwait(false);
+                DiscordNotificationService.SendAppExitMessageAsync().ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        Console.WriteLine($"Error sending app exit message: {t.Exception?.Message}");
+                    }
+                }).ConfigureAwait(false);
             }
             Controller?.Dispose();
             ToastNotificationManagerCompat.Uninstall();
