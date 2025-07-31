@@ -52,7 +52,7 @@ internal static partial class Program
         {
             Task.Run(async () =>
             {
-                var existsUpdate = await UpdateChecker.Check();
+                var existsUpdate = await UpdateChecker.CheckAsync().ConfigureAwait(false);
                 if (existsUpdate)
                 {
                     Console.WriteLine("Found update. Exiting...");
