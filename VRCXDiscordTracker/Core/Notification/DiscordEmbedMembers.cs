@@ -239,7 +239,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
             fields.RemoveAt(fields.Count - 1);
         }
 
-        return !ValidateEmbed(baseEmbed.WithFields(fields)) ? throw new Exception("Embed is too long after reducing fields.") : fields;
+        return ValidateEmbed(baseEmbed.WithFields(fields)) ? fields : throw new Exception("Embed is too long after reducing fields.");
     }
 
     /// <summary>
