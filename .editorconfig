@@ -16,8 +16,8 @@ indent_size = 4
 tab_width = 4
 # 改行コードをCRLF（\r\n）のみに限定する強制
 end_of_line = crlf
-# ファイル末尾の自動改行追加の禁止
-insert_final_newline = false
+# ファイル末尾の自動改行の強制
+insert_final_newline = true
 # 行末の空白自動削除の強制
 trim_trailing_whitespace = true
 # ファイルの文字エンコーディングをUTF-8のみに限定する強制
@@ -66,6 +66,8 @@ csharp_style_var_elsewhere = false:warning
 csharp_style_var_for_built_in_types = true:warning
 # 型明示時のvar使用の強制
 csharp_style_var_when_type_is_apparent = true:warning
+# 条件付きデリゲート呼び出しを使用する
+csharp_style_conditional_delegate_call = true:warning
 
 # =========================
 # C# コードスタイル: usingディレクティブ
@@ -73,7 +75,9 @@ csharp_style_var_when_type_is_apparent = true:warning
 # usingディレクティブのグループ分け禁止
 dotnet_separate_import_directive_groups = false
 # System名前空間usingの先頭配置の強制
-dotnet_sort_system_directives_first = true:warning
+dotnet_sort_system_directives_first = true
+# usingディレクティブを名前空間の外に配置する
+csharp_using_directive_placement = outside_namespace:warning
 
 # =========================
 # C# コードスタイル: 型名・メンバーアクセス
@@ -96,6 +100,8 @@ dotnet_style_qualification_for_property = false
 # =========================
 # 名前空間のスコープはファイル単位とする
 csharp_style_namespace_declarations = file_scoped:warning
+# 最上位レベルのステートメントを使用しない
+csharp_style_prefer_top_level_statements = false:warning
 
 # =========================
 # C# コードスタイル: 不要な括弧の扱い
@@ -146,90 +152,443 @@ csharp_space_before_comma = false
 # =========================
 # 診断・警告レベルの設定
 # =========================
-# CA1031: 一般的な Exception キャッチの抑制を無効化
-dotnet_diagnostic.CA1031.severity = none
-# CA1051: public フィールド宣言の回避
-dotnet_diagnostic.CA1051.severity = warning
-# CA1063: IDisposable 実装の正しい Dispose パターン
-dotnet_diagnostic.CA1063.severity = warning
-# CA1305: IFormatProvider の明示指定
-dotnet_diagnostic.CA1305.severity = warning
-# CA1707: 識別子のアンダースコア禁止
-dotnet_diagnostic.CA1707.severity = warning
-# CA1801: 未使用引数の削除
-dotnet_diagnostic.CA1801.severity = warning
-# CA1820: 空文字列チェックに string.IsNullOrEmpty を使用
-dotnet_diagnostic.CA1820.severity = warning
-# CA1822: static 化可能メンバーの警告
-dotnet_diagnostic.CA1822.severity = warning
-# CA9999: カスタムコード分析ルール違反
-dotnet_diagnostic.CA9999.severity = warning
-# CS8602: ヌル参照可能性チェック
-dotnet_diagnostic.CS8602.severity = warning
-# CS8618: 非 null プロパティの初期化漏れ
-dotnet_diagnostic.CS8618.severity = warning
-# IDE0003: 型を明示的に指定
+dotnet_diagnostic.IDE0001.severity = warning
+dotnet_diagnostic.IDE0002.severity = warning
 dotnet_diagnostic.IDE0003.severity = warning
-# IDE0004: 不要なキャストの除去
 dotnet_diagnostic.IDE0004.severity = warning
-# IDE0005: 未使用 using ディレクティブの除去
 dotnet_diagnostic.IDE0005.severity = warning
-# IDE0017: オブジェクト初期化子の活用
+dotnet_diagnostic.IDE0007.severity = warning
+dotnet_diagnostic.IDE0008.severity = warning
+dotnet_diagnostic.IDE0009.severity = warning
+dotnet_diagnostic.IDE0010.severity = warning
+dotnet_diagnostic.IDE0011.severity = warning
+dotnet_diagnostic.IDE0016.severity = warning
 dotnet_diagnostic.IDE0017.severity = warning
-# IDE0018: 変数スコープの最小化
 dotnet_diagnostic.IDE0018.severity = warning
-# IDE0019: パターンマッチングの利用
 dotnet_diagnostic.IDE0019.severity = warning
-# IDE0020: 不要な null 合体演算子の除去
 dotnet_diagnostic.IDE0020.severity = warning
-# IDE0021: 不要な null 条件演算子の除去
 dotnet_diagnostic.IDE0021.severity = warning
-# IDE0022: 不要な null 許容型の除去
 dotnet_diagnostic.IDE0022.severity = warning
-# IDE0028: 不要な条件演算子の除去
+dotnet_diagnostic.IDE0023.severity = warning
+dotnet_diagnostic.IDE0024.severity = warning
+dotnet_diagnostic.IDE0025.severity = warning
+dotnet_diagnostic.IDE0026.severity = warning
+dotnet_diagnostic.IDE0027.severity = warning
 dotnet_diagnostic.IDE0028.severity = warning
-# IDE0030: 不要な this 修飾子の除去
+dotnet_diagnostic.IDE0029.severity = warning
 dotnet_diagnostic.IDE0030.severity = warning
-# IDE0031: 不要な base 修飾子の除去
 dotnet_diagnostic.IDE0031.severity = warning
-# IDE0039: 不要な readonly 修飾子の除去
+dotnet_diagnostic.IDE0032.severity = warning
+dotnet_diagnostic.IDE0033.severity = warning
+dotnet_diagnostic.IDE0034.severity = warning
+dotnet_diagnostic.IDE0035.severity = warning
+dotnet_diagnostic.IDE0036.severity = warning
+dotnet_diagnostic.IDE0037.severity = warning
+dotnet_diagnostic.IDE0038.severity = warning
 dotnet_diagnostic.IDE0039.severity = warning
-# IDE0044: 変更不可フィールドに readonly を付与
+dotnet_diagnostic.IDE0040.severity = warning
+dotnet_diagnostic.IDE0041.severity = warning
+dotnet_diagnostic.IDE0042.severity = warning
 dotnet_diagnostic.IDE0044.severity = warning
-# IDE0050: 不要な private 修飾子の除去
+dotnet_diagnostic.IDE0045.severity = warning
+dotnet_diagnostic.IDE0046.severity = warning
+dotnet_diagnostic.IDE0047.severity = warning
+dotnet_diagnostic.IDE0048.severity = warning
+dotnet_diagnostic.IDE0049.severity = warning
 dotnet_diagnostic.IDE0050.severity = warning
-# IDE0051: 未使用 private メンバーの削除
 dotnet_diagnostic.IDE0051.severity = warning
-# IDE0052: 書き込み専用未使用フィールドの警告
 dotnet_diagnostic.IDE0052.severity = warning
-# IDE0055: コードフォーマットの自動適用
+dotnet_diagnostic.IDE0053.severity = warning
+dotnet_diagnostic.IDE0054.severity = warning
 dotnet_diagnostic.IDE0055.severity = warning
-# IDE0059: 未使用変数の削除
+dotnet_diagnostic.IDE0056.severity = warning
+dotnet_diagnostic.IDE0057.severity = warning
+# dotnet_diagnostic.IDE0058.severity = warning # 未使用の式の値は警告しない
 dotnet_diagnostic.IDE0059.severity = warning
-# IDE0060: 未使用パラメータの削除
 dotnet_diagnostic.IDE0060.severity = warning
-# IDE0063: using ステートメントのスコープ確認
+dotnet_diagnostic.IDE0061.severity = warning
+dotnet_diagnostic.IDE0062.severity = warning
 dotnet_diagnostic.IDE0063.severity = warning
-# IDE0075: 不要な条件式の除去
+dotnet_diagnostic.IDE0064.severity = warning
+dotnet_diagnostic.IDE0065.severity = warning
+dotnet_diagnostic.IDE0066.severity = warning
+dotnet_diagnostic.IDE0070.severity = warning
+dotnet_diagnostic.IDE0071.severity = warning
+dotnet_diagnostic.IDE0072.severity = warning
+dotnet_diagnostic.IDE0073.severity = warning
+dotnet_diagnostic.IDE0074.severity = warning
 dotnet_diagnostic.IDE0075.severity = warning
-# IDE0078: 不要な switch 式の除去
+dotnet_diagnostic.IDE0076.severity = warning
+dotnet_diagnostic.IDE0077.severity = warning
 dotnet_diagnostic.IDE0078.severity = warning
-# IDE0079: 不要な #pragma の除去
 dotnet_diagnostic.IDE0079.severity = warning
-# IDE0080: 不要な null 許容型の除去
 dotnet_diagnostic.IDE0080.severity = warning
-# IDE0090: 型推論の抑制
+dotnet_diagnostic.IDE0081.severity = warning
+dotnet_diagnostic.IDE0082.severity = warning
+dotnet_diagnostic.IDE0083.severity = warning
+dotnet_diagnostic.IDE0084.severity = warning
 dotnet_diagnostic.IDE0090.severity = warning
-# IDE0091: 不要な型明示の削除
-dotnet_diagnostic.IDE0091.severity = warning
-# IDE0092: 不要な型変換の削除
-dotnet_diagnostic.IDE0092.severity = warning
-# IDE0110: 不要な null 許容型の除去
+dotnet_diagnostic.IDE0100.severity = warning
 dotnet_diagnostic.IDE0110.severity = warning
-# IDE0111: 不要な null 許容型の除去
-dotnet_diagnostic.IDE0111.severity = warning
-# IDE1006: 命名規則違反の警告
-dotnet_diagnostic.IDE1006.severity = warning
+dotnet_diagnostic.IDE0120.severity = warning
+dotnet_diagnostic.IDE0121.severity = warning
+dotnet_diagnostic.IDE0130.severity = warning
+dotnet_diagnostic.IDE0140.severity = warning
+dotnet_diagnostic.IDE0150.severity = warning
+dotnet_diagnostic.IDE0160.severity = warning
+dotnet_diagnostic.IDE0161.severity = warning
+dotnet_diagnostic.IDE0170.severity = warning
+dotnet_diagnostic.IDE0180.severity = warning
+dotnet_diagnostic.IDE0200.severity = warning
+dotnet_diagnostic.IDE0210.severity = warning
+dotnet_diagnostic.IDE0211.severity = warning
+dotnet_diagnostic.IDE0220.severity = warning
+dotnet_diagnostic.IDE0230.severity = warning
+dotnet_diagnostic.IDE0240.severity = warning
+dotnet_diagnostic.IDE0241.severity = warning
+dotnet_diagnostic.IDE0250.severity = warning
+dotnet_diagnostic.IDE0251.severity = warning
+dotnet_diagnostic.IDE0260.severity = warning
+dotnet_diagnostic.IDE0270.severity = warning
+dotnet_diagnostic.IDE0280.severity = warning
+dotnet_diagnostic.IDE0290.severity = warning
+dotnet_diagnostic.IDE0300.severity = warning
+dotnet_diagnostic.IDE0301.severity = warning
+dotnet_diagnostic.IDE0302.severity = warning
+dotnet_diagnostic.IDE0303.severity = warning
+dotnet_diagnostic.IDE0304.severity = warning
+dotnet_diagnostic.IDE0305.severity = warning
+dotnet_diagnostic.IDE0306.severity = warning
+dotnet_diagnostic.IDE0320.severity = warning
+dotnet_diagnostic.IDE0330.severity = warning
+dotnet_diagnostic.IDE0340.severity = warning
+dotnet_diagnostic.IDE0350.severity = warning
+dotnet_diagnostic.IDE1005.severity = warning
+
+dotnet_diagnostic.CA1000.severity = warning
+dotnet_diagnostic.CA1001.severity = warning
+dotnet_diagnostic.CA1002.severity = warning
+dotnet_diagnostic.CA1003.severity = warning
+dotnet_diagnostic.CA1005.severity = warning
+dotnet_diagnostic.CA1008.severity = warning
+dotnet_diagnostic.CA1010.severity = warning
+dotnet_diagnostic.CA1012.severity = warning
+dotnet_diagnostic.CA1014.severity = warning
+dotnet_diagnostic.CA1016.severity = warning
+dotnet_diagnostic.CA1017.severity = warning
+dotnet_diagnostic.CA1018.severity = warning
+dotnet_diagnostic.CA1019.severity = warning
+dotnet_diagnostic.CA1021.severity = warning
+dotnet_diagnostic.CA1024.severity = warning
+dotnet_diagnostic.CA1027.severity = warning
+dotnet_diagnostic.CA1028.severity = warning
+dotnet_diagnostic.CA1030.severity = warning
+# dotnet_diagnostic.CA1031.severity = warning # 一般的な例外の種類をキャッチしても警告しない
+dotnet_diagnostic.CA1032.severity = warning
+dotnet_diagnostic.CA1033.severity = warning
+dotnet_diagnostic.CA1034.severity = warning
+dotnet_diagnostic.CA1036.severity = warning
+dotnet_diagnostic.CA1040.severity = warning
+dotnet_diagnostic.CA1041.severity = warning
+dotnet_diagnostic.CA1043.severity = warning
+dotnet_diagnostic.CA1044.severity = warning
+dotnet_diagnostic.CA1045.severity = warning
+dotnet_diagnostic.CA1046.severity = warning
+dotnet_diagnostic.CA1047.severity = warning
+dotnet_diagnostic.CA1050.severity = warning
+dotnet_diagnostic.CA1051.severity = warning
+dotnet_diagnostic.CA1052.severity = warning
+dotnet_diagnostic.CA1053.severity = warning
+dotnet_diagnostic.CA1054.severity = warning
+dotnet_diagnostic.CA1055.severity = warning
+dotnet_diagnostic.CA1056.severity = warning
+dotnet_diagnostic.CA1058.severity = warning
+dotnet_diagnostic.CA1060.severity = warning
+dotnet_diagnostic.CA1061.severity = warning
+dotnet_diagnostic.CA1062.severity = warning
+dotnet_diagnostic.CA1063.severity = warning
+dotnet_diagnostic.CA1064.severity = warning
+dotnet_diagnostic.CA1065.severity = warning
+dotnet_diagnostic.CA1066.severity = warning
+dotnet_diagnostic.CA1067.severity = warning
+dotnet_diagnostic.CA1068.severity = warning
+dotnet_diagnostic.CA1069.severity = warning
+dotnet_diagnostic.CA1070.severity = warning
+dotnet_diagnostic.CA1200.severity = warning
+# dotnet_diagnostic.CA1303.severity = warning # ローカライズされるパラメーターとしてリテラルを渡しても警告しない
+dotnet_diagnostic.CA1304.severity = warning
+dotnet_diagnostic.CA1305.severity = warning
+# dotnet_diagnostic.CA1307.severity = warning # StringComparison を指定しない場合に警告しない
+dotnet_diagnostic.CA1308.severity = warning
+# dotnet_diagnostic.CA1309.severity = warning # 順序を示す StringComparison を指定しない場合に警告しない
+dotnet_diagnostic.CA1310.severity = warning
+dotnet_diagnostic.CA1311.severity = warning
+dotnet_diagnostic.CA1401.severity = warning
+dotnet_diagnostic.CA1416.severity = warning
+dotnet_diagnostic.CA1417.severity = warning
+dotnet_diagnostic.CA1418.severity = warning
+dotnet_diagnostic.CA1419.severity = warning
+dotnet_diagnostic.CA1420.severity = warning
+dotnet_diagnostic.CA1421.severity = warning
+dotnet_diagnostic.CA1422.severity = warning
+dotnet_diagnostic.CA1501.severity = warning
+dotnet_diagnostic.CA1502.severity = warning
+dotnet_diagnostic.CA1505.severity = warning
+dotnet_diagnostic.CA1506.severity = warning
+dotnet_diagnostic.CA1507.severity = warning
+dotnet_diagnostic.CA1508.severity = warning
+dotnet_diagnostic.CA1509.severity = warning
+dotnet_diagnostic.CA1510.severity = warning
+dotnet_diagnostic.CA1511.severity = warning
+dotnet_diagnostic.CA1512.severity = warning
+dotnet_diagnostic.CA1513.severity = warning
+dotnet_diagnostic.CA1514.severity = warning
+dotnet_diagnostic.CA1515.severity = warning
+dotnet_diagnostic.CA1700.severity = warning
+dotnet_diagnostic.CA1707.severity = warning
+dotnet_diagnostic.CA1708.severity = warning
+dotnet_diagnostic.CA1710.severity = warning
+dotnet_diagnostic.CA1711.severity = warning
+dotnet_diagnostic.CA1712.severity = warning
+dotnet_diagnostic.CA1713.severity = warning
+dotnet_diagnostic.CA1714.severity = warning
+dotnet_diagnostic.CA1715.severity = warning
+dotnet_diagnostic.CA1716.severity = warning
+dotnet_diagnostic.CA1717.severity = warning
+dotnet_diagnostic.CA1720.severity = warning
+dotnet_diagnostic.CA1721.severity = warning
+dotnet_diagnostic.CA1724.severity = warning
+dotnet_diagnostic.CA1725.severity = warning
+dotnet_diagnostic.CA1727.severity = warning
+dotnet_diagnostic.CA1801.severity = warning
+dotnet_diagnostic.CA1802.severity = warning
+# dotnet_diagnostic.CA1805.severity = warning # 型の規定値に初期化しても警告しない
+dotnet_diagnostic.CA1806.severity = warning
+dotnet_diagnostic.CA1810.severity = warning
+dotnet_diagnostic.CA1812.severity = warning
+dotnet_diagnostic.CA1813.severity = warning
+dotnet_diagnostic.CA1814.severity = warning
+dotnet_diagnostic.CA1815.severity = warning
+dotnet_diagnostic.CA1816.severity = warning
+dotnet_diagnostic.CA1819.severity = warning
+dotnet_diagnostic.CA1820.severity = warning
+dotnet_diagnostic.CA1821.severity = warning
+dotnet_diagnostic.CA1822.severity = warning
+dotnet_diagnostic.CA1823.severity = warning
+dotnet_diagnostic.CA1824.severity = warning
+dotnet_diagnostic.CA1825.severity = warning
+dotnet_diagnostic.CA1826.severity = warning
+dotnet_diagnostic.CA1827.severity = warning
+dotnet_diagnostic.CA1828.severity = warning
+dotnet_diagnostic.CA1829.severity = warning
+dotnet_diagnostic.CA1830.severity = warning
+dotnet_diagnostic.CA1831.severity = warning
+dotnet_diagnostic.CA1832.severity = warning
+dotnet_diagnostic.CA1833.severity = warning
+dotnet_diagnostic.CA1834.severity = warning
+dotnet_diagnostic.CA1835.severity = warning
+dotnet_diagnostic.CA1836.severity = warning
+dotnet_diagnostic.CA1837.severity = warning
+dotnet_diagnostic.CA1838.severity = warning
+dotnet_diagnostic.CA1839.severity = warning
+dotnet_diagnostic.CA1840.severity = warning
+dotnet_diagnostic.CA1841.severity = warning
+dotnet_diagnostic.CA1842.severity = warning
+dotnet_diagnostic.CA1843.severity = warning
+dotnet_diagnostic.CA1844.severity = warning
+dotnet_diagnostic.CA1845.severity = warning
+dotnet_diagnostic.CA1846.severity = warning
+dotnet_diagnostic.CA1847.severity = warning
+dotnet_diagnostic.CA1848.severity = warning
+dotnet_diagnostic.CA1849.severity = warning
+dotnet_diagnostic.CA1850.severity = warning
+dotnet_diagnostic.CA1851.severity = warning
+# dotnet_diagnostic.CA1852.severity = warning # 内部型が sealed でない場合に警告しない
+dotnet_diagnostic.CA1853.severity = warning
+dotnet_diagnostic.CA1854.severity = warning
+dotnet_diagnostic.CA1855.severity = warning
+dotnet_diagnostic.CA1856.severity = warning
+dotnet_diagnostic.CA1857.severity = warning
+dotnet_diagnostic.CA1858.severity = warning
+dotnet_diagnostic.CA1859.severity = warning
+dotnet_diagnostic.CA1860.severity = warning
+dotnet_diagnostic.CA1861.severity = warning
+dotnet_diagnostic.CA1862.severity = warning
+dotnet_diagnostic.CA1863.severity = warning
+dotnet_diagnostic.CA1864.severity = warning
+dotnet_diagnostic.CA1865.severity = warning
+dotnet_diagnostic.CA1866.severity = warning
+dotnet_diagnostic.CA1867.severity = warning
+dotnet_diagnostic.CA1868.severity = warning
+dotnet_diagnostic.CA1869.severity = warning
+dotnet_diagnostic.CA1870.severity = warning
+dotnet_diagnostic.CA1871.severity = warning
+dotnet_diagnostic.CA1872.severity = warning
+# dotnet_diagnostic.CA2000.severity = warning # スコープを失う前にオブジェクトを破棄しなくても警告しない
+dotnet_diagnostic.CA2002.severity = warning
+dotnet_diagnostic.CA2007.severity = warning
+# dotnet_diagnostic.CA2008.severity = warning # TaskScheduler を渡さずにタスクを作成しても警告しない
+dotnet_diagnostic.CA2009.severity = warning
+dotnet_diagnostic.CA2011.severity = warning
+dotnet_diagnostic.CA2012.severity = warning
+dotnet_diagnostic.CA2013.severity = warning
+dotnet_diagnostic.CA2014.severity = warning
+dotnet_diagnostic.CA2015.severity = warning
+dotnet_diagnostic.CA2016.severity = warning
+dotnet_diagnostic.CA2017.severity = warning
+dotnet_diagnostic.CA2018.severity = warning
+dotnet_diagnostic.CA2019.severity = warning
+dotnet_diagnostic.CA2020.severity = warning
+dotnet_diagnostic.CA2021.severity = warning
+dotnet_diagnostic.CA2022.severity = warning
+dotnet_diagnostic.CA2024.severity = warning
+# dotnet_diagnostic.CA2100.severity = warning # SQL クエリのセキュリティ脆弱性を確認しない
+dotnet_diagnostic.CA2101.severity = warning
+dotnet_diagnostic.CA2109.severity = warning
+dotnet_diagnostic.CA2119.severity = warning
+dotnet_diagnostic.CA2153.severity = warning
+dotnet_diagnostic.CA2200.severity = warning
+dotnet_diagnostic.CA2201.severity = suggestion # Exception などを送出する場合はサジェストのみする
+dotnet_diagnostic.CA2207.severity = warning
+dotnet_diagnostic.CA2208.severity = warning
+dotnet_diagnostic.CA2211.severity = warning
+dotnet_diagnostic.CA2213.severity = suggestion # 破棄可能なフィールドが破棄されない場合にはサジェストのみする（Designer.cs などの都合で Dispose を定義できないことがあるため）
+dotnet_diagnostic.CA2214.severity = warning
+dotnet_diagnostic.CA2215.severity = warning
+dotnet_diagnostic.CA2216.severity = warning
+dotnet_diagnostic.CA2217.severity = warning
+dotnet_diagnostic.CA2218.severity = warning
+dotnet_diagnostic.CA2219.severity = warning
+dotnet_diagnostic.CA2224.severity = warning
+dotnet_diagnostic.CA2225.severity = warning
+dotnet_diagnostic.CA2226.severity = warning
+dotnet_diagnostic.CA2227.severity = warning
+dotnet_diagnostic.CA2229.severity = warning
+dotnet_diagnostic.CA2231.severity = warning
+dotnet_diagnostic.CA2234.severity = warning
+dotnet_diagnostic.CA2235.severity = warning
+dotnet_diagnostic.CA2237.severity = warning
+dotnet_diagnostic.CA2241.severity = warning
+dotnet_diagnostic.CA2242.severity = warning
+dotnet_diagnostic.CA2243.severity = warning
+dotnet_diagnostic.CA2244.severity = warning
+dotnet_diagnostic.CA2245.severity = warning
+dotnet_diagnostic.CA2246.severity = warning
+dotnet_diagnostic.CA2247.severity = warning
+dotnet_diagnostic.CA2248.severity = warning
+dotnet_diagnostic.CA2249.severity = warning
+dotnet_diagnostic.CA2250.severity = warning
+dotnet_diagnostic.CA2251.severity = warning
+dotnet_diagnostic.CA2252.severity = warning
+dotnet_diagnostic.CA2253.severity = warning
+dotnet_diagnostic.CA2254.severity = warning
+dotnet_diagnostic.CA2255.severity = warning
+dotnet_diagnostic.CA2256.severity = warning
+dotnet_diagnostic.CA2257.severity = warning
+dotnet_diagnostic.CA2258.severity = warning
+dotnet_diagnostic.CA2259.severity = warning
+dotnet_diagnostic.CA2260.severity = warning
+dotnet_diagnostic.CA2261.severity = warning
+dotnet_diagnostic.CA2262.severity = warning
+dotnet_diagnostic.CA2263.severity = warning
+dotnet_diagnostic.CA2264.severity = warning
+dotnet_diagnostic.CA2265.severity = warning
+dotnet_diagnostic.CA2300.severity = warning
+dotnet_diagnostic.CA2301.severity = warning
+dotnet_diagnostic.CA2302.severity = warning
+dotnet_diagnostic.CA2305.severity = warning
+dotnet_diagnostic.CA2310.severity = warning
+dotnet_diagnostic.CA2311.severity = warning
+dotnet_diagnostic.CA2312.severity = warning
+dotnet_diagnostic.CA2315.severity = warning
+dotnet_diagnostic.CA2321.severity = warning
+dotnet_diagnostic.CA2322.severity = warning
+dotnet_diagnostic.CA2326.severity = warning
+dotnet_diagnostic.CA2327.severity = warning
+dotnet_diagnostic.CA2328.severity = warning
+dotnet_diagnostic.CA2329.severity = warning
+dotnet_diagnostic.CA2330.severity = warning
+dotnet_diagnostic.CA2350.severity = warning
+dotnet_diagnostic.CA2351.severity = warning
+dotnet_diagnostic.CA2352.severity = warning
+dotnet_diagnostic.CA2353.severity = warning
+dotnet_diagnostic.CA2354.severity = warning
+dotnet_diagnostic.CA2355.severity = warning
+dotnet_diagnostic.CA2356.severity = warning
+dotnet_diagnostic.CA2361.severity = warning
+dotnet_diagnostic.CA2362.severity = warning
+dotnet_diagnostic.CA3001.severity = warning
+dotnet_diagnostic.CA3002.severity = warning
+dotnet_diagnostic.CA3003.severity = warning
+dotnet_diagnostic.CA3004.severity = warning
+dotnet_diagnostic.CA3005.severity = warning
+dotnet_diagnostic.CA3006.severity = warning
+dotnet_diagnostic.CA3007.severity = warning
+dotnet_diagnostic.CA3008.severity = warning
+dotnet_diagnostic.CA3009.severity = warning
+dotnet_diagnostic.CA3010.severity = warning
+dotnet_diagnostic.CA3011.severity = warning
+dotnet_diagnostic.CA3012.severity = warning
+dotnet_diagnostic.CA3061.severity = warning
+dotnet_diagnostic.CA3075.severity = warning
+dotnet_diagnostic.CA3076.severity = warning
+dotnet_diagnostic.CA3077.severity = warning
+dotnet_diagnostic.CA3147.severity = warning
+dotnet_diagnostic.CA5350.severity = warning
+dotnet_diagnostic.CA5351.severity = warning
+dotnet_diagnostic.CA5358.severity = warning
+dotnet_diagnostic.CA5359.severity = warning
+dotnet_diagnostic.CA5360.severity = warning
+dotnet_diagnostic.CA5361.severity = warning
+dotnet_diagnostic.CA5362.severity = warning
+dotnet_diagnostic.CA5363.severity = warning
+dotnet_diagnostic.CA5364.severity = warning
+dotnet_diagnostic.CA5365.severity = warning
+dotnet_diagnostic.CA5366.severity = warning
+dotnet_diagnostic.CA5367.severity = warning
+dotnet_diagnostic.CA5368.severity = warning
+dotnet_diagnostic.CA5369.severity = warning
+dotnet_diagnostic.CA5370.severity = warning
+dotnet_diagnostic.CA5371.severity = warning
+dotnet_diagnostic.CA5372.severity = warning
+dotnet_diagnostic.CA5373.severity = warning
+dotnet_diagnostic.CA5374.severity = warning
+dotnet_diagnostic.CA5375.severity = warning
+dotnet_diagnostic.CA5376.severity = warning
+dotnet_diagnostic.CA5377.severity = warning
+dotnet_diagnostic.CA5378.severity = warning
+dotnet_diagnostic.CA5379.severity = warning
+dotnet_diagnostic.CA5380.severity = warning
+dotnet_diagnostic.CA5381.severity = warning
+dotnet_diagnostic.CA5382.severity = warning
+dotnet_diagnostic.CA5383.severity = warning
+dotnet_diagnostic.CA5384.severity = warning
+dotnet_diagnostic.CA5385.severity = warning
+dotnet_diagnostic.CA5386.severity = warning
+dotnet_diagnostic.CA5387.severity = warning
+dotnet_diagnostic.CA5388.severity = warning
+dotnet_diagnostic.CA5389.severity = warning
+dotnet_diagnostic.CA5390.severity = warning
+dotnet_diagnostic.CA5391.severity = warning
+dotnet_diagnostic.CA5392.severity = warning
+dotnet_diagnostic.CA5393.severity = warning
+dotnet_diagnostic.CA5394.severity = warning
+dotnet_diagnostic.CA5395.severity = warning
+dotnet_diagnostic.CA5396.severity = warning
+dotnet_diagnostic.CA5397.severity = warning
+dotnet_diagnostic.CA5398.severity = warning
+dotnet_diagnostic.CA5399.severity = warning
+dotnet_diagnostic.CA5400.severity = warning
+dotnet_diagnostic.CA5401.severity = warning
+dotnet_diagnostic.CA5402.severity = warning
+dotnet_diagnostic.CA5403.severity = warning
+dotnet_diagnostic.CA5404.severity = warning
+dotnet_diagnostic.CA5405.severity = warning
+dotnet_diagnostic.IL3000.severity = warning
+dotnet_diagnostic.IL3001.severity = warning
+dotnet_diagnostic.IL3002.severity = warning
+dotnet_diagnostic.IL3003.severity = warning
+dotnet_diagnostic.IL3005.severity = warning
 
 # =========================
 # 命名規則 (.NET Naming Rules)
@@ -240,6 +599,20 @@ dotnet_naming_rule.methods_should_be_pascal_case.severity = warning
 dotnet_naming_rule.methods_should_be_pascal_case.symbols = methods
 # メソッド名のスタイル指定（PascalCase）
 dotnet_naming_rule.methods_should_be_pascal_case.style = pascal_case
+
+# 非同期メソッド名をAsyncで終わらせることを強制
+dotnet_naming_rule.async_methods_end_in_async.severity = warning
+# 非同期メソッド名に対するルール適用対象指定
+dotnet_naming_rule.async_methods_end_in_async.symbols = async_methods
+# 非同期メソッド名のスタイル指定（PascalCase+Async）
+dotnet_naming_rule.async_methods_end_in_async.style = end_in_async
+
+# Asyncで終わる名前を持つメソッドはasyncキーワードを持つべき
+dotnet_naming_rule.async_suffix_methods_should_be_async.severity = warning
+# Asyncで終わるメソッド名に対するルール適用対象指定
+dotnet_naming_rule.async_suffix_methods_should_be_async.symbols = async_suffix_methods
+# Asyncで終わるメソッド名のスタイル指定（asyncキーワードを持つべき）
+dotnet_naming_rule.async_suffix_methods_should_be_async.style = must_be_async
 
 # インターフェース名をIで始めることを強制
 dotnet_naming_rule.interface_should_be_prefixed_with_i.severity = warning
@@ -326,6 +699,20 @@ dotnet_naming_symbols.types.applicable_kinds = class, struct, enum, interface
 dotnet_naming_symbols.types.applicable_accessibilities = *
 # 型全般の修飾子指定なし
 dotnet_naming_symbols.types.required_modifiers =
+# 非同期メソッドに対する適用範囲指定
+dotnet_naming_symbols.async_methods.applicable_kinds = method
+# 非同期メソッドのアクセス修飾子指定なし
+dotnet_naming_symbols.async_methods.applicable_accessibilities = *
+# 非同期メソッドの修飾子指定（async）
+dotnet_naming_symbols.async_methods.required_modifiers = async
+# Asyncで終わる名前を持つメソッドに対する適用範囲指定
+dotnet_naming_symbols.async_suffix_methods.applicable_kinds = method
+# Asyncで終わる名前を持つメソッドのアクセス修飾子指定なし
+dotnet_naming_symbols.async_suffix_methods.applicable_accessibilities = *
+# Asyncで終わる名前を持つメソッドの修飾子指定なし
+dotnet_naming_symbols.async_suffix_methods.required_modifiers = 
+# Asyncで終わる名前を持つメソッドの名前パターン
+dotnet_naming_symbols.async_suffix_methods.required_suffix = Async
 # privateフィールドに対する適用範囲指定
 dotnet_naming_symbols.private_fields.applicable_kinds = field
 # privateフィールドのアクセス修飾子指定（private）
@@ -374,6 +761,8 @@ dotnet_naming_symbols.parameters.applicable_accessibilities = *
 dotnet_naming_symbols.parameters.required_modifiers =
 # ローカル変数に対する適用範囲指定
 dotnet_naming_symbols.locals.applicable_kinds = local
+dotnet_naming_symbols.locals.applicable_accessibilities = *
+dotnet_naming_symbols.locals.required_modifiers =
 
 # =========================
 # 命名規則: スタイル仕様
@@ -388,3 +777,11 @@ dotnet_naming_style.pascal_case.capitalization = pascal_case
 dotnet_naming_style.camel_case_with_underscore.required_prefix = _
 # _+camelCaseの大文字小文字指定
 dotnet_naming_style.camel_case_with_underscore.capitalization = camel_case
+# Asyncで終わるPascalCaseスタイル指定
+dotnet_naming_style.end_in_async.required_suffix = Async
+# Asyncで終わるPascalCaseの大文字小文字指定
+dotnet_naming_style.end_in_async.capitalization = pascal_case
+# asyncキーワードを持つべきスタイル指定
+dotnet_naming_style.must_be_async.required_modifiers = async
+# asyncキーワードを持つべきの大文字小文字指定
+dotnet_naming_style.must_be_async.capitalization = pascal_case

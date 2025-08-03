@@ -9,7 +9,7 @@ namespace VRCXDiscordTracker.Core;
 /// <summary>
 /// VRCXDiscordTrackerのコントローラークラス
 /// </summary>
-internal class VRCXDiscordTrackerController
+internal class VRCXDiscordTrackerController : IDisposable
 {
     /// <summary>
     /// VRCXのSQLiteデータベースのパス
@@ -88,13 +88,13 @@ internal class VRCXDiscordTrackerController
     /// </summary>
     /// <param name="sender">Sender</param>
     /// <param name="e">EventArgs</param>
-    private void OnTimerTick(object? sender, EventArgs e) => Task.Run(Run).Wait();
+    private void OnTimerTick(object? sender, EventArgs e) => Task.Run(RunAsync).Wait();
 
     /// <summary>
     /// 監視処理
     /// </summary>
     /// <returns>Task</returns>
-    private async Task Run()
+    private async Task RunAsync()
     {
         try
         {
@@ -110,7 +110,7 @@ internal class VRCXDiscordTrackerController
                 List<InstanceMember> instanceMembers = _vrcxDatabase.GetInstanceMembers(userId, myLocation);
                 Console.WriteLine($"GetInstanceMembers: {instanceMembers.Count}");
 
-                await new DiscordNotificationService(myLocation, instanceMembers).SendUpdateMessageAsync();
+                await new DiscordNotificationService(myLocation, instanceMembers).SendUpdateMessageAsync().ConfigureAwait(false);
             }
         }
         catch (Exception ex)

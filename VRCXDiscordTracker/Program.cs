@@ -16,11 +16,12 @@ internal static partial class Program
     public static VRCXDiscordTrackerController? Controller;
 
     [LibraryImport("kernel32.dll", SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool AllocConsole();
 
     [STAThread]
-    static void Main()
+    private static void Main()
     {
         if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
         {
@@ -51,7 +52,7 @@ internal static partial class Program
         {
             Task.Run(async () =>
             {
-                var existsUpdate = await UpdateChecker.Check();
+                var existsUpdate = await UpdateChecker.CheckAsync().ConfigureAwait(false);
                 if (existsUpdate)
                 {
                     Console.WriteLine("Found update. Exiting...");
@@ -77,13 +78,13 @@ internal static partial class Program
 
             if (AppConfig.NotifyOnStart)
             {
-                DiscordNotificationService.SendAppStartMessage().ContinueWith(t =>
+                DiscordNotificationService.SendAppStartMessageAsync().ContinueWith(t =>
                 {
                     if (t.IsFaulted)
                     {
                         Console.WriteLine($"Error sending app start message: {t.Exception?.Message}");
                     }
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -91,7 +92,13 @@ internal static partial class Program
         {
             if (AppConfig.NotifyOnExit)
             {
-                DiscordNotificationService.SendAppExitMessage().GetAwaiter().GetResult();
+                DiscordNotificationService.SendAppExitMessageAsync().ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        Console.WriteLine($"Error sending app exit message: {t.Exception?.Message}");
+                    }
+                }).ConfigureAwait(false);
             }
             Controller?.Dispose();
             ToastNotificationManagerCompat.Uninstall();
@@ -113,7 +120,7 @@ internal static partial class Program
             {
                 "An error has occurred and the operation has stopped.",
                 "It would be helpful if you could report this bug using GitHub issues!",
-                $"https://github.com/tomacheese/{AppConstants.AppName}/issues",
+                $"https://github.com/{AppConstants.GitHubRepoOwner}/{AppConstants.GitHubRepoName}/issues",
                 "",
                 GetErrorDetails(e, false),
                 "",
@@ -128,7 +135,7 @@ internal static partial class Program
         {
             Process.Start(new ProcessStartInfo()
             {
-                FileName = $"https://github.com/tomacheese/{AppConstants.AppName}/issues/new?body={Uri.EscapeDataString(GetErrorDetails(e, true))}",
+                FileName = $"https://github.com/{AppConstants.GitHubRepoOwner}/{AppConstants.GitHubRepoName}/issues/new?body={Uri.EscapeDataString(GetErrorDetails(e, true))}",
 
                 UseShellExecute = true,
             });
@@ -136,6 +143,13 @@ internal static partial class Program
         Application.Exit();
     }
 
+
+    /// <summary>
+    /// 例外の詳細情報を取得するメソッド
+    /// </summary>
+    /// <param name="e">Exception</param>
+    /// <param name="isMarkdown">Markdown形式で出力するかどうか</param>
+    /// <returns>例外の詳細情報</returns>
     private static string GetErrorDetails(Exception e, bool isMarkdown)
     {
         var sb = new StringBuilder();
@@ -160,7 +174,7 @@ internal static partial class Program
             var title = level == 0
                 ? "Error"
                 : $"Inner Exception (Level {level})";
-            AppendSection(title, $"{(current.Message ?? "<no message>")}\n{(current.StackTrace ?? "<no trace>")}");
+            AppendSection(title, $"{current.Message ?? "<no message>"}\n{current.StackTrace ?? "<no trace>"}");
 
             current = current.InnerException;
             level++;

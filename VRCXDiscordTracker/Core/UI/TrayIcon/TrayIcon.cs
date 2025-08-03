@@ -1,4 +1,8 @@
 namespace VRCXDiscordTracker.Core.UI.TrayIcon;
+
+/// <summary>
+/// トレイアイコン
+/// </summary>
 internal class TrayIcon : ApplicationContext
 {
     /// <summary>
