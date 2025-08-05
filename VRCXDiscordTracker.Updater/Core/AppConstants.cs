@@ -1,6 +1,9 @@
 using System.Reflection;
 
 namespace VRCXDiscordTracker.Updater.Core;
+/// <summary>
+/// アプリケーションの定数を定義するクラス
+/// </summary>
 internal static class AppConstants
 {
     /// <summary>

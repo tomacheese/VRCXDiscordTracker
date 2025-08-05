@@ -1,6 +1,9 @@
 using System.Reflection;
 
 namespace VRCXDiscordTracker.Core;
+/// <summary>
+/// アプリケーションの定数を定義するクラス
+/// </summary>
 internal static class AppConstants
 {
     /// <summary>
@@ -21,10 +24,10 @@ internal static class AppConstants
     /// <summary>
     /// GitHub リポジトリのオーナー名
     /// </summary>
-    public static readonly string GitHubRepoOwner = "tomacheese";
+    public const string GitHubRepoOwner = "tomacheese";
 
     /// <summary>
     /// GitHub リポジトリ名
     /// </summary>
-    public static readonly string GitHubRepoName = "VRCXDiscordTracker";
+    public const string GitHubRepoName = "VRCXDiscordTracker";
 }

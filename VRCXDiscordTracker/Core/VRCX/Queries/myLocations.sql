@@ -67,14 +67,22 @@ WITH
     FROM paired p
   ),
 
+  locations AS (
+    SELECT
+    DISTINCT location,
+      world_name,
+      world_id
+    FROM gamelog_location gl
+  ),
+
   limited AS (
     SELECT
       f.*,
-      gl.world_name,
-      gl.world_id
+      l.world_name,
+      l.world_id
     FROM final f
-    LEFT JOIN gamelog_location gl
-      ON f.location = gl.location
+    LEFT JOIN locations l
+      ON f.location = l.location
     ORDER BY f.join_created_at DESC
     LIMIT :location_count
   )

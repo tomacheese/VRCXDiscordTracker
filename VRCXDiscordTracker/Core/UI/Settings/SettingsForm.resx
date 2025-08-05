@@ -22,8 +22,10 @@
     <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
         <value>[base64 mime encoded serialized .NET Framework object]</value>
     </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing"
+  mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework
+  object]</value>
         <comment>This is a comment</comment>
     </data>
 
@@ -59,7 +61,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -112,37 +115,41 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0,
+      Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0,
+      Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <assembly alias="System.Drawing"
+    name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing"
+    mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        AAABAAEAICAAAAAAIAA0BQAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAAgAAAAIAgGAAAAc3p69AAAAAFz
-        UkdCAK7OHOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAABYlAAAWJQFJUiTwAAAEyUlEQVRYR61XWUwb
-        VxR191YNddhDKXxUooK2assSYs/Y4wVsFtusdmxCKDFKKIEqURNFailqRFoEkZooUSMlaaVKTVU+qkRV
-        t88KKTSJ2q98dKGtVAkIm1lsY4L7gbh9d+YNHmfGMIYc6eh53nv3njNv3n0z1uwUkTu7X6M/HxoeIXyK
-        8Fna4rUigje1Y+GftYCkXQ8FT6SmpmozMjJysCXXTwrd8RCFpQyOaHfT4R3haRQvLCx8KTMzcw+5fkbo
-        jmFhqEAmLjI4qh2g07aH9PT0lPz8/BdLSkpKC0iblpb2HB3iMeM0KApLGRrVztLpyQOXndz9q1ar1VJU
-        VPSKVqtNpUO8uBoDImlYckhJSUkvKyvb2+By1RcXF5ftytmVMWIyPS6KJ2MASdOqR3Z2dhbLsoa2trZ2
-        bIlgWCqerAEkTa0OuAHJ8ts+OdpxZrHZAnMPiG/HAJK4SFjOccjNzX1h3m1ZW+7xwJKnAuZccgOhHzIV
-        RRJx4WyBEOtg+6lMYqBg0GeDyHuHSGuHgMsoM4BUElLirFcXH1vLTFApOXACCgZbq2FlsBuCB2sSGkCG
-        R1IVRZHBG3sUYyjPUMkYpmsN1TiIgqF2B6x+8QGEDjk3NSBl4NjrEOh5Q3FMiVQ2BnEABcOH6yB68yqE
-        jzTAfJ06A9shldZopmrZy2JngAgudzXBf3d/guUeN5ywmKHXZITb1fIEO+WEWycc89LO+ToOPvT64I8/
-        x6DR8yboWAuU600bHLCoX5EahouLRVr0RrjniM2RGWAYEzT7/DA7OwfRaBQQd375NS7JUWNsfiJK5yNN
-        1iowmm0b16NVwjyN3W6vxnpf8lbC7812aGnvhrW1NV5YCuwzmqvAYLIDy1XCYpMZFhpNMF+P5PhHh/sH
-        y7iC3KUotI8x0wwxeHxt/Bhv4Puzp6/fv3gSVoc/gqEL1yAQmKfT5Dh2qh/8nSfAd7ATpt5ugTDZKyG/
-        iy9bvIHFZisxZeYfGwqjyLff/Uij44Fje4lRzbm+3sHI+35YGeqGrnf6YGJyEtbX1+m0GCKRCLT6e/jH
-        42o8AEuH6/ky3RB3C+K4IsLdCwZOnuqlGeLx8fmL/LhmHwEGIk0GKzgbW2B8fGLDBLYXLl0BxlgJemMF
-        6MkcHWvllx03rHTp8b2BLNfFb76ZmVk+lxTiCsk2IS6f+0AHjE9Mgq/tLV5Mmgz5acXmlXDPwcpi0Pi1
-        L4fh8pXP4vplBsYcHNQ3t8LY2N/Q5G2XleGgyjI8R+ZJ45T4Ww0tw2knOyAG8gdRtxsm796Cxob9ZKnI
-        htJzcITjZCJqWK5TMKIzwV+1BlIOnsd4AwgxQDiK6yF6+3MId6o7ijGZUv9WpNICpqsNL2MnGsDdvfpV
-        PykxdS8jJ5v86sBpzaNUOoZpBxPlDZDX8P3zx/lWjQFc1lvJvSu+ppJyCB8kdljp64BgS+IPEpHvmo0w
-        TXe90viDnHKwISqlDPwkm3NXLC8f98LS/krFTzKR39j5hPzvf8g+uLpFeZJPsutUJjHy8vKet9ls9oGu
-        zl48WpU+SjfjcKVyP02/NbKysrIZhjH6CTiOM/5bo7+hlFA9GS9NrQ74x6S0tLTc7XZ78A9KTk5OBh2K
-        O7A245STXaEhW0Cj+R89gA/zM5+1VQAAAABJRU5ErkJggg==
-</value>
+      AAABAAEAICAAAAAAIAA0BQAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAAgAAAAIAgGAAAAc3p69AAAAAFz
+      UkdCAK7OHOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAABYlAAAWJQFJUiTwAAAEyUlEQVRYR61XWUwb
+      VxR191YNddhDKXxUooK2assSYs/Y4wVsFtusdmxCKDFKKIEqURNFailqRFoEkZooUSMlaaVKTVU+qkRV
+      t88KKTSJ2q98dKGtVAkIm1lsY4L7gbh9d+YNHmfGMIYc6eh53nv3njNv3n0z1uwUkTu7X6M/HxoeIXyK
+      8Fna4rUigje1Y+GftYCkXQ8FT6SmpmozMjJysCXXTwrd8RCFpQyOaHfT4R3haRQvLCx8KTMzcw+5fkbo
+      jmFhqEAmLjI4qh2g07aH9PT0lPz8/BdLSkpKC0iblpb2HB3iMeM0KApLGRrVztLpyQOXndz9q1ar1VJU
+      VPSKVqtNpUO8uBoDImlYckhJSUkvKyvb2+By1RcXF5ftytmVMWIyPS6KJ2MASdOqR3Z2dhbLsoa2trZ2
+      bIlgWCqerAEkTa0OuAHJ8ts+OdpxZrHZAnMPiG/HAJK4SFjOccjNzX1h3m1ZW+7xwJKnAuZccgOhHzIV
+      RRJx4WyBEOtg+6lMYqBg0GeDyHuHSGuHgMsoM4BUElLirFcXH1vLTFApOXACCgZbq2FlsBuCB2sSGkCG
+      R1IVRZHBG3sUYyjPUMkYpmsN1TiIgqF2B6x+8QGEDjk3NSBl4NjrEOh5Q3FMiVQ2BnEABcOH6yB68yqE
+      jzTAfJ06A9shldZopmrZy2JngAgudzXBf3d/guUeN5ywmKHXZITb1fIEO+WEWycc89LO+ToOPvT64I8/
+      x6DR8yboWAuU600bHLCoX5EahouLRVr0RrjniM2RGWAYEzT7/DA7OwfRaBQQd375NS7JUWNsfiJK5yNN
+      1iowmm0b16NVwjyN3W6vxnpf8lbC7812aGnvhrW1NV5YCuwzmqvAYLIDy1XCYpMZFhpNMF+P5PhHh/sH
+      y7iC3KUotI8x0wwxeHxt/Bhv4Puzp6/fv3gSVoc/gqEL1yAQmKfT5Dh2qh/8nSfAd7ATpt5ugTDZKyG/
+      iy9bvIHFZisxZeYfGwqjyLff/Uij44Fje4lRzbm+3sHI+35YGeqGrnf6YGJyEtbX1+m0GCKRCLT6e/jH
+      42o8AEuH6/ky3RB3C+K4IsLdCwZOnuqlGeLx8fmL/LhmHwEGIk0GKzgbW2B8fGLDBLYXLl0BxlgJemMF
+      6MkcHWvllx03rHTp8b2BLNfFb76ZmVk+lxTiCsk2IS6f+0AHjE9Mgq/tLV5Mmgz5acXmlXDPwcpi0Pi1
+      L4fh8pXP4vplBsYcHNQ3t8LY2N/Q5G2XleGgyjI8R+ZJ45T4Ww0tw2knOyAG8gdRtxsm796Cxob9ZKnI
+      htJzcITjZCJqWK5TMKIzwV+1BlIOnsd4AwgxQDiK6yF6+3MId6o7ijGZUv9WpNICpqsNL2MnGsDdvfpV
+      PykxdS8jJ5v86sBpzaNUOoZpBxPlDZDX8P3zx/lWjQFc1lvJvSu+ppJyCB8kdljp64BgS+IPEpHvmo0w
+      TXe90viDnHKwISqlDPwkm3NXLC8f98LS/krFTzKR39j5hPzvf8g+uLpFeZJPsutUJjHy8vKet9ls9oGu
+      zl48WpU+SjfjcKVyP02/NbKysrIZhjH6CTiOM/5bo7+hlFA9GS9NrQ74x6S0tLTc7XZ78A9KTk5OBh2K
+      O7A245STXaEhW0Cj+R89gA/zM5+1VQAAAABJRU5ErkJggg==
+    </value>
   </data>
 </root>
