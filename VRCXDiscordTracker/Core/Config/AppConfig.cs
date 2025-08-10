@@ -1,10 +1,11 @@
 using System.Text.Json;
 
 namespace VRCXDiscordTracker.Core.Config;
+
 /// <summary>
 /// アプリケーションの設定を管理するクラス
 /// </summary>
-internal class AppConfig
+internal static class AppConfig
 {
     /// <summary>
     /// 設定ファイルのパス
@@ -109,7 +110,9 @@ internal class AppConfig
         set
         {
             var trimmedValue = value.Trim();
-            if (!string.IsNullOrEmpty(trimmedValue) && !trimmedValue.StartsWith("http://") && !trimmedValue.StartsWith("https://"))
+            if (!string.IsNullOrEmpty(trimmedValue) &&
+                !trimmedValue.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                !trimmedValue.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
             {
                 throw new ArgumentException("DiscordWebhookUrl must start with http or https.");
             }
