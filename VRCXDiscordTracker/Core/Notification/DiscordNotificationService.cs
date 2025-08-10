@@ -39,6 +39,11 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     };
 
     /// <summary>
+    /// ファイル読み書き時のロックオブジェクト
+    /// </summary>
+    private static readonly Lock _lock = new();
+
+    /// <summary>
     /// Embed のフッターに表示するテキストを取得する
     /// </summary>
     /// <returns>Embed フッター用テキスト</returns>
@@ -160,19 +165,22 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     /// <returns>JoinIdとMessageIdのペアを保存する辞書</returns>
     private static Dictionary<string, ulong> LoadJoinIdMessageIdPairs()
     {
-        if (!File.Exists(SaveFilePath))
+        using (_lock.EnterScope())
         {
-            return [];
-        }
+            if (!File.Exists(SaveFilePath))
+            {
+                return [];
+            }
 
-        try
-        {
-            var json = File.ReadAllText(SaveFilePath);
-            return JsonSerializer.Deserialize<Dictionary<string, ulong>>(json) ?? [];
-        }
-        catch
-        {
-            return [];
+            try
+            {
+                var json = File.ReadAllText(SaveFilePath);
+                return JsonSerializer.Deserialize<Dictionary<string, ulong>>(json) ?? [];
+            }
+            catch
+            {
+                return [];
+            }
         }
     }
 
@@ -181,14 +189,17 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     /// </summary>
     private static void SaveJoinIdMessageIdPairs()
     {
-        try
+        using (_lock.EnterScope())
         {
-            var json = JsonSerializer.Serialize(_joinIdMessageIdPairs, _jsonSerializerOptions);
-            File.WriteAllText(SaveFilePath, json);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error saving joinIdMessageIdPairs: {ex.Message}");
+            try
+            {
+                var json = JsonSerializer.Serialize(_joinIdMessageIdPairs, _jsonSerializerOptions);
+                File.WriteAllText(SaveFilePath, json);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving joinIdMessageIdPairs: {ex.Message}");
+            }
         }
     }
     /// <summary>
