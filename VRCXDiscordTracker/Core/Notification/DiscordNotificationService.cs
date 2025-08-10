@@ -167,14 +167,14 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     {
         using (_lock.EnterScope())
         {
-            if (!File.Exists(_saveFilePath))
+            if (!File.Exists(SaveFilePath))
             {
                 return [];
             }
 
             try
             {
-                var json = File.ReadAllText(_saveFilePath);
+                var json = File.ReadAllText(SaveFilePath);
                 return JsonSerializer.Deserialize<Dictionary<string, ulong>>(json) ?? [];
             }
             catch
@@ -194,7 +194,7 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
             try
             {
                 var json = JsonSerializer.Serialize(_joinIdMessageIdPairs, _jsonSerializerOptions);
-                File.WriteAllText(_saveFilePath, json);
+                File.WriteAllText(SaveFilePath, json);
             }
             catch (Exception ex)
             {
