@@ -8,6 +8,11 @@ namespace VRCXDiscordTracker.Core.Config;
 internal static class AppConfig
 {
     /// <summary>
+    /// 静的コンストラクタ。設定ファイルを読み込む
+    /// </summary>
+    static AppConfig() => Load();
+
+    /// <summary>
     /// 設定ファイルのパス
     /// </summary>
     /// <remarks>アプリケーションの実行ディレクトリに config.json という名前で保存される</remarks>
@@ -31,11 +36,6 @@ internal static class AppConfig
     /// ファイル読み書き時のロックオブジェクト
     /// </summary>
     private static readonly Lock _lock = new();
-
-    /// <summary>
-    /// 静的コンストラクタ。設定ファイルを読み込む
-    /// </summary>
-    static AppConfig() => Load();
 
     /// <summary>
     /// 設定ファイルを読み込む
