@@ -16,6 +16,11 @@ namespace VRCXDiscordTracker.Core.Notification;
 internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMember> instanceMembers)
 {
     /// <summary>
+    /// ファイル読み書き時のロックオブジェクト
+    /// </summary>
+    private static readonly Lock _lock = new();
+
+    /// <summary>
     /// 保存パス
     /// </summary>
     private const string SaveFilePath = "discord-messages.json";
@@ -37,11 +42,6 @@ internal class DiscordNotificationService(MyLocation myLocation, List<InstanceMe
     {
         WriteIndented = true
     };
-
-    /// <summary>
-    /// ファイル読み書き時のロックオブジェクト
-    /// </summary>
-    private static readonly Lock _lock = new();
 
     /// <summary>
     /// Embed のフッターに表示するテキストを取得する
