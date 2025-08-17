@@ -185,21 +185,16 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
     /// <returns>フォーマット済み期間文字列（例: "(1h30m)"）</returns>
     private static string FormatDuration(DateTime start, DateTime end)
     {
-        var duration = end - start;
+        TimeSpan duration = end - start;
         if (duration.TotalSeconds < 0) return string.Empty;
 
         var totalMinutes = (int)duration.TotalMinutes;
         var hours = totalMinutes / 60;
         var minutes = totalMinutes % 60;
 
-        if (hours > 0 && minutes > 0)
-            return $"({hours}h{minutes}m)";
-        else if (hours > 0)
-            return $"({hours}h)";
-        else if (minutes > 0)
-            return $"({minutes}m)";
-        else
-            return "(0m)";
+        return (hours > 0 && minutes > 0) ? $"({hours}h{minutes}m)" :
+               (hours > 0) ? $"({hours}h)" :
+               (minutes > 0) ? $"({minutes}m)" : "(0m)";
     }
 
     /// <summary>
@@ -345,7 +340,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
 
             // 参加日時は、参加時刻がある場合はそれを、無い場合は Unknown を表示
             var joinText = member.LastJoinAt.HasValue ? FormatDateTime(member.LastJoinAt) : "_Unknown_";
-            
+
             string joinLeave;
             if (member.IsCurrently && member.LastJoinAt.HasValue)
             {
