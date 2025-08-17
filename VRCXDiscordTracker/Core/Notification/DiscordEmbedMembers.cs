@@ -183,7 +183,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
             DateTimeKind.Utc => new DateTimeOffset(dateTime).ToUnixTimeSeconds(),
             DateTimeKind.Local => new DateTimeOffset(dateTime).ToUnixTimeSeconds(),
             DateTimeKind.Unspecified => new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)).ToUnixTimeSeconds(),
-            _ => throw new ArgumentOutOfRangeException(nameof(dateTime.Kind), "Unknown DateTimeKind value.")
+            _ => throw new ArgumentOutOfRangeException(nameof(dateTime), "Unknown DateTimeKind value.")
         };
     }
 
@@ -208,7 +208,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         if (hours > 0) result += $"{hours}h";
         if (minutes > 0) result += $"{minutes}m";
         if (seconds > 0) result += $"{seconds}s";
-        
+
         return string.IsNullOrEmpty(result) ? "(0s)" : $"({result})";
     }
 
@@ -358,7 +358,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
 
             // 従来の形式を初期値として設定
             var joinLeave = $"{joinText} - ";
-            
+
             if (member.IsCurrently && member.LastJoinAt.HasValue)
             {
                 // 現在のメンバーの場合: Discord の相対時間フォーマットを使用
