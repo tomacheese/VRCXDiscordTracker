@@ -175,7 +175,17 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
     /// </summary>
     /// <param name="dateTime">対象日時</param>
     /// <returns>Unix タイムスタンプ</returns>
-    private static long ToUnixTimestamp(DateTime dateTime) => ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
+    private static long ToUnixTimestamp(DateTime dateTime)
+    {
+        // Handle DateTime.Kind explicitly to avoid incorrect timestamps
+        return dateTime.Kind switch
+        {
+            DateTimeKind.Utc => new DateTimeOffset(dateTime).ToUnixTimeSeconds(),
+            DateTimeKind.Local => new DateTimeOffset(dateTime).ToUnixTimeSeconds(),
+            DateTimeKind.Unspecified => new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)).ToUnixTimeSeconds(),
+            _ => throw new ArgumentOutOfRangeException(nameof(dateTime.Kind), "Unknown DateTimeKind value.")
+        };
+    }
 
     /// <summary>
     /// 2つの DateTime 間の期間を人間が読みやすい形式でフォーマットする
@@ -348,18 +358,21 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
                 var unixTimestamp = ToUnixTimestamp(member.LastJoinAt.Value);
                 joinLeave = $"{joinText} - (<t:{unixTimestamp}:R>)";
             }
-            else if (member.LastLeaveAt.HasValue && member.LastJoinAt.HasValue && member.LastLeaveAt > member.LastJoinAt)
-            {
-                // 過去のメンバーの場合: 退出時刻と滞在時間を表示
-                var leaveText = FormatDateTime(member.LastLeaveAt);
-                var duration = FormatDuration(member.LastJoinAt.Value, member.LastLeaveAt.Value);
-                joinLeave = $"{joinText} - {leaveText} {duration}";
-            }
             else if (member.LastLeaveAt.HasValue && (!member.LastJoinAt.HasValue || member.LastLeaveAt > member.LastJoinAt))
             {
-                // 参加時刻が不明だが退出時刻がある場合
+                // 退出時刻がある場合: 参加時刻が不明か、退出が参加より後
                 var leaveText = FormatDateTime(member.LastLeaveAt);
-                joinLeave = $"{joinText} - {leaveText}";
+                if (member.LastJoinAt.HasValue)
+                {
+                    // 参加時刻がある場合は滞在時間も表示
+                    var duration = FormatDuration(member.LastJoinAt.Value, member.LastLeaveAt.Value);
+                    joinLeave = $"{joinText} - {leaveText} {duration}";
+                }
+                else
+                {
+                    // 参加時刻が不明な場合
+                    joinLeave = $"{joinText} - {leaveText}";
+                }
             }
             else
             {
