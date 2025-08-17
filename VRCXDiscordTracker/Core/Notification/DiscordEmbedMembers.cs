@@ -198,13 +198,16 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         TimeSpan duration = end - start;
         if (duration.TotalSeconds < 0) return string.Empty;
 
-        var totalMinutes = (int)duration.TotalMinutes;
-        var hours = totalMinutes / 60;
-        var minutes = totalMinutes % 60;
+        var days = (int)duration.TotalDays;
+        var hours = duration.Hours;
+        var minutes = duration.Minutes;
 
-        return (hours > 0 && minutes > 0) ? $"({hours}h{minutes}m)" :
-               (hours > 0) ? $"({hours}h)" :
-               (minutes > 0) ? $"({minutes}m)" : "(0m)";
+        var result = "";
+        if (days > 0) result += $"{days}d";
+        if (hours > 0) result += $"{hours}h";
+        if (minutes > 0) result += $"{minutes}m";
+        
+        return string.IsNullOrEmpty(result) ? "(0m)" : $"({result})";
     }
 
     /// <summary>
@@ -351,7 +354,9 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
             // 参加日時は、参加時刻がある場合はそれを、無い場合は Unknown を表示
             var joinText = member.LastJoinAt.HasValue ? FormatDateTime(member.LastJoinAt) : "_Unknown_";
 
-            string joinLeave;
+            // 従来の形式を初期値として設定
+            var joinLeave = $"{joinText} - ";
+            
             if (member.IsCurrently && member.LastJoinAt.HasValue)
             {
                 // 現在のメンバーの場合: Discord の相対時間フォーマットを使用
@@ -373,11 +378,6 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
                     // 参加時刻が不明な場合
                     joinLeave = $"{joinText} - {leaveText}";
                 }
-            }
-            else
-            {
-                // その他の場合（従来の形式）
-                joinLeave = $"{joinText} - ";
             }
 
             var text = memberTextFormat switch
