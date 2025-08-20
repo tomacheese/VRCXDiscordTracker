@@ -192,7 +192,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
     /// </summary>
     /// <param name="start">開始日時</param>
     /// <param name="end">終了日時</param>
-    /// <returns>フォーマット済み期間文字列（例: "(1日5時間30分前)"）</returns>
+    /// <returns>フォーマット済み期間文字列（例: "(1日5時間30分)"）</returns>
     private static string FormatDuration(DateTime start, DateTime end)
     {
         TimeSpan duration = end - start;
@@ -209,7 +209,7 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
         if (minutes > 0) result += $"{minutes}分";
         if (seconds > 0) result += $"{seconds}秒";
 
-        return string.IsNullOrEmpty(result) ? "(0秒前)" : $"({result}前)";
+        return string.IsNullOrEmpty(result) ? "(0秒)" : $"({result})";
     }
 
     /// <summary>
