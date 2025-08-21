@@ -171,6 +171,48 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
     private static string FormatDateTime(DateTime? dateTime) => dateTime?.ToString("G", CultureInfo.CurrentCulture) ?? string.Empty;
 
     /// <summary>
+    /// DateTime を Unix タイムスタンプに変換する
+    /// </summary>
+    /// <param name="dateTime">対象日時</param>
+    /// <returns>Unix タイムスタンプ</returns>
+    private static long ToUnixTimestamp(DateTime dateTime)
+    {
+        // Handle DateTime.Kind explicitly to avoid incorrect timestamps
+        return dateTime.Kind switch
+        {
+            DateTimeKind.Utc => new DateTimeOffset(dateTime).ToUnixTimeSeconds(),
+            DateTimeKind.Local => new DateTimeOffset(dateTime).ToUnixTimeSeconds(),
+            DateTimeKind.Unspecified => new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)).ToUnixTimeSeconds(),
+            _ => throw new ArgumentOutOfRangeException(nameof(dateTime), "Unknown DateTimeKind value.")
+        };
+    }
+
+    /// <summary>
+    /// 2つの DateTime 間の期間を人間が読みやすい形式でフォーマットする
+    /// </summary>
+    /// <param name="start">開始日時</param>
+    /// <param name="end">終了日時</param>
+    /// <returns>フォーマット済み期間文字列（例: "(1日5時間30分)"）</returns>
+    private static string FormatDuration(DateTime start, DateTime end)
+    {
+        TimeSpan duration = end - start;
+        if (duration.TotalSeconds < 0) return string.Empty;
+
+        var days = (int)duration.TotalDays;
+        var hours = duration.Hours;
+        var minutes = duration.Minutes;
+        var seconds = duration.Seconds;
+
+        var result = "";
+        if (days > 0) result += $"{days}日";
+        if (hours > 0) result += $"{hours}時間";
+        if (minutes > 0) result += $"{minutes}分";
+        if (seconds > 0) result += $"{seconds}秒";
+
+        return string.IsNullOrEmpty(result) ? "(0秒)" : $"({result})";
+    }
+
+    /// <summary>
     /// Embed のサイズ制限内に収まるようフィールド数・文字数を削減する
     /// </summary>
     /// <param name="baseEmbed">基本 EmbedBuilder</param>
@@ -313,12 +355,32 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
 
             // 参加日時は、参加時刻がある場合はそれを、無い場合は Unknown を表示
             var joinText = member.LastJoinAt.HasValue ? FormatDateTime(member.LastJoinAt) : "_Unknown_";
-            // 退出日時は、参加日時よりも新しい場合もしくは参加日時が無い場合は表示。それ以外の場合は空文字
-            var leaveText = (member.LastLeaveAt.HasValue && (member.LastLeaveAt > member.LastJoinAt || !member.LastJoinAt.HasValue))
-                ? FormatDateTime(member.LastLeaveAt)
-                : string.Empty;
 
-            var joinLeave = $"{joinText} - {leaveText}";
+            // 従来の形式を初期値として設定
+            var joinLeave = $"{joinText} - ";
+
+            if (member.IsCurrently && member.LastJoinAt.HasValue)
+            {
+                // 現在のメンバーの場合: Discord の相対時間フォーマットを使用
+                var unixTimestamp = ToUnixTimestamp(member.LastJoinAt.Value);
+                joinLeave = $"{joinText} - (<t:{unixTimestamp}:R>)";
+            }
+            else if (member.LastLeaveAt.HasValue && (!member.LastJoinAt.HasValue || member.LastLeaveAt > member.LastJoinAt))
+            {
+                // 退出時刻がある場合: 参加時刻が不明か、退出が参加より後
+                var leaveText = FormatDateTime(member.LastLeaveAt);
+                if (member.LastJoinAt.HasValue)
+                {
+                    // 参加時刻がある場合は滞在時間も表示
+                    var duration = FormatDuration(member.LastJoinAt.Value, member.LastLeaveAt.Value);
+                    joinLeave = $"{joinText} - {leaveText} {duration}";
+                }
+                else
+                {
+                    // 参加時刻が不明な場合
+                    joinLeave = $"{joinText} - {leaveText}";
+                }
+            }
 
             var text = memberTextFormat switch
             {
