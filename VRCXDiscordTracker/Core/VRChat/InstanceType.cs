@@ -7,7 +7,7 @@ namespace VRCXDiscordTracker.Core.VRChat;
 /// </summary>
 /// <param name="id">管理用ID</param>
 /// <param name="name">表示名</param>
-/// <param name="isGroup">グループに関連するインスタンスかどうか</param>"
+/// <param name="isGroup">グループに関連するインスタンスかどうか</param>
 internal class InstanceType(int id, string name, bool isGroup) : IComparable<InstanceType>, IEquatable<InstanceType>, IFormattable
 {
     /// <summary>
