@@ -7,47 +7,48 @@ namespace VRCXDiscordTracker.Core.VRChat;
 /// </summary>
 /// <param name="id">管理用ID</param>
 /// <param name="name">表示名</param>
-internal class InstanceType(int id, string name) : IComparable<InstanceType>, IEquatable<InstanceType>, IFormattable
+/// <param name="isGroup">グループに関連するインスタンスかどうか</param>"
+internal class InstanceType(int id, string name, bool isGroup) : IComparable<InstanceType>, IEquatable<InstanceType>, IFormattable
 {
     /// <summary>
     /// Public
     /// </summary>
-    public static readonly InstanceType Public = new(0, "Public");
+    public static readonly InstanceType Public = new(0, "Public", false);
 
     /// <summary>
     /// Friends+
     /// </summary>
-    public static readonly InstanceType FriendsPlus = new(1, "Friends+");
+    public static readonly InstanceType FriendsPlus = new(1, "Friends+", false);
 
     /// <summary>
     /// Friends
     /// </summary>
-    public static readonly InstanceType Friends = new(2, "Friends");
+    public static readonly InstanceType Friends = new(2, "Friends", false);
 
     /// <summary>
     /// Invite+
     /// </summary>
-    public static readonly InstanceType InvitePlus = new(3, "Invite+");
+    public static readonly InstanceType InvitePlus = new(3, "Invite+", false);
 
     /// <summary>
     /// Invite
     /// </summary>
-    public static readonly InstanceType Invite = new(4, "Invite");
+    public static readonly InstanceType Invite = new(4, "Invite", false);
 
     /// <summary>
     /// Group Public
     /// </summary>
-    public static readonly InstanceType GroupPublic = new(5, "Group Public");
+    public static readonly InstanceType GroupPublic = new(5, "Group Public", true);
 
     /// <summary>
     /// Group+
     /// </summary>
-    public static readonly InstanceType GroupPlus = new(6, "Group+");
+    public static readonly InstanceType GroupPlus = new(6, "Group+", true);
 
     /// <summary>
     /// Group
     /// </summary>
-    public static readonly InstanceType Group = new(7, "Group");
+    public static readonly InstanceType Group = new(7, "Group", true);
 
     /// <summary>
     /// 管理用ID
@@ -59,6 +60,12 @@ internal class InstanceType(int id, string name) : IComparable<InstanceType>, IE
     /// </summary>
     /// <example>Public</example>
     public readonly string Name = name;
+
+    /// <summary>
+    /// グループに関連するインスタンスかどうか
+    /// </summary>
+    /// <example>true (Group Public, Group+, Group)</example>
+    public readonly bool IsGroup = isGroup;
 
     public static IEnumerable<T> GetAll<T>() where T : class
     {

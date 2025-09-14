@@ -71,7 +71,8 @@ WITH
     SELECT
     DISTINCT location,
       world_name,
-      world_id
+      world_id,
+      group_name
     FROM gamelog_location gl
   ),
 
@@ -79,7 +80,8 @@ WITH
     SELECT
       f.*,
       l.world_name,
-      l.world_id
+      l.world_id,
+      l.group_name
     FROM final f
     LEFT JOIN locations l
       ON f.location = l.location
