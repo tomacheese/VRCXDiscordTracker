@@ -2,7 +2,11 @@ using VRCXDiscordTracker.Core.Config;
 using VRCXDiscordTracker.Core.Notification;
 
 namespace VRCXDiscordTracker.Core;
-public partial class SettingsForm : Form
+
+/// <summary>
+/// 設定画面
+/// </summary>
+internal partial class SettingsForm : Form
 {
     /// <summary>
     /// 最後に保存したデータベースのパス

@@ -8,7 +8,7 @@ namespace VRCXDiscordTracker.Core.VRCX;
 /// <summary>
 /// VRCXのSQLiteデータベースを操作するクラス
 /// </summary>
-internal class VRCXDatabase
+internal class VRCXDatabase : IDisposable
 {
     /// <summary>
     /// SQLiteデータベースの接続
@@ -75,12 +75,7 @@ internal class VRCXDatabase
         // configs テーブルで、key = "config:lastuserloggedin" の value
         cmd.CommandText = "SELECT value FROM configs WHERE key = 'config:lastuserloggedin'";
         using SQLiteDataReader reader = cmd.ExecuteReader();
-        if (reader.Read())
-        {
-            return reader.GetString(0);
-        }
-
-        throw new Exception("VRChat User ID not found in database.");
+        return reader.Read() ? reader.GetString(0) : throw new Exception("VRChat User ID not found in database.");
     }
 
     /// <summary>
@@ -136,7 +131,7 @@ internal class VRCXDatabase
 
         // Location が local: で始まる場合は、ローカルインスタンスなので除外
         return myLocations.FindAll(
-            myLocation => !myLocation.LocationId.StartsWith("local:")
+            myLocation => !myLocation.LocationId.StartsWith("local:", StringComparison.Ordinal)
         );
     }
 

@@ -59,41 +59,24 @@ internal class InstanceRegion(int id, string token, string name) : IComparable<I
     public static InstanceRegion? GetByToken(string? token) =>
         GetAll<InstanceRegion>().FirstOrDefault(region => region.Token.Equals(token, StringComparison.OrdinalIgnoreCase));
 
-    public int CompareTo(InstanceRegion? other)
-    {
-        if (other == null) return 1;
-        if (Id == other.Id) return 0;
-        return Id.CompareTo(other.Id);
-    }
+    public int CompareTo(InstanceRegion? other) => other == null ? 1 : Id == other.Id ? 0 : Id.CompareTo(other.Id);
 
-    public override bool Equals(object? obj)
-    {
-        if (obj is InstanceRegion other)
-            return Equals(other);
-
-        return false;
-    }
+    public override bool Equals(object? obj) => obj is InstanceRegion other && Equals(other);
 
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
-        if (string.IsNullOrEmpty(format))
-            return $"{GetType().Name}({Token})";
-        if (format.Equals("id", StringComparison.OrdinalIgnoreCase))
-            return Id.ToString(formatProvider);
-        if (format.Equals("token", StringComparison.OrdinalIgnoreCase))
-            return Token;
-        if (format.Equals("name", StringComparison.OrdinalIgnoreCase))
-            return Name;
-
-        throw new FormatException($"The format '{format}' is not supported.");
+        return string.IsNullOrEmpty(format)
+            ? $"{GetType().Name}({Token})"
+            : format.Equals("id", StringComparison.OrdinalIgnoreCase)
+            ? Id.ToString(formatProvider)
+            : format.Equals("token", StringComparison.OrdinalIgnoreCase)
+            ? Token
+            : format.Equals("name", StringComparison.OrdinalIgnoreCase)
+            ? Name
+            : throw new FormatException($"The format '{format}' is not supported.");
     }
 
     public override int GetHashCode() => Id.GetHashCode();
 
-    public bool Equals(InstanceRegion? other)
-    {
-        if (other == null) return false;
-        if (Id == other.Id) return true;
-        return false;
-    }
+    public bool Equals(InstanceRegion? other) => other != null && Id == other.Id;
 }

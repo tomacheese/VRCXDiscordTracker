@@ -76,39 +76,22 @@ internal class InstanceType(int id, string name, bool isGroup) : IComparable<Ins
             .Where(instance => instance != null)!;
     }
 
-    public int CompareTo(InstanceType? other)
-    {
-        if (other == null) return 1;
-        if (Id == other.Id) return 0;
-        return Id.CompareTo(other.Id);
-    }
+    public int CompareTo(InstanceType? other) => other == null ? 1 : Id == other.Id ? 0 : Id.CompareTo(other.Id);
 
-    public override bool Equals(object? obj)
-    {
-        if (obj is InstanceType other)
-            return Equals(other);
-
-        return false;
-    }
+    public override bool Equals(object? obj) => obj is InstanceType other && Equals(other);
 
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
-        if (string.IsNullOrEmpty(format))
-            return Name;
-        if (format.Equals("id", StringComparison.OrdinalIgnoreCase))
-            return Id.ToString(formatProvider);
-        if (format.Equals("name", StringComparison.OrdinalIgnoreCase))
-            return Name;
-
-        throw new FormatException($"The format '{format}' is not supported.");
+        return string.IsNullOrEmpty(format)
+            ? Name
+            : format.Equals("id", StringComparison.OrdinalIgnoreCase)
+            ? Id.ToString(formatProvider)
+            : format.Equals("name", StringComparison.OrdinalIgnoreCase)
+            ? Name
+            : throw new FormatException($"The format '{format}' is not supported.");
     }
 
     public override int GetHashCode() => Id.GetHashCode();
 
-    public bool Equals(InstanceType? other)
-    {
-        if (other == null) return false;
-        if (Id == other.Id) return true;
-        return false;
-    }
+    public bool Equals(InstanceType? other) => other != null && Id == other.Id;
 }

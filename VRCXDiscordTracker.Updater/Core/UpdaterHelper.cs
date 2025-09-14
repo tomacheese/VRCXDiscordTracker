@@ -6,7 +6,7 @@ namespace VRCXDiscordTracker.Updater.Core;
 /// <summary>
 /// UpdaterHelper
 /// </summary>
-internal class UpdaterHelper
+internal static class UpdaterHelper
 {
     /// <summary>
     /// 指定したプロセス名のプロセスを全て終了させる。まずは CloseMainWindow() を呼び、5秒待ってから Kill() を呼ぶ。
@@ -61,9 +61,18 @@ internal class UpdaterHelper
             // ディレクトリは飛ばす
             if (string.IsNullOrEmpty(entry.Name)) continue;
 
+            // サニタイズされたパスを作成
             var dest = Path.Combine(targetFolder, entry.FullName);
-            Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
-            entry.ExtractToFile(dest, overwrite: true);
+            var fullPath = Path.GetFullPath(dest);
+
+            // 展開先フォルダの外に出ないようにチェック
+            if (!fullPath.StartsWith(Path.GetFullPath(targetFolder), StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("The ZIP file contains an incorrect path.");
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+            entry.ExtractToFile(fullPath, overwrite: true);
         }
     }
 }
