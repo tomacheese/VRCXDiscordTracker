@@ -76,4 +76,9 @@ internal class MyLocation
     /// ワールドのID
     /// </summary>
     public required string? WorldId { get; set; }
+
+    /// <summary>
+    /// このインスタンスのグループ名
+    /// </summary>
+    public required string? GroupName { get; set; }
 }

@@ -117,6 +117,7 @@ internal class VRCXDatabase : IDisposable
                         EstimatedLeaveCreatedAt = reader.IsDBNull(10) ? null : DateTime.Parse(reader.GetString(10), CultureInfo.InvariantCulture),
                         WorldName = reader.IsDBNull(11) ? null : reader.GetString(11),
                         WorldId = reader.IsDBNull(12) ? null : reader.GetString(12),
+                        GroupName = reader.IsDBNull(13) ? null : reader.GetString(13),
                     };
                     myLocations.Add(myLocation);
                 }

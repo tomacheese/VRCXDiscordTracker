@@ -92,11 +92,14 @@ internal partial class DiscordEmbedMembers(MyLocation myLocation, List<InstanceM
             throw new FormatException("Location string is not in the expected format with a colon.");
         }
         var instanceId = locationParts[1];
+        var groupName = myLocation.LocationInstance.Type.IsGroup && !string.IsNullOrEmpty(myLocation.GroupName) ? myLocation.GroupName : string.Empty;
+        var groupUrl = "https://vrchat.com/home/group/" + myLocation.LocationInstance.OwnerId;
         var embed = new EmbedBuilder
         {
             Title = $"{myLocation.WorldName} ({myLocation.LocationInstance.Type})",
             Url = $"https://vrchat.com/home/launch?worldId={myLocation.WorldId}&instanceId={instanceId}",
-            Description = $"Current Members Count: {instanceMembers.Count(member => member.IsCurrently)}\n" +
+            Description = (!string.IsNullOrEmpty(groupName) ? $"Group: [`{Sanitize(groupName)}`]({groupUrl})\n" : string.Empty) +
+                          $"Current Members Count: {instanceMembers.Count(member => member.IsCurrently)}\n" +
                           $"Past Members Count: {instanceMembers.Count(member => !member.IsCurrently)}\n",
             Author = new EmbedAuthorBuilder
             {
