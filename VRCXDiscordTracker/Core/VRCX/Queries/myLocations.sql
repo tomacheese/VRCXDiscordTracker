@@ -69,11 +69,18 @@ WITH
 
   locations AS (
     SELECT
-    DISTINCT location,
-      world_name,
-      world_id,
-      group_name
+      gl.location,
+      gl.world_name,
+      gl.world_id,
+      gl.group_name
     FROM gamelog_location gl
+    JOIN (
+      SELECT location, MAX(rowid) AS max_rowid
+      FROM gamelog_location
+      GROUP BY location
+    ) latest
+      ON latest.location = gl.location
+     AND gl.rowid = latest.max_rowid
   ),
 
   limited AS (
