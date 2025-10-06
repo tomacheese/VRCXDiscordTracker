@@ -69,11 +69,17 @@ WITH
 
   locations AS (
     SELECT
-    DISTINCT location,
-      world_name,
-      world_id,
-      group_name
-    FROM gamelog_location gl
+        location,
+        world_name,
+        world_id,
+        group_name
+    FROM (
+        SELECT
+            gl.*,
+            ROW_NUMBER() OVER (PARTITION BY location ORDER BY rowid DESC) AS rn
+        FROM gamelog_location gl
+    ) t
+    WHERE rn = 1
   ),
 
   limited AS (
