@@ -41,7 +41,7 @@ internal class GitHubReleaseService : IDisposable
         var tagName = root.GetProperty("tag_name").GetString()!;
         var asset = root.GetProperty("assets").EnumerateArray()
             .FirstOrDefault(x => x.GetProperty("name").GetString() == assetName);
-        if (asset.ValueKind == System.Text.Json.JsonValueKind.Undefined)
+        if (asset.ValueKind == JsonValueKind.Undefined)
         {
             throw new Exception($"Failed to find asset: {assetName}");
         }
