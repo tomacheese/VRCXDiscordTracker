@@ -1,6 +1,6 @@
-using Microsoft.Data.Sqlite;
 using System.Globalization;
 using System.Reflection;
+using Microsoft.Data.Sqlite;
 using VRCXDiscordTracker.Core.VRChat;
 
 namespace VRCXDiscordTracker.Core.VRCX;
@@ -71,7 +71,7 @@ internal class VRCXDatabase : IDisposable
     public string GetVRChatUserId()
     {
         Console.WriteLine("VRCXDatabase.GetVRChatUserId()");
-        using var cmd = _conn.CreateCommand();
+        using SqliteCommand cmd = _conn.CreateCommand();
         // configs テーブルで、key = "config:lastuserloggedin" の value
         cmd.CommandText = "SELECT value FROM configs WHERE key = 'config:lastuserloggedin'";
         using SqliteDataReader reader = cmd.ExecuteReader();
@@ -90,7 +90,7 @@ internal class VRCXDatabase : IDisposable
         var sql = GetEmbedFileContent("VRCXDiscordTracker.Core.VRCX.Queries.myLocations.sql");
 
         var myLocations = new List<MyLocation>();
-        using (var cmd = _conn.CreateCommand())
+        using (SqliteCommand cmd = _conn.CreateCommand())
         {
             cmd.CommandText = sql;
             cmd.Parameters.AddWithValue(":target_user_id", vrchatUserId);
@@ -149,7 +149,7 @@ internal class VRCXDatabase : IDisposable
         var sql = GetEmbedFileContent("VRCXDiscordTracker.Core.VRCX.Queries.instanceMembers.sql").Replace("@{friendTableName}", friendTableName);
 
         var instanceMembers = new List<InstanceMember>();
-        using (var cmd = _conn.CreateCommand())
+        using (SqliteCommand cmd = _conn.CreateCommand())
         {
             cmd.CommandText = sql;
             cmd.Parameters.AddWithValue(":join_created_at", FormatDateTime(myLocation.JoinCreatedAt.AddSeconds(-1)));
