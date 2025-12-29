@@ -39,12 +39,14 @@ internal class GitHubReleaseService : IDisposable
         using JsonDocument doc = JsonDocument.Parse(json);
         var root = doc.RootElement;
         var tagName = root.GetProperty("tag_name").GetString()!;
-        var assetUrl = root.GetProperty("assets").EnumerateArray()
-            .FirstOrDefault(x => x.GetProperty("name").GetString() == assetName)
-            .GetProperty("browser_download_url").GetString();
-        return string.IsNullOrEmpty(assetUrl)
-            ? throw new Exception($"Failed to find asset: {assetName}")
-            : new ReleaseInfo(tagName, assetUrl);
+        var asset = root.GetProperty("assets").EnumerateArray()
+            .FirstOrDefault(x => x.GetProperty("name").GetString() == assetName);
+        if (asset.ValueKind == System.Text.Json.JsonValueKind.Undefined)
+        {
+            throw new Exception($"Failed to find asset: {assetName}");
+        }
+        var assetUrl = asset.GetProperty("browser_download_url").GetString()!;
+        return new ReleaseInfo(tagName, assetUrl);
     }
 
     public void Dispose()
