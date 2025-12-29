@@ -1,4 +1,4 @@
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using System.Globalization;
 using System.Reflection;
 using VRCXDiscordTracker.Core.VRChat;
@@ -13,7 +13,7 @@ internal class VRCXDatabase : IDisposable
     /// <summary>
     /// SQLiteデータベースの接続
     /// </summary>
-    private readonly SQLiteConnection _conn;
+    private readonly SqliteConnection _conn;
 
     /// <summary>
     /// コンストラクタ
@@ -21,13 +21,13 @@ internal class VRCXDatabase : IDisposable
     /// <param name="databasePath">VRCXのSQLiteデータベースのパス</param>
     public VRCXDatabase(string databasePath)
     {
-        var sqlConnStr = new SQLiteConnectionStringBuilder
+        var sqlConnStr = new SqliteConnectionStringBuilder
         {
             DataSource = databasePath,
-            ReadOnly = true,
+            Mode = SqliteOpenMode.ReadOnly,
         };
 
-        _conn = new SQLiteConnection(sqlConnStr.ToString());
+        _conn = new SqliteConnection(sqlConnStr.ToString());
         Open();
     }
 
@@ -71,10 +71,10 @@ internal class VRCXDatabase : IDisposable
     public string GetVRChatUserId()
     {
         Console.WriteLine("VRCXDatabase.GetVRChatUserId()");
-        using var cmd = new SQLiteCommand(_conn);
+        using var cmd = _conn.CreateCommand();
         // configs テーブルで、key = "config:lastuserloggedin" の value
         cmd.CommandText = "SELECT value FROM configs WHERE key = 'config:lastuserloggedin'";
-        using SQLiteDataReader reader = cmd.ExecuteReader();
+        using SqliteDataReader reader = cmd.ExecuteReader();
         return reader.Read() ? reader.GetString(0) : throw new Exception("VRChat User ID not found in database.");
     }
 
@@ -90,12 +90,12 @@ internal class VRCXDatabase : IDisposable
         var sql = GetEmbedFileContent("VRCXDiscordTracker.Core.VRCX.Queries.myLocations.sql");
 
         var myLocations = new List<MyLocation>();
-        using (var cmd = new SQLiteCommand(_conn))
+        using (var cmd = _conn.CreateCommand())
         {
             cmd.CommandText = sql;
             cmd.Parameters.AddWithValue(":target_user_id", vrchatUserId);
             cmd.Parameters.AddWithValue(":location_count", locationCount);
-            using SQLiteDataReader reader = cmd.ExecuteReader();
+            using SqliteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 try
@@ -149,14 +149,14 @@ internal class VRCXDatabase : IDisposable
         var sql = GetEmbedFileContent("VRCXDiscordTracker.Core.VRCX.Queries.instanceMembers.sql").Replace("@{friendTableName}", friendTableName);
 
         var instanceMembers = new List<InstanceMember>();
-        using (var cmd = new SQLiteCommand(_conn))
+        using (var cmd = _conn.CreateCommand())
         {
             cmd.CommandText = sql;
             cmd.Parameters.AddWithValue(":join_created_at", FormatDateTime(myLocation.JoinCreatedAt.AddSeconds(-1)));
             cmd.Parameters.AddWithValue(":estimated_leave_created_at", FormatDateTime(myLocation.EstimatedLeaveCreatedAt?.AddSeconds(1)));
             cmd.Parameters.AddWithValue(":location", myLocation.LocationId);
 
-            using SQLiteDataReader reader = cmd.ExecuteReader();
+            using SqliteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 // 取得したデータを処理
