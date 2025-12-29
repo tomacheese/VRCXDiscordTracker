@@ -39,14 +39,41 @@ internal class GitHubReleaseService : IDisposable
         var json = await _http.GetStringAsync(uri).ConfigureAwait(false);
         using JsonDocument doc = JsonDocument.Parse(json);
         var root = doc.RootElement;
-        var tagName = root.GetProperty("tag_name").GetString()!;
-        var asset = root.GetProperty("assets").EnumerateArray()
-            .FirstOrDefault(x => x.GetProperty("name").GetString() == assetName);
+
+        if (!root.TryGetProperty("tag_name", out var tagNameElement) || tagNameElement.ValueKind != JsonValueKind.String)
+        {
+            throw new Exception("Failed to find 'tag_name' in GitHub release response.");
+        }
+        var tagName = tagNameElement.GetString()!;
+
+        if (!root.TryGetProperty("assets", out var assetsElement) || assetsElement.ValueKind != JsonValueKind.Array)
+        {
+            throw new Exception("Invalid release response: 'assets' array is missing or has an unexpected format.");
+        }
+
+        JsonElement asset = default;
+        foreach (var item in assetsElement.EnumerateArray())
+        {
+            if (item.TryGetProperty("name", out var nameProperty) &&
+                nameProperty.GetString() == assetName)
+            {
+                asset = item;
+                break;
+            }
+        }
+
         if (asset.ValueKind == JsonValueKind.Undefined)
         {
             throw new Exception($"Failed to find asset: {assetName}");
         }
-        var assetUrl = asset.GetProperty("browser_download_url").GetString()!;
+
+        if (!asset.TryGetProperty("browser_download_url", out var browserDownloadUrlElement) ||
+            browserDownloadUrlElement.ValueKind != JsonValueKind.String)
+        {
+            throw new Exception($"Failed to get browser_download_url for asset: {assetName}");
+        }
+        var assetUrl = browserDownloadUrlElement.GetString()!;
+
         return new ReleaseInfo(tagName, assetUrl);
     }
 
