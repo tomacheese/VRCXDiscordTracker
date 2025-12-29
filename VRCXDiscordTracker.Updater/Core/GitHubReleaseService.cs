@@ -1,5 +1,4 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace VRCXDiscordTracker.Updater.Core;
 
@@ -38,10 +37,12 @@ internal class GitHubReleaseService : IDisposable
         Console.WriteLine($"GET {url}");
         var uri = new Uri(url);
         var json = await _http.GetStringAsync(uri).ConfigureAwait(false);
-        JObject obj = JsonConvert.DeserializeObject<JObject>(json)!;
-        var tagName = obj["tag_name"]!.ToString();
-        var assetUrl = obj["assets"]!
-            .FirstOrDefault(x => x["name"]!.ToString() == assetName)?["browser_download_url"]?.ToString();
+        using JsonDocument doc = JsonDocument.Parse(json);
+        var root = doc.RootElement;
+        var tagName = root.GetProperty("tag_name").GetString()!;
+        var assetUrl = root.GetProperty("assets").EnumerateArray()
+            .FirstOrDefault(x => x.GetProperty("name").GetString() == assetName)
+            .GetProperty("browser_download_url").GetString();
         return string.IsNullOrEmpty(assetUrl)
             ? throw new Exception($"Failed to find asset: {assetName}")
             : new ReleaseInfo(tagName, assetUrl);
