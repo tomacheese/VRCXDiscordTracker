@@ -36,24 +36,24 @@ internal class GitHubReleaseService : IDisposable
         var url = $"https://api.github.com/repos/{_owner}/{_repo}/releases/latest";
         var uri = new Uri(url);
         var json = await _http.GetStringAsync(uri).ConfigureAwait(false);
-        using JsonDocument doc = JsonDocument.Parse(json);
-        var root = doc.RootElement;
+        using var doc = JsonDocument.Parse(json);
+        JsonElement root = doc.RootElement;
 
-        if (!root.TryGetProperty("tag_name", out var tagNameElement) || tagNameElement.ValueKind != JsonValueKind.String)
+        if (!root.TryGetProperty("tag_name", out JsonElement tagNameElement) || tagNameElement.ValueKind != JsonValueKind.String)
         {
             throw new Exception("Failed to get 'tag_name' from GitHub release response.");
         }
-        var tagName = tagNameElement.GetString()!;
+        string tagName = tagNameElement.GetString()!;
 
-        if (!root.TryGetProperty("assets", out var assetsElement) || assetsElement.ValueKind != JsonValueKind.Array)
+        if (!root.TryGetProperty("assets", out JsonElement assetsElement) || assetsElement.ValueKind != JsonValueKind.Array)
         {
             throw new Exception("Failed to find assets in GitHub API response.");
         }
 
         JsonElement asset = default;
-        foreach (var item in assetsElement.EnumerateArray())
+        foreach (JsonElement item in assetsElement.EnumerateArray())
         {
-            if (item.TryGetProperty("name", out var nameProperty) &&
+            if (item.TryGetProperty("name", out JsonElement nameProperty) &&
                 nameProperty.ValueKind == JsonValueKind.String &&
                 nameProperty.GetString() == assetName)
             {
@@ -67,12 +67,12 @@ internal class GitHubReleaseService : IDisposable
             throw new Exception($"Failed to find asset: {assetName}");
         }
 
-        if (!asset.TryGetProperty("browser_download_url", out var browserDownloadUrlElement) ||
+        if (!asset.TryGetProperty("browser_download_url", out JsonElement browserDownloadUrlElement) ||
             browserDownloadUrlElement.ValueKind != JsonValueKind.String)
         {
             throw new Exception($"Failed to get browser_download_url for asset: {assetName}");
         }
-        var assetUrl = browserDownloadUrlElement.GetString()!;
+        string assetUrl = browserDownloadUrlElement.GetString()!;
 
         return new ReleaseInfo(tagName, assetUrl);
     }
