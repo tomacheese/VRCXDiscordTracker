@@ -44,7 +44,7 @@ internal class GitHubReleaseService : IDisposable
         {
             throw new Exception("Failed to get 'tag_name' from GitHub release response.");
         }
-        string tagName = tagNameElement.GetString()!;
+        var tagName = tagNameElement.GetString()!;
 
         if (!root.TryGetProperty("assets", out JsonElement assetsElement) || assetsElement.ValueKind != JsonValueKind.Array)
         {
@@ -73,7 +73,7 @@ internal class GitHubReleaseService : IDisposable
         {
             throw new Exception($"Failed to get browser_download_url for asset: {assetName}");
         }
-        string assetUrl = browserDownloadUrlElement.GetString()!;
+        var assetUrl = browserDownloadUrlElement.GetString()!;
 
         return new ReleaseInfo(tagName, assetUrl);
     }
