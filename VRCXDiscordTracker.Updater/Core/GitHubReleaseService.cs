@@ -42,19 +42,20 @@ internal class GitHubReleaseService : IDisposable
 
         if (!root.TryGetProperty("tag_name", out var tagNameElement) || tagNameElement.ValueKind != JsonValueKind.String)
         {
-            throw new Exception("Failed to find 'tag_name' in GitHub release response.");
+            throw new Exception("Failed to get 'tag_name' from GitHub release response.");
         }
         var tagName = tagNameElement.GetString()!;
 
         if (!root.TryGetProperty("assets", out var assetsElement) || assetsElement.ValueKind != JsonValueKind.Array)
         {
-            throw new Exception("Invalid release response: 'assets' array is missing or has an unexpected format.");
+            throw new Exception("Failed to find assets in GitHub API response.");
         }
 
         JsonElement asset = default;
         foreach (var item in assetsElement.EnumerateArray())
         {
             if (item.TryGetProperty("name", out var nameProperty) &&
+                nameProperty.ValueKind == JsonValueKind.String &&
                 nameProperty.GetString() == assetName)
             {
                 asset = item;

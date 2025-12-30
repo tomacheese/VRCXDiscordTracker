@@ -54,6 +54,7 @@ internal class GitHubReleaseService : IDisposable
         foreach (var item in assetsElement.EnumerateArray())
         {
             if (item.TryGetProperty("name", out var nameProperty) &&
+                nameProperty.ValueKind == JsonValueKind.String &&
                 nameProperty.GetString() == assetName)
             {
                 asset = item;
