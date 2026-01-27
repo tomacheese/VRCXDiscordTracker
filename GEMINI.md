@@ -41,5 +41,5 @@ dotnet format VRCXDiscordTracker.sln
 - Windows 特有のライブラリ（WinForms, UWP Notifications）を使用していることに留意する。
 
 ## リポジトリ固有
-- VRCX の SQLite データベースの場所は、デフォルトで `%AppData%/VRCX/VRCX.sqlite3` です。
+- VRCX の SQLite データベースの場所は、デフォルトで `%APPDATA%\VRCX\VRCX.sqlite3` です。
 - インスタンス種別（Public, Friend+ 等）やリージョン（US, EU, JP）のパースロジックが含まれています。
