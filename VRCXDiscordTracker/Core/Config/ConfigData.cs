@@ -37,5 +37,5 @@ internal class ConfigData
     /// 通知対象とするロケーションの数
     /// </summary>
     [JsonPropertyName("locationCount")]
-    public int LocationCount { get; set; } = 5;
+    public int LocationCount { get; set; } = 15;
 }
