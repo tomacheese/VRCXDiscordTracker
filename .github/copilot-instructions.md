@@ -1,64 +1,26 @@
-# GitHub Copilot Instructions
+# GitHub Copilot コードレビュー指示
 
-## プロジェクト概要
-- **目的**: VRCX のデータベースを監視し、VRChat のアクティビティ（インスタンス移動など）を Discord Webhook を介して通知するツール。
-- **主な機能**:
-    - VRCX の SQLite データベースの監視とデータ取得。
-    - インスタンス情報の解析と Discord Embed 形式での通知。
-    - Windows トレイアイコンによるバックグラウンド動作と設定管理。
-    - GitHub Releases を利用した自動アップデート機能。
-    - Windows トースト通知によるアプリ状態の通知。
-- **対象ユーザー**: VRCX を利用している VRChat ユーザー。
+VRCXDiscordTracker のプルリクエストをレビューする際の観点。C# / .NET 9.0（WinForms）、VRCX の SQLite DB を監視し Discord Webhook で通知する Windows 常駐アプリ。
 
-## 共通ルール
-- 会話は日本語で行う。
-- PR とコミットは [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従う。
-    - `<type>(<scope>): <description>` 形式。
-    - `<description>` は日本語で記載する。
-- 日本語と英数字の間には半角スペースを入れる。
+## 重点的に確認する点
 
-## 技術スタック
-- **言語**: C# (.NET 9.0)
-- **UI フレームワーク**: Windows Forms (WinForms)
-- **データベース**: SQLite (System.Data.SQLite)
-- **通知**: Discord.Net.Webhook, Microsoft.Toolkit.Uwp.Notifications
+- **機密情報の混入**: Discord Webhook URL、`config.json` の実値、個人を特定できる VRChat 情報がコード・テストデータ・ログ・コミットに含まれていないか。ログ出力に Webhook URL やユーザー情報が漏れていないか。
+- **リソース解放**: `SQLiteConnection` / `SQLiteCommand` / `SQLiteDataReader` が `using` で確実に破棄されているか。DB 接続の開きっぱなしは指摘対象。
+- **SQL の扱い**: VRCX DB へのクエリは埋め込み SQL（`Core/VRCX/Queries/`）。動的に組み立てる値がある場合はパラメータ化されているか。
+- **非同期と UI スレッド**: `async/await` が適切に使われ、UI スレッドを長時間ブロックしていないか。WinForms コントロールへスレッド外からアクセスしていないか（`Invoke`/`BeginInvoke` の要否）。
+- **null 安全性**: Nullable 有効。null 許容警告を握りつぶさず、DB 読み取り結果や設定値の null を適切に扱っているか。
+- **VRCX スキーマ依存**: インスタンス種別・リージョンの解析（`Core/VRChat/`）や DB クエリが VRCX のスキーマ前提に依存する。パースの分岐漏れや未知値のフォールバックがあるか。
+- **設定アクセス**: 設定値は `AppConfig` 経由か（直接ファイルを読む重複実装を持ち込んでいないか）。
 
-## 開発コマンド
-```bash
-# 依存関係の復元
-dotnet restore VRCXDiscordTracker.sln
+## 規約（lint/format で強制済み）
 
-# ビルド (Debug)
-dotnet build VRCXDiscordTracker.sln
+- **フォーマット**: `dotnet format` を CI が `--verify-no-changes --severity warn` で検証する。整形差分は CI で落ちるため、スタイルの微修正はレビューで重ねて指摘しなくてよい。
+- **コミット**: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)（description は日本語）。
+- **コメント言語**: 公開メソッド・インターフェースの XML ドキュメントコメントは日本語。エラーメッセージは英語。日本語と英数字の間は半角スペース。
 
-# ビルド (Release)
-dotnet build VRCXDiscordTracker.sln /p:Configuration=Release
+## フラグ不要な既知パターン（誤検知しやすい点）
 
-# 発行
-dotnet publish VRCXDiscordTracker.sln -p:PublishProfile=Publish
-
-# コードフォーマットの確認
-dotnet format VRCXDiscordTracker.sln --verify-no-changes --severity warn
-
-# コードフォーマットの修正
-dotnet format VRCXDiscordTracker.sln
-```
-
-## コーディング規約
-- **命名規則**: C# の標準的な命名規則（PascalCase for classes/methods, camelCase for local variables）に従う。
-- **ドキュメント**: 公開メソッドやインターフェースには XML ドキュメントコメントを日本語で記載する。
-- **非同期プログラミング**: `async/await` を適切に使用し、UI スレッドをブロックしないようにする。
-
-## テスト方針
-- 現時点ではテストプロジェクトは存在しない。新規機能追加時には、必要に応じてテストプロジェクトの作成を検討する。
-
-## セキュリティ / 機密情報
-- Discord Webhook URL などの機密情報は設定ファイル（`config.json`）で管理し、リポジトリには含めない。
-- ログに Webhook URL や個人を特定できる情報を出力しない。
-
-## ドキュメント更新
-- コード変更に伴い、必要に応じてソースコード内のコメントを更新する。
-
-## リポジトリ固有
-- VRCX のデータベース（`VRCX.sqlite3`）の構造に依存しているため、スキーマ変更に注意する。
-- Windows 環境専用（WinForms および UWP 通知を使用）。
+- **Windows 専用 API**: WinForms・UWP トースト通知（`Microsoft.Toolkit.Uwp.Notifications`）はクロスプラットフォーム非対応で意図的。移植性の指摘は不要。
+- **`AllowUnsafeBlocks`**: csproj で有効化済み。`unsafe` の利用自体は設定上許容されている。
+- **自動テストの不在**: テストプロジェクトは未整備。テスト追加要求は必須指摘としない（新規ロジックで妥当な場合のみ提案）。
+- **`config.json` は実行ディレクトリ**: `%APPDATA%` ではなく実行ディレクトリ配置は仕様（`AppConfig`）。パス選択の指摘は不要。

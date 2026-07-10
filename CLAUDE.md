@@ -1,110 +1,65 @@
 # CLAUDE.md
 
-## 目的
-Claude Code の作業方針とプロジェクト固有ルールを示します。
-
-## 判断記録のルール
-判断が必要な変更を行う場合は、以下の内容を記録してください。
-- 判断内容の要約
-- 検討した代替案
-- 採用しなかった案とその理由
-- 前提条件・仮定・不確実性
-- 他エージェントによるレビュー可否
-
 ## プロジェクト概要
-- **目的**: VRCX のデータベースを監視し、VRChat のアクティビティを Discord Webhook を介して通知する。
-- **主な機能**:
-    - VRCX SQLite データベースの監視（`instanceMembers`, `myLocations` クエリ）。
-    - インスタンス種別やリージョンの解析。
-    - Discord Embed による詳細な通知。
-    - 設定画面とトレイアイコンによる操作。
+- **目的**: VRCX の SQLite データベースを監視し、VRChat のアクティビティ（インスタンス移動やメンバーの出入り）を Discord Webhook で通知する Windows 常駐アプリ。
+- **主な機能**: VRCX データベースの監視、インスタンス種別・リージョンの解析、Discord Embed による通知、Windows トースト通知、トレイアイコンと設定画面、GitHub Releases を用いた自動アップデート。
+- **構成**: 本体 `VRCXDiscordTracker`（WinExe）とアップデータ `VRCXDiscordTracker.Updater`（自己完結型 win-x64 実行ファイル）の 2 プロジェクト。`VRCXDiscordTracker.sln` で束ねる。
 
-## 重要ルール
-- **会話言語**: 日本語
-- **コミット規約**: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)（description は日本語）
-- **コメント言語**: 日本語
-- **エラーメッセージ言語**: 英語
-
-## 環境のルール
-- **ブランチ命名**: [Conventional Branch](https://conventional-branch.github.io)（feat, fix 等の短縮形を使用）
-- **GitHub リポジトリ調査**: 調査が必要な場合は一時ディレクトリに clone して検索する。
-- **Renovate**: Renovate が作成した PR に対して追加コミットや更新を行わない。
-
-## Git Worktree
-新規ブランチを作成する場合は、以下の構成で Git Worktree を作成してください。
-```text
-.bare/
-<ブランチ名>
-```
-
-## コード改修時のルール
-- 日本語と英数字の間には半角スペースを挿入する。
-- エラーメッセージの絵文字は、全体で統一感を持たせる（既存のパターンに従う）。
-- 関数やインターフェースには日本語で docstring (XML ドキュメントコメント) を記載する。
-
-## 相談ルール
-- **Codex CLI**: 実装の詳細レビュー、局所的な設計相談、既存コードとの整合性確認に使用。
-- **Gemini CLI**: 外部仕様の確認、最新技術情報の取得、広範なコンテキストの理解に使用。
-- ユーザーや他エージェントからの指摘は真摯に受け止め、黙殺しないこと。
+## 技術スタック
+- **言語 / ターゲット**: C# / .NET 9.0（`net9.0-windows10.0.17763.0`）、WinForms、`PublishSingleFile`、Nullable 有効。
+- **主要パッケージ**: `Discord.Net.Webhook`、`Microsoft.Toolkit.Uwp.Notifications`、`System.Data.SQLite`。
 
 ## 開発コマンド
 ```bash
 # 依存関係の復元
 dotnet restore VRCXDiscordTracker.sln
 
-# ビルド
+# ビルド（Release）
 dotnet build VRCXDiscordTracker.sln /p:Configuration=Release
 
-# 発行
+# 発行（Publish プロファイル: bin/Publish/ へ自己完結 win-x64 出力）
 dotnet publish VRCXDiscordTracker.sln -p:PublishProfile=Publish
+
+# フォーマット確認（CI と同一。差分があると失敗する）
+dotnet format VRCXDiscordTracker.sln --verify-no-changes --severity warn
 
 # フォーマット修正
 dotnet format VRCXDiscordTracker.sln
 ```
 
 ## アーキテクチャと主要ファイル
-- **VRCXDiscordTracker/Core**: アプリケーションのコアロジック。
-    - `VRChat/`: VRChat のインスタンスや場所に関する解析。
-    - `VRCX/`: VRCX データベースへのクエリとデータ構造。
-    - `Notification/`: Discord および Windows 通知の処理。
-- **VRCXDiscordTracker.Updater**: アップデート用実行ファイル。
+- `VRCXDiscordTracker/Program.cs`: エントリポイント。
+- `VRCXDiscordTracker/Core/`: コアロジック。
+    - `VRCX/`: VRCX データベースへの接続とクエリ（`VRCXDatabase.cs`、埋め込み SQL `Queries/instanceMembers.sql`・`myLocations.sql`）。
+    - `VRChat/`: インスタンス・場所の解析（`LocationParser.cs`、`InstanceType.cs`、`InstanceRegion.cs`）。
+    - `Notification/`: Discord Webhook 通知（`DiscordNotificationService.cs`）と Windows トースト通知（`UwpNotificationService.cs`）。
+    - `Config/`: `AppConfig.cs`（設定の読み書き）。
+    - `Updater/`: `GitHubReleaseService.cs`、`UpdateChecker.cs` による自動アップデート。
+    - `UI/`: `SettingsForm`、`TrayIcon`。
+    - `AppConstants.cs`: VRCX デフォルト DB パス等の定数。
+- `VRCXDiscordTracker.Updater/`: 本体を置き換えるアップデータ。
 
-## 実装パターン
-- **推奨**:
-    - 非同期処理 (`Task`, `async/await`) の活用。
-    - `AppConfig` を通じた設定値へのアクセス。
-- **非推奨**:
-    - UI スレッドでの長時間実行。
-    - データベース接続の開きっぱなし。
+## 設定とデータの所在
+- **アプリ設定**: 実行ディレクトリの `config.json`（`AppConfig`）。Discord Webhook URL 等を保持するため **コミットしない**。
+- **VRCX DB のデフォルトパス**: `%APPDATA%\VRCX\VRCX.sqlite3`（`AppConstants.VRCXDefaultDatabasePath`）。設定で空欄にするとこの既定値が使われる。
+
+## コーディング規約
+- **命名**: C# 標準（クラス/メソッドは PascalCase、ローカル変数は camelCase）。
+- **非同期**: `async/await` を用い、UI スレッドをブロックしない。DB 接続は使い終えたら閉じる。
+- **設定アクセス**: 設定値は `AppConfig` 経由で取得する。
+- **コメント**: 公開メソッド・インターフェースには日本語で XML ドキュメントコメントを付ける。
+- **言語**: コメントは日本語、エラーメッセージは英語。日本語と英数字の間には半角スペースを入れる。
+- **フォーマット**: `dotnet format` に従う（CI で `--verify-no-changes` により強制）。
 
 ## テスト
-- 現時点では自動テストは導入されていない。手動での動作確認を徹底すること。
+- 自動テストは未導入。変更後は実機（Windows）でのビルドと動作確認を行う。
 
 ## ドキュメント更新ルール
-- ソースコード内の XML ドキュメントコメントを常に最新の状態に保つ。
+- ソース内の XML ドキュメントコメントを実装と一致させる。
+- ディレクトリ構成・コマンド・依存パッケージを変更したら本ファイルの該当箇所も更新する。
 
-## 作業チェックリスト
-
-### 新規改修時
-1. プロジェクトを理解する。
-2. 作業ブランチが適切であることを確認する。
-3. 最新のリモートブランチに基づいた新規ブランチであることを確認する。
-4. 指定されたパッケージマネージャー（dotnet）で依存関係をインストールする。
-
-### コミット・プッシュ前
-1. Conventional Commits に従っていることを確認する。
-2. センシティブな情報（Webhook URL 等）が含まれていないことを確認する。
-3. `dotnet format` でエラーがないことを確認する。
-4. 動作確認を行う。
-
-### PR 作成前
-1. PR 作成の依頼があることを確認する。
-2. コンフリクトの恐れがないことを確認する。
-
-### PR 作成後
-1. コンフリクトがないことを確認する。
-2. PR 本文が最新の状態のみを網羅していることを確認する。
-3. CI (`gh pr checks`) の結果を確認する。
-
-## リポジトリ固有
-- Windows 専用アプリであるため、Windows API や WinForms 特有の挙動に留意する。
+## リポジトリ固有の注意
+- Windows 専用（WinForms・UWP 通知）。API の可用性やスレッド挙動に留意する。
+- VRCX の SQLite スキーマに依存するため、スキーマ変更時はクエリ（`Core/VRCX/Queries/`）の追従が必要。
+- **会話言語**: 日本語。**コミット**: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)（description は日本語）。**ブランチ**: [Conventional Branch](https://conventional-branch.github.io) 短縮形。
+- Renovate が作成した PR には追加コミットしない。
